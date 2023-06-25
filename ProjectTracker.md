@@ -4,3 +4,4 @@
 3. Lesson Notes Uploads 
 4. Role Based Authenthication
 5. CRUD operations for Annoucement, News and Reports
+6. git commit 
