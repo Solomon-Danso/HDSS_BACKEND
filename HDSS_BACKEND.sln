@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1705.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HDSS_BACKEND", "HDSS_BACKEND.csproj", "{976D4AC0-897E-4752-9200-846622AE0226}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{976D4AC0-897E-4752-9200-846622AE0226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{976D4AC0-897E-4752-9200-846622AE0226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{976D4AC0-897E-4752-9200-846622AE0226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{976D4AC0-897E-4752-9200-846622AE0226}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1EBE7897-1440-4B46-B1BC-59446FDFDDB1}
+	EndGlobalSection
+EndGlobal
