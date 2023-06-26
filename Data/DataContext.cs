@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HDSS_BACKEND.Models;
 using Microsoft.EntityFrameworkCore;
+
+
+
 
 namespace HDSS_BACKEND.Data
 {
@@ -18,7 +22,7 @@ base.OnConfiguring(optionsBuilder); optionsBuilder.UseSqlServer("Server=localhos
 }
 //Data Set, where Project and User are models in the Model folder
 
-// public DbSet<Register> Register => Set<Register>(); 
+public DbSet<Teacher> Teachers => Set<Teacher>(); 
 
     }
 }
