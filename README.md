@@ -10,7 +10,7 @@
 
   *[#]* Project Section
 [.] Admin
-1. Register teachers and students
+1. Register teachers[Done] and students
 2. Mark Lesson Notes 
 3. Website Admin section, Software Administration Section, System administration
 4. Annoucement, News and Reports

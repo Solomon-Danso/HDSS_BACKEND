@@ -23,6 +23,15 @@ base.OnConfiguring(optionsBuilder); optionsBuilder.UseSqlServer("Server=localhos
 //Data Set, where Project and User are models in the Model folder
 
 public DbSet<Teacher> Teachers => Set<Teacher>(); 
+ public DbSet<Student> Students { get; set; }
+public DbSet<SchoolFee> SchoolFees { get; set; }
+public DbSet<AmountOwing> AmountsOwing { get; set; }
+public DbSet<AmountPaid> AmountsPaid { get; set; }
+
+
+
+
+
 
     }
 }
