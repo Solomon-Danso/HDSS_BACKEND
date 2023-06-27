@@ -27,6 +27,7 @@ namespace HDSS_BACKEND.Models
         public string? MedicalIInformation { get; set; }
         public string? BasicLevel { get; set; }
         public double? amountOwing { get; set; }
+        public double? creditAmount { get; set; }
         public string? AdmissionDate { get; set; }
        
 
@@ -46,6 +47,7 @@ namespace HDSS_BACKEND.Models
         public string? StudentName { get; set; }
         public double? AmountDebtOld { get; set; }
         public double? Amountpaid { get; set; }
+        public double? CreditAmount{ get; set; }
         public double? AmountDebtNew { get; set; }
         public string? PaymentDate { get; set; }
 

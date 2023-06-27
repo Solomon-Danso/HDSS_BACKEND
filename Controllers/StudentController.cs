@@ -36,22 +36,32 @@ namespace HDSS_BACKEND.Controllers
             if (student == null){
                 return BadRequest("Student does not exist");
             }
-
-            student.amountOwing = owe.Amount + student.amountOwing;
-            student.amountOwing = student.amountOwing * -1;
+            
+            
+            
 
             var debt = new AmountOwing{
              Id = owe.Id,
              StudentId= student.StudentId,
              StudentName = student.Title + " " + student.FirstName + " " + student.OtherName + " " +student.LastName,
-             Amount = student.amountOwing,
+             Amount = owe.Amount,
              DebtDate = DateTime.Today.Date.ToString("dd MMMM, yyyy")
             };
-
+                   
             context.AmountsOwing.Add(debt);
+            var owingAmount = student.creditAmount - (student.amountOwing+debt.Amount);
+            if(owingAmount>=0){
+                student.creditAmount = owingAmount;
+                student.amountOwing = 0;
+            }
+            else{
+                student.amountOwing = owingAmount;
+                student.creditAmount = 0;
+            }
+            
             await context.SaveChangesAsync();
 
-            return Ok($" Successfull new amount {student.amountOwing}");
+            return Ok($"Done");
 
 
         }
@@ -64,6 +74,10 @@ namespace HDSS_BACKEND.Controllers
                 return BadRequest("Student does not exist");
             }
 
+            
+           
+            
+
             var credit = new AmountPaid{
 
              Id = paid.Id,
@@ -71,15 +85,25 @@ namespace HDSS_BACKEND.Controllers
             StudentName = student.Title + " " + student.FirstName + " " + student.OtherName + " " +student.LastName,
             AmountDebtOld = student.amountOwing,
             Amountpaid = paid.Amountpaid,
-            AmountDebtNew = student.amountOwing + paid.Amountpaid,
+            CreditAmount = student.creditAmount,
+            AmountDebtNew = student.amountOwing+paid.Amountpaid+student.creditAmount,
             PaymentDate = DateTime.Today.Date.ToString("dd MMMM, yyyy")
 
             };
            
             context.AmountsPaid.Add(credit);
-            student.amountOwing = credit.AmountDebtNew;
+            if(credit.AmountDebtNew>=0){
+               student.creditAmount = credit.AmountDebtNew;
+               student.amountOwing = 0;
+            }
+            else{
+                student.amountOwing = credit.AmountDebtNew;
+                student.creditAmount = 0;
+            }
+            
+            
             await context.SaveChangesAsync();
-            return Ok($"Successfull new amount {student.amountOwing}");
+            return Ok($"Done");
 
 
         }
@@ -97,7 +121,7 @@ namespace HDSS_BACKEND.Controllers
             if(student == null){
                 return BadRequest("Student not found");
             }
-            return Ok($"{student.Title}  {student.FirstName} {student.OtherName} {student.LastName} {student.amountOwing}");
+            return Ok($"Debit=> {student.amountOwing}, Credit => {student.creditAmount}");
 
         }
 
