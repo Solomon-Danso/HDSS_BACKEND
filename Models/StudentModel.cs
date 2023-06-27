@@ -54,10 +54,18 @@ namespace HDSS_BACKEND.Models
     }
 
 
-    public class SchoolFee
+    public class SchoolFeeTransaction
     {
-        public int SchoolFeeId { get; set; }
-        public DateTime Date { get; set; }
-        public decimal Amount { get; set; }
+       public int Id { get; set; }
+       public string? StudentId { get; set; }
+       public string? StudentName { get; set; }
+       public double? OldAmountOwing { get; set; }
+       public double? CreditAmount { get; set; }
+       public double? THEAmountPaid { get; set; }
+       public double? NewAmountOwing { get; set; }
+       public string? PaymentDate { get; set; }
+
+
+
     }
 }

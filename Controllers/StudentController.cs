@@ -6,6 +6,7 @@ using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace HDSS_BACKEND.Controllers
 {
     [ApiController]
@@ -13,6 +14,8 @@ namespace HDSS_BACKEND.Controllers
     public class StudentController : ControllerBase
     {
         private readonly DataContext context;
+        public static double? credit1;
+        public static double? owe2;
 
         public StudentController(DataContext ctx)
         {
@@ -22,7 +25,12 @@ namespace HDSS_BACKEND.Controllers
 
         [HttpPost("registerStudent")]
         public async Task<IActionResult> CreateStudent(Student student)
-        {
+        {   
+            bool stu = await context.Students.AnyAsync(s=>s.StudentId == student.StudentId);
+            if(stu){
+                return BadRequest("Student already exists");
+            }
+
             student.AdmissionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy");
             context.Students.Add(student);
             await context.SaveChangesAsync();
@@ -75,7 +83,7 @@ namespace HDSS_BACKEND.Controllers
             }
 
             
-           
+           var owe1 = student.amountOwing;
             
 
             var credit = new AmountPaid{
@@ -90,16 +98,37 @@ namespace HDSS_BACKEND.Controllers
             PaymentDate = DateTime.Today.Date.ToString("dd MMMM, yyyy")
 
             };
+
            
             context.AmountsPaid.Add(credit);
+
             if(credit.AmountDebtNew>=0){
                student.creditAmount = credit.AmountDebtNew;
                student.amountOwing = 0;
+                credit1 = credit.AmountDebtNew;
+                
             }
             else{
                 student.amountOwing = credit.AmountDebtNew;
                 student.creditAmount = 0;
+                owe2 = student.amountOwing;
+                
             }
+
+            
+             var transaction = new SchoolFeeTransaction{
+             Id= paid.Id,
+             StudentId= student.StudentId,
+             StudentName= student.Title + " " + student.FirstName + " " + student.OtherName + " " +student.LastName,
+             OldAmountOwing = owe1,
+             CreditAmount = student.creditAmount,
+             THEAmountPaid = paid.Amountpaid,
+             NewAmountOwing = student.amountOwing,
+             PaymentDate = DateTime.Today.Date.ToString("dd MMMM, yyyy")
+
+            };
+
+           context.SchoolFeeTransactions.Add(transaction);
             
             
             await context.SaveChangesAsync();
@@ -128,7 +157,7 @@ namespace HDSS_BACKEND.Controllers
         [HttpGet("PaymentHistory")]
 public async Task<IActionResult> GetPaymentHistory(string accountId)
 {
-    var payments = context.AmountsPaid.Where(a => a.StudentId == accountId).ToList();
+    var payments = context.SchoolFeeTransactions.Where(a => a.StudentId == accountId).ToList();
     if (payments.Count == 0)
     {
         return BadRequest("No payments found for the student");

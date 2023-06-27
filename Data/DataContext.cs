@@ -24,7 +24,7 @@ base.OnConfiguring(optionsBuilder); optionsBuilder.UseSqlServer("Server=localhos
 
 public DbSet<Teacher> Teachers => Set<Teacher>(); 
  public DbSet<Student> Students { get; set; }
-public DbSet<SchoolFee> SchoolFees { get; set; }
+public DbSet<SchoolFeeTransaction> SchoolFeeTransactions { get; set; }
 public DbSet<AmountOwing> AmountsOwing { get; set; }
 public DbSet<AmountPaid> AmountsPaid { get; set; }
 
