@@ -102,6 +102,173 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("AmountsPaid");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.LessonNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateWritten")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day1Phase1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day1Phase2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day1Phase3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day2Phase1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day2Phase2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day2Phase3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day3Phase1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day3Phase2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day3Phase3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day4")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day4Phase1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day4Phase2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day4Phase3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day5")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day5Phase1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day5Phase2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Day5Phase3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HeadTeacherComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("HeadTeacherDateSigned")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Lesson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Period")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Stage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TLMS")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("WeekEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("WeekStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("classSize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("contentStandard")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("coreCompetence")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("indicator")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("keywords")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("performanceIndicator")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("references")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("strand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("substrand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LessonNotes");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.LessonNoteUpload", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateUploaded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HeadTeacherComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("HeadTeacherDateSigned")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LessonNotePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TeacherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LessonNotesUpload");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.SchoolFeeTransaction", b =>
                 {
                     b.Property<int>("Id")
@@ -194,6 +361,12 @@ namespace HDSS_BACKEND.Migrations
 
                     b.Property<string>("OtherName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("SchoolBankAccount")
+                        .HasColumnType("float");
 
                     b.Property<string>("StudentId")
                         .HasColumnType("nvarchar(max)");

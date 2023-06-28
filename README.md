@@ -10,8 +10,8 @@
 
   *[#]* Project Section
 [.] Admin
-1. Register teachers[Done] and students
-2. Mark Lesson Notes 
+1. Register teachers[Done] and students[Done]
+2. Mark Lesson Notes [WIP]
 3. Website Admin section, Software Administration Section, System administration
 4. Annoucement, News and Reports
 5. Contact Information and Live Video Calls 
@@ -28,7 +28,7 @@
 8. Class Notes 
 
 [.] Account 
-1. School fees collections
+1. School fees collections [Done]
 2. Feeding fees collections
 3. Transport fees collections
 4. Salary Payment 
@@ -109,7 +109,7 @@
 4. Social Groups
 
 New Idea
-A full system to pay money using prepaid systems. They are going to pay all their money using their school ID cards 
+A full system to pay money using prepaid systems. They are going to pay all their money using their school ID cards, Generate a QR Code, Include A Banking System and a QRCODE reader  
 
 
  *[#]* Business Section

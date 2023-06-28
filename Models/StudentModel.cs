@@ -29,9 +29,45 @@ namespace HDSS_BACKEND.Models
         public double? amountOwing { get; set; }
         public double? creditAmount { get; set; }
         public string? AdmissionDate { get; set; }
-       
+        public double? SchoolBankAccount { get; set; }
+        public string? ProfilePic { get; set; }
+
 
     }
+
+
+    public class StudentDto
+    {
+        public int Id { get; set; }
+        public string? StudentId { get; set; }
+        public string? Title { get; set; }
+        public string? FirstName { get; set; }
+        public string? OtherName { get; set; }
+        public string? LastName { get; set; }
+        public string? DateOfBirth { get; set; }
+        public string? Gender { get; set; }
+        public string? HomeTown { get; set; }
+        public string? Location { get; set; }
+        public string? Country { get; set; }
+        public string? FathersName { get; set; }
+        public string? FathersContact { get; set; }
+        public string? MothersName { get; set; }
+        public string? MothersContact { get; set; }
+        public string? GuardianName { get; set; }
+        public string? GuardianContact { get; set; }
+        public string? MedicalIInformation { get; set; }
+        public string? BasicLevel { get; set; }
+        public double? amountOwing { get; set; }
+        public double? creditAmount { get; set; }
+        public string? AdmissionDate { get; set; }
+        public double? SchoolBankAccount { get; set; }
+        public IFormFile? File { get; set; }
+
+
+    }
+
+
+
 
     public class AmountOwing{
         public int Id { get; set; }

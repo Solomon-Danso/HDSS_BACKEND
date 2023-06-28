@@ -27,6 +27,8 @@ public DbSet<Teacher> Teachers => Set<Teacher>();
 public DbSet<SchoolFeeTransaction> SchoolFeeTransactions { get; set; }
 public DbSet<AmountOwing> AmountsOwing { get; set; }
 public DbSet<AmountPaid> AmountsPaid { get; set; }
+public DbSet<LessonNote> LessonNotes { get; set; }
+public DbSet<LessonNoteUpload> LessonNotesUpload { get; set; }
 
 
 
