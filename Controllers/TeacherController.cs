@@ -12,6 +12,7 @@ namespace HDSS_BACKEND.Controllers
 {
     [ApiController]
     [Route("api/Admin")]
+
     public class AdminController : ControllerBase
     {
        private readonly DataContext context;
@@ -185,7 +186,7 @@ if (request.AppointFile == null || request.AppointFile.Length == 0)
 
 private string StaffIdGenerator()
 {
-    byte[] randomBytes = new byte[3];
+    byte[] randomBytes = new byte[4]; // Increase the array length to 4
     using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
     {
         rng.GetBytes(randomBytes);

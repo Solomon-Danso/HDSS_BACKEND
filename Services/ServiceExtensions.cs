@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace HDSS_BACKEND.Services
 {
@@ -14,6 +15,11 @@ options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
 public static void ConfigureIISIntegration(this IServiceCollection services) => services.Configure<IISOptions>(options =>
 {
 });
-    }
+
+
+
+
+
+}
     
 }

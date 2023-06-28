@@ -176,13 +176,19 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("HeadTeacherComment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("HeadTeacherDateSigned")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("HeadTeacherDateSigned")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Lesson")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("NotesTicket")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Period")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SearchId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Stage")
@@ -252,14 +258,20 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("HeadTeacherComment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("HeadTeacherDateSigned")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("HeadTeacherDateSigned")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LessonNotePath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TeacherId")
-                        .HasColumnType("int");
+                    b.Property<string>("NotesTicket")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SearchId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TeacherName")
                         .HasColumnType("nvarchar(max)");

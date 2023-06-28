@@ -8,6 +8,7 @@ namespace HDSS_BACKEND.Models
     public class LessonNote
     {
         public int Id { get; set; }
+        public string? NotesTicket { get; set; }
         public string? TeacherId { get; set; }
         public string? TeacherName { get; set; }
         public string? DateWritten { get; set; }
@@ -54,33 +55,37 @@ namespace HDSS_BACKEND.Models
         public string? Day5Phase3 { get; set; }
 
         public string? HeadTeacherComment { get; set; }
-        public DateTime? HeadTeacherDateSigned { get; set; }
+        public string? HeadTeacherDateSigned { get; set; }
+        public string? SearchId { get; set; }
 
 
     }
 
     public class LessonNoteUpload{
         public int Id { get; set; }
-        public int TeacherId { get; set; }
+        public string? NotesTicket { get; set; }        
+        public string? TeacherId { get; set; }
         public string? TeacherName { get; set; }
         public string? DateUploaded{ get; set; }
         public string? LessonNotePath { get; set; }
+        public string? SearchId { get; set; }
 
          public string? HeadTeacherComment { get; set; }
-        public DateTime? HeadTeacherDateSigned { get; set; }
+        public string? HeadTeacherDateSigned { get; set; }
 
 
     }
 
         public class LessonNoteUploadDto{
         public int Id { get; set; }
-        public int TeacherId { get; set; }
+        public string? NotesTicket { get; set; }
+        public string? TeacherId { get; set; }
         public string? TeacherName { get; set; }
         public string? DateUploaded{ get; set; }
         public IFormFile? File { get; set; }
 
          public string? HeadTeacherComment { get; set; }
-        public DateTime? HeadTeacherDateSigned { get; set; }
+        public string? HeadTeacherDateSigned { get; set; }
 
 
     }

@@ -1,5 +1,6 @@
 ﻿using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Services;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureCors(); 
 builder.Services.ConfigureIISIntegration();
 
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = long.MaxValue;
+});
+
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = long.MaxValue;
+
+});
+
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -17,6 +31,9 @@ builder.Services.AddDbContext<DataContext>();
 
 
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
