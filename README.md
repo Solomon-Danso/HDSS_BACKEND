@@ -11,9 +11,9 @@
   *[#]* Project Section
 [.] Admin
 1. Register teachers[Done] and students[Done]
-2. Mark Lesson Notes [WIP]
+2. Mark Lesson Notes [Done]
 3. Website Admin section, Software Administration Section, System administration
-4. Annoucement, News and Reports
+4. Annoucement, News and Reports[Next]
 5. Contact Information and Live Video Calls 
 6. CCTV Camera Section
 
