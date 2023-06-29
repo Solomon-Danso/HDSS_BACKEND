@@ -1,11 +1,16 @@
 *[#]* Project LineUp
 
   This will be an advance school system which will be completed in 100 days 
+  
   July 2023 => Full Backend Section
-  August 2023 => Full Web based frontend 
-  September 2023 => Full Apps 
-  October 2023 => Project Completed, Fully Tested, hosted on servers, possibly new features added 
-  November 2023 and December 2023 => Employment of Software Trainers, Software will be launched on Beta section and live Demo account, Feedbacks and Bugs will be fixed in this period 
+  August 2023 => FFull Backend Section
+
+  
+  September 2023 => Full Web App Section
+  October 2023 => Full Web App Section
+
+  November 2023 => Full Hybrid App Section
+  December 2023 => Full Hybrid App Section
 
 
   *[#]* Project Section
@@ -16,6 +21,8 @@
 4. Annoucement, News and Reports[Next]
 5. Contact Information and Live Video Calls 
 6. CCTV Camera Section
+7. All Id's for student,Admin and Teachers can be accessed using a QR Code
+
 
 [.] Class Management
 1. Full Sakai system 
@@ -23,7 +30,7 @@
 3. Full YouTube system to browse and upload videos 
 4. Full AI tools to enhance research and learniing 
 5. All teaching and learning materials 
-6. Class chatting platform 
+6. Class chatting platform [Fully Functional Telegram Chat System From Scratch]
 7. Quiz App
 8. Class Notes 
 
