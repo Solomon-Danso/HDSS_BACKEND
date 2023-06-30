@@ -25,7 +25,7 @@
 
 
 [.] Class Management
-1. Full Sakai system 
+1. Full Sakai system[Wip] 
 2. Live online teaching 
 3. Full YouTube system to browse and upload videos 
 4. Full AI tools to enhance research and learniing 
