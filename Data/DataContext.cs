@@ -30,16 +30,8 @@ public DbSet<AmountPaid> AmountsPaid { get; set; }
 public DbSet<LessonNote> LessonNotes { get; set; }
 public DbSet<LessonNoteUpload> LessonNotesUpload { get; set; }
 public DbSet<Subject> Subjects { get; set; }
-public DbSet<ChatMessage>ChatMessages { get; set; }
-public DbSet<ClassAnnouncement>ClassAnnouncements{ get; set; }
-public DbSet<AssignmentFile>AssignmentsFile{ get; set; }
-public DbSet<Slide>Slides{ get; set; }
-public DbSet <Video>Videos{ get; set; }
-public DbSet <Audio>Audios{ get; set; }
-public DbSet <Picture>Pics{ get; set; }
-public DbSet<RegisteredStudent>RegisteredStudents{ get; set; }
-public DbSet<RegisteredTeacher>RegisteredTeachers{ get; set; }
-
+public DbSet<TeacherForSubject>TeacherForSubjects { get;set; }
+public DbSet<Classes> Classess { get; set; }
 
 
 

@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HDSS_BACKEND.Controllers
 {
     [ApiController]
-    [Route("api/LMS")]
+    [Route("api/[controller]")]
     public class LMSController : ControllerBase
     {
         private readonly DataContext context;
@@ -18,60 +19,114 @@ namespace HDSS_BACKEND.Controllers
         }
 
         [HttpPost("AddSubject")]
-        public async Task<IActionResult> AddSubject([FromBody]Subject request){
+        public async Task<IActionResult> AddSubject([FromBody]Subject request,string Stage ){
+            var classy = context.Classess.FirstOrDefault(c => c.ClassName == Stage);
+            if (classy == null){
+                return BadRequest("Enter A Valid Class Name");
+            }
+            bool subjectAlreadyExists = await context.Subjects.AnyAsync(s=>s.SubjectName == request.SubjectName);
+            if (subjectAlreadyExists){
+                return BadRequest("Subject already exists");
+            }
+
             var subject = new Subject{
-              Id = request.Id,
-              SubjectId = request.SubjectId,  
+            SubjectName = request.SubjectName,
+            ClassName = classy.ClassName,
+            DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
             };
 
             context.Subjects.Add(subject);
             await context.SaveChangesAsync();
-            return Ok($"{subject.SubjectId} created successfully");
+            return Ok($"{subject.SubjectName} created successfully");
         }
+        [HttpPost("AddClass")]
+        public async Task<IActionResult>AddClass([FromBody]Classes request){
+            bool classAlreadyExist = await context.Classess.AnyAsync(c=>c.ClassName == request.ClassName);
+            if (classAlreadyExist){
+                return BadRequest("Class already exists");
+            }
+            var classy = new Classes{
+                ClassName = request.ClassName,
+                 DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+            };
+            context.Classess.Add(classy);
+            await context.SaveChangesAsync();
+            return Ok($"{classy.ClassName} created successfully");
 
-        [HttpPost("AddStudentToSubject")]
-        public async Task<IActionResult> AddStudentToSubject(string subjectId, string studentId,[FromBody]RegisteredStudent request){
-        var subject =  context.Subjects.FirstOrDefault(s => s.SubjectId == subjectId);
-        var student = context.Students.FirstOrDefault(s => s.StudentId == studentId);
-        
-        if(subject == null||student == null){
-            return BadRequest("Student or Subject not found");
-        }
-
-        var registered = new RegisteredStudent{
-            StudentId = student.StudentId,
-            StudentName = student.Title + " " + student.FirstName + " " + student.OtherName + " " +student.LastName,
-            DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-        };
-
-        subject.Students.Add(registered);
-        await context.SaveChangesAsync();
-        return Ok($"{registered.StudentName} has been added as a registered student of {subject.SubjectId}");    
 
         }
 
         [HttpPost("AddTeacherToSubject")]
-        public async Task<IActionResult> AddTeacherToSubject(string subjectId, string teacherId,[FromBody]RegisteredTeacher request){
-        var subject =  context.Subjects.FirstOrDefault(s => s.SubjectId == subjectId);
-        var teacher = context.Teachers.FirstOrDefault(s => s.StaffID == teacherId);
-        
-        if(subject == null||teacher == null){
-            return BadRequest("Teacher or Subject not found");
+        public async Task<IActionResult> AddTeacherToSubject(string subjects, string StaffID,string Stage,[FromBody] TeacherForSubject request){
+         var subject = context.Subjects.FirstOrDefault(s => s.SubjectName == subjects);
+         var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == StaffID);
+         if (subject == null||teacher == null){
+            return BadRequest("Subject or Teacher not found");
+         }
+          var classy = context.Classess.FirstOrDefault(c => c.ClassName == Stage);
+            if (classy == null){
+                return BadRequest("Enter A Valid Class Name");
+            }
+
+         var code =  subject.SubjectName+teacher.StaffID+classy.ClassName;
+         bool teacherAlreadyExist =await context.TeacherForSubjects.AnyAsync(t => t.TeacherCode == code);
+         if(teacherAlreadyExist) {
+            return BadRequest("Teacher Already Exist");
+         }
+
+
+         var teacherforsub = new TeacherForSubject{
+            StaffID = teacher.StaffID,
+            StaffName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+            SubjectName = subject.SubjectName,
+            ClassName = classy.ClassName,
+            TeacherCode = code
+
+         };
+
+         context.TeacherForSubjects.Add(teacherforsub);
+         await context.SaveChangesAsync();
+
+         return Ok($"{teacherforsub.StaffName} has been assigned to {teacherforsub.SubjectName}");
+
         }
 
-        var registered = new RegisteredTeacher{
-            TeacherId = teacher.StaffID,
-            TeacherName = teacher.Title + " " + teacher.FirstName + " " + teacher.OtherName + " " +teacher.LastName,
-            DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-        };
+        
+        [HttpDelete("removeTeacherFromSubject")]
+        public async Task<IActionResult> RemoveTeacherFromSubject(string subjects, string StaffID,string Stage){
+            
+            var subject = context.Subjects.FirstOrDefault(s => s.SubjectName == subjects);
+            var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == StaffID);
+            if (subject == null||teacher == null){
+            return BadRequest("Subject or Teacher not found");
+         }  
+           var classy = context.Classess.FirstOrDefault(c => c.ClassName == Stage);
+            if (classy == null){
+                return BadRequest("Enter A Valid Class Name");
+            }
 
-        subject.Teachers.Add(registered);
-        await context.SaveChangesAsync();
-        return Ok($"{registered.TeacherName} has been added as a registered teacher for {subject.SubjectId}");    
+         var code =  subject.SubjectName+teacher.StaffID+classy.ClassName;
+            var teachercode = context.TeacherForSubjects.FirstOrDefault(t => t.TeacherCode == code);
+            if (teachercode == null){
+                return BadRequest("Teacher not found");
+            }
+
+            context.TeacherForSubjects.Remove(teachercode);
+            await context.SaveChangesAsync();
+            return Ok("Teacher has been removed");
 
         }
-
-
         
+        [HttpGet("ViewTeachersInSubject")]
+        public async Task<IActionResult> ViewTeachersInSubject(string SubjectName,string Stage){
+            var subject = context.TeacherForSubjects.Where(t=>t.SubjectName == SubjectName && t.ClassName==Stage).ToList();
+            return Ok(subject);
+        }
+  
+  
+  
+  
+  
+  
     }
 }

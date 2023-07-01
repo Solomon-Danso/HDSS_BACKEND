@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230701140838_mnbvcxzlkjhgfds")]
+    partial class mnbvcxzlkjhgfds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,7 +105,7 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("AmountsPaid");
                 });
 
-            modelBuilder.Entity("HDSS_BACKEND.Models.Classes", b =>
+            modelBuilder.Entity("HDSS_BACKEND.Models.AssignmentFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,15 +113,98 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClassName")
+                    b.Property<string>("AssignmentFilePath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DateAdded")
+                    b.Property<string>("DateUploaded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Classess");
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("AssignmentsFile");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.Audio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AudioPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateUploaded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("Audios");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateUploaded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.ClassAnnouncement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateUploaded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("ClassAnnouncements");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.LessonNote", b =>
@@ -300,6 +386,87 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("LessonNotesUpload");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.Picture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateUploaded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PicturePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("Pics");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.RegisteredStudent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("RegisteredStudents");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.RegisteredTeacher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TeacherId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("RegisteredTeachers");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.SchoolFeeTransaction", b =>
                 {
                     b.Property<int>("Id")
@@ -332,6 +499,33 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SchoolFeeTransactions");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.Slide", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateUploaded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SlidePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("Slides");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.Student", b =>
@@ -424,13 +618,7 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClassName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DateAdded")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubjectName")
+                    b.Property<string>("SubjectId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -541,7 +729,7 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("Teachers");
                 });
 
-            modelBuilder.Entity("HDSS_BACKEND.Models.TeacherForSubject", b =>
+            modelBuilder.Entity("HDSS_BACKEND.Models.Video", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -549,24 +737,23 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClassName")
+                    b.Property<string>("DateUploaded")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StaffID")
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StaffName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubjectName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TeacherCode")
+                    b.Property<string>("VideoPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TeacherForSubjects");
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("Videos");
                 });
 
             modelBuilder.Entity("SchoolBank", b =>
@@ -622,6 +809,73 @@ namespace HDSS_BACKEND.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.AssignmentFile", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", null)
+                        .WithMany("AssignmentsFile")
+                        .HasForeignKey("SubjectId");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.Audio", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", null)
+                        .WithMany("Audios")
+                        .HasForeignKey("SubjectId");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.ChatMessage", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", null)
+                        .WithMany("ChatMessages")
+                        .HasForeignKey("SubjectId");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.ClassAnnouncement", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", null)
+                        .WithMany("ClassAnnouncements")
+                        .HasForeignKey("SubjectId");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.Picture", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", null)
+                        .WithMany("Pics")
+                        .HasForeignKey("SubjectId");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.RegisteredStudent", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", "Subject")
+                        .WithMany("Students")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.RegisteredTeacher", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", null)
+                        .WithMany("Teachers")
+                        .HasForeignKey("SubjectId");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.Slide", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", null)
+                        .WithMany("Slides")
+                        .HasForeignKey("SubjectId");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.Video", b =>
+                {
+                    b.HasOne("HDSS_BACKEND.Models.Subject", null)
+                        .WithMany("Videos")
+                        .HasForeignKey("SubjectId");
+                });
+
             modelBuilder.Entity("SchoolBank", b =>
                 {
                     b.HasOne("HDSS_BACKEND.Models.Teacher", "Teacher")
@@ -642,6 +896,27 @@ namespace HDSS_BACKEND.Migrations
                         .IsRequired();
 
                     b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.Subject", b =>
+                {
+                    b.Navigation("AssignmentsFile");
+
+                    b.Navigation("Audios");
+
+                    b.Navigation("ChatMessages");
+
+                    b.Navigation("ClassAnnouncements");
+
+                    b.Navigation("Pics");
+
+                    b.Navigation("Slides");
+
+                    b.Navigation("Students");
+
+                    b.Navigation("Teachers");
+
+                    b.Navigation("Videos");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.Teacher", b =>
