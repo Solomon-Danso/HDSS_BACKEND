@@ -47,10 +47,7 @@ public class Teacher
     public string? PasswordResetTokenExpire { get; set; }
     public string? TwoStepsAuthToken { get; set; }
     public string? TwoStepsAuthTokenExpire { get; set; }
-    public int SubjectId { get; set; }
 
-    // Navigation property
-    public Subject? Subject { get; set; }
 }
 
 
@@ -106,7 +103,7 @@ public class TeacherDto
         public class SubjectToTeach
         {
         public int Id { get; set; }
-        public string? Path { get; set; }
+        public string? Name { get; set; }
         public int TeacherId { get; set; }
         public Teacher Teacher { get; set; }
         }

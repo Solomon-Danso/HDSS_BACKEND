@@ -37,6 +37,8 @@ public DbSet<Slide>Slides{ get; set; }
 public DbSet <Video>Videos{ get; set; }
 public DbSet <Audio>Audios{ get; set; }
 public DbSet <Picture>Pics{ get; set; }
+public DbSet<RegisteredStudent>RegisteredStudents{ get; set; }
+public DbSet<RegisteredTeacher>RegisteredTeachers{ get; set; }
 
 
 
