@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.EntityFrameworkCore;
-
+using System.Security.Cryptography;
 
 namespace HDSS_BACKEND.Controllers
 {
@@ -60,7 +60,7 @@ namespace HDSS_BACKEND.Controllers
 
  var student = new Student
     {
-        StudentId = studentDto.StudentId,
+        StudentId = StudentIdGenerator(),
         Title = studentDto.Title,
         FirstName = studentDto.FirstName,
         OtherName = studentDto.OtherName,
@@ -90,6 +90,21 @@ namespace HDSS_BACKEND.Controllers
     return Ok("Working");
     
     }
+
+
+private string StudentIdGenerator()
+{
+    byte[] randomBytes = new byte[2]; // Increase the array length to 2 for a 4-digit random number
+    using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+    {
+        rng.GetBytes(randomBytes);
+    }
+
+    ushort randomNumber = BitConverter.ToUInt16(randomBytes, 0);
+    int fullNumber = randomNumber; // 109000 is added to ensure the number is 5 digits long
+
+    return fullNumber.ToString("D5");
+}
 
 
 

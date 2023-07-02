@@ -13,10 +13,10 @@ namespace HDSS_BACKEND.Controllers
     [ApiController]
     [Route("api/Admin")]
 
-    public class AdminController : ControllerBase
+    public class TeacherController : ControllerBase
     {
        private readonly DataContext context;
-        public AdminController(DataContext ctx){
+        public TeacherController(DataContext ctx){
             context = ctx;
 
         }          
@@ -186,14 +186,16 @@ if (request.AppointFile == null || request.AppointFile.Length == 0)
 
 private string StaffIdGenerator()
 {
-    byte[] randomBytes = new byte[4]; // Increase the array length to 4
+    byte[] randomBytes = new byte[2]; // Increase the array length to 2 for a 4-digit random number
     using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
     {
         rng.GetBytes(randomBytes);
     }
 
-    uint randomNumber = BitConverter.ToUInt32(randomBytes, 0);
-    return randomNumber.ToString("D6");
+    ushort randomNumber = BitConverter.ToUInt16(randomBytes, 0);
+    int fullNumber = randomNumber; // 109000 is added to ensure the number is 5 digits long
+
+    return fullNumber.ToString("D5");
 }
 
 [HttpPost("updateTeacher")]

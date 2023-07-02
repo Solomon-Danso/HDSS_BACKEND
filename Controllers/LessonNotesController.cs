@@ -173,7 +173,7 @@ public async Task<IActionResult> GetOneLessonNotes(string NoteId, string StaffID
 [HttpGet("GetLessonHistory")]
 public async Task<IActionResult> GetLessonHistory(string accountId)
 {
-    var lessonnotes = context.LessonNotes.Where(a => a.TeacherId == accountId).ToList();
+    var lessonnotes = context.LessonNotes.Where(a => a.TeacherId == accountId).OrderByDescending(a=>a.Id).ToList();
     if (lessonnotes.Count == 0)
     {
         return BadRequest("No lessonnotes found ");
@@ -406,7 +406,7 @@ public async Task<IActionResult> GetOneLessonNotesFiles(string NoteId, string St
 [HttpGet("GetLessonHistoryFiles")]
 public async Task<IActionResult> GetLessonHistoryFiles(string accountId)
 {
-    var lessonnotes = context.LessonNotesUpload.Where(a => a.TeacherId == accountId).ToList();
+    var lessonnotes = context.LessonNotesUpload.Where(a => a.TeacherId == accountId).OrderByDescending(a=>a.Id).ToList();
     if (lessonnotes.Count == 0)
     {
         return BadRequest("No lessonnotes found ");
