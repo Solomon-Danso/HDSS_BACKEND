@@ -43,10 +43,10 @@ public DbSet<AnnouncementForStudent>AnnouncementForStudents { get; set; }
 public DbSet<AnnouncementForTeachers>AnnouncementForTeachers { get; set; }
 public DbSet<AnnouncementForPTA>AnnouncementForPTA { get; set; }
 public DbSet<AnnoucementForHOD>AnnoucementForHOD { get; set; }
-
-
-
-
+public DbSet<AnnoucementForSubject>AnnoucementForSubjects { get; set;}
+public DbSet<Discussions>Discussions { get; set; }
+public DbSet<Assignment>Assignments { get; set; }
+public DbSet<AssignmentSubmission>AssignmentSubmissions { get; set; }
 
 
 

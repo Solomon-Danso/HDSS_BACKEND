@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
@@ -42,7 +43,7 @@ namespace HDSS_BACKEND.Controllers
 
         [HttpGet("viewAllSubject")]
         public async Task<IActionResult> ViewAllSubjects(){
-            var subject = context.Subjects.ToList();
+            var subject = context.Subjects.OrderByDescending(R=>R.Id).ToList();
             return Ok(subject);
         }
 
@@ -68,7 +69,7 @@ namespace HDSS_BACKEND.Controllers
  
           [HttpGet("viewAllClasses")]
         public async Task<IActionResult> ViewAllClasses(){
-            var classy = context.Classess.ToList();
+            var classy = context.Classess.OrderByDescending(R=>R.Id).ToList();
             return Ok(classy);
         }
 
@@ -848,7 +849,7 @@ public async Task<IActionResult> DeleteAnnouncementForStudent(string DateAdded){
 [HttpGet("GetannoucementForStudent")]
 
 public async Task<IActionResult> GetAnnouncementForStudent(){
-  var annoucement = context.AnnouncementForStudents.ToList();
+  var annoucement = context.AnnouncementForStudents.OrderByDescending(R=>R.Id).ToList();
   return Ok(annoucement);
 
 }
@@ -902,7 +903,7 @@ public async Task<IActionResult> DeleteAnnouncementForTeachers(string DateAdded)
 [HttpGet("GetannoucementForTeachers")]
 
 public async Task<IActionResult> GetAnnouncementForTeachers(){
-  var annoucement = context.AnnouncementForTeachers.ToList();
+  var annoucement = context.AnnouncementForTeachers.OrderByDescending(R=>R.Id).ToList();
   return Ok(annoucement);
 
 }
@@ -955,7 +956,7 @@ public async Task<IActionResult> DeleteAnnouncementForPTA(string DateAdded){
 [HttpGet("GetannoucementForPTA")]
 
 public async Task<IActionResult> GetAnnouncementForPTA(){
-  var annoucement = context.AnnouncementForPTA.ToList();
+  var annoucement = context.AnnouncementForPTA.OrderByDescending(R=>R.Id).ToList();
   return Ok(annoucement);
 
 }
@@ -1012,7 +1013,7 @@ public async Task<IActionResult> DeleteAnnoucementForHOD(string DateAdded){
 [HttpGet("GetannoucementForHOD")]
 
 public async Task<IActionResult> GetAnnoucementForHOD(){
-  var annoucement = context.AnnoucementForHOD.ToList();
+  var annoucement = context.AnnoucementForHOD.OrderByDescending(R=>R.Id).ToList();
   return Ok(annoucement);
 
 }
@@ -1020,6 +1021,174 @@ public async Task<IActionResult> GetAnnoucementForHOD(){
 
 
 
+            [HttpPost("anouncementForSubjects")]
+        public async Task<IActionResult> AnouncementForSubjects(string TeacherId, string SubjectN, string ClassN, [FromBody]AnnoucementForSubject request){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to post an announcement");
+         }
+         
+    
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var announce = new AnnoucementForSubject{
+        //Select the subject name from an option in the frontend
+       SubjectName = SubjectN,
+       Content = request.Content,
+       Title = request.Title,
+       ClassName = ClassN,
+       DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       TeacherId = teacher.StaffID,
+       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+
+    };
+
+    context.AnnoucementForSubjects.Add(announce);
+    await context.SaveChangesAsync();
+
+    return Ok($"{announce.Title} for {announce.SubjectName} has been added successfully");
+    
+    }
+
+
+
+    [HttpPost("subjectDiscussionTeacher")]
+        public async Task<IActionResult> SubjectDiscussionTeacher(string TeacherId, string SubjectN, string ClassN, [FromBody]DiscussionsForTeacher request){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to write a comment on this subject");
+         }
+         
+    
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var announce = new Discussions{
+
+       Subject = SubjectN,
+       Content = request.Content,
+       ClassName = ClassN,
+       DateSent = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       SenderId = teacher.StaffID,
+       SenderName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+
+    };
+
+    context.Discussions.Add(announce);
+    await context.SaveChangesAsync();
+
+    return Ok($"{announce.Content} from {announce.SenderName} at {announce.DateSent}");
+    
+    }
+
+
+  [HttpPost("subjectDiscussionStudent")]
+        public async Task<IActionResult> SubjectDiscussionStuden(string StudentId, string SubjectN, string ClassN, [FromBody]DiscussionsForStudent request){
+        var checker = SubjectN+StudentId+ClassN;
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to write a comment on this subject");
+         }
+         
+    
+    var teacher = context.Students.FirstOrDefault(t=> t.StudentId == StudentId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var announce = new Discussions{
+
+       Subject = SubjectN,
+       Content = request.Content,
+       ClassName = ClassN,
+       DateSent = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       SenderId = teacher.StudentId,
+       SenderName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+
+    };
+
+    context.Discussions.Add(announce);
+    await context.SaveChangesAsync();
+
+    return Ok($"{announce.Content} from {announce.SenderName} at {announce.DateSent}");
+    
+    }
+
+
+[HttpGet("getSubjectDiscussion")]
+public async Task<IActionResult> GetSubjectDiscussion(string Subject, string ClassName){
+    var discuss = context.Discussions.Where(x => x.Subject == Subject && x.ClassName == ClassName).OrderByDescending(R=>R.Id).ToList();
+    if (discuss.Count == 0){
+        return BadRequest("No discussion");
+    };
+    return Ok(discuss);
+}
+
+
+
+    [HttpPost("UploadAssignment")]
+        public async Task<IActionResult> UploadAssignment(string TeacherId, string SubjectN, string ClassN, [FromForm]AssignmentDto request){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to upload slides");
+         }
+         
+         if (request.AssignmentFile == null || request.AssignmentFile.Length == 0)
+    {
+        return BadRequest("Invalid assignment file");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "AssignmentFiles");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.AssignmentFile.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.AssignmentFile.CopyToAsync(stream);
+    }
+   
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var assignment = new Assignment{
+        //Select the subject name from an option in the frontend
+       SubjectName = SubjectN,
+       StartDate = request.StartDate,
+       ExpireDate = request.ExpireDate,
+       ClassName = ClassN,
+       AssignmentPath = Path.Combine("LMS/AssignmentFiles", slideName),
+       TeacherId = teacher.StaffID,
+       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+       AssignmentCode = AssignmentIdGenerator()
+    };
+
+    context.Assignments.Add(assignment);
+    await context.SaveChangesAsync();
+
+    return Ok($"{assignment .SubjectName} assignment has been uploaded succesfully ");
+    
+    }
 
 
 
@@ -1027,12 +1196,147 @@ public async Task<IActionResult> GetAnnoucementForHOD(){
 
 
 
+    [HttpPost("UploadAssignmentSolutions")]
+        public async Task<IActionResult> UploadAssignmentSolutions(string StudentId, string SubjectN, string ClassN,string Code, [FromForm]AssignmentSubmissionDto request){
+        var checker = SubjectN+StudentId+ClassN;
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this assignment");
+         }
+         var question = context.Assignments.FirstOrDefault(a=>a.AssignmentCode == Code);
+         if (question == null||question.ClassName!=ClassN||question.SubjectName!=SubjectN){
+            return BadRequest("No Assignment Found");
+         }
+         
+         if (request.AssignmentFile == null || request.AssignmentFile.Length == 0)
+    {
+        return BadRequest("Invalid assignment file");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "SubmissionFiles");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.AssignmentFile.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.AssignmentFile.CopyToAsync(stream);
+    }
+   
+    var student = context.Students.FirstOrDefault(t=> t.StudentId == StudentId);
+    if (student == null){
+    return Unauthorized();
+    }
+
+    var submission = new AssignmentSubmission{
+        //Select the subject name from an option in the frontend
+       SubjectName = SubjectN,
+       AssignmentPath = question.AssignmentPath,
+       ClassName = ClassN,
+       SubmissionPath = Path.Combine("LMS/SubmissionFiles", slideName),
+        uploadDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       StudentId = student.StudentId,
+       StudentName = student.Title+". "+student.FirstName+" "+student.OtherName+" " + student.LastName,
+       AssignmentCode = question.AssignmentCode
+    };
+
+    context.AssignmentSubmissions.Add(submission);
+    await context.SaveChangesAsync();
+
+    return Ok($"{submission.SubjectName} solution has been sent succesfully ");
+    
+    }
+
+
+[HttpGet("ViewAllStudentAssignmentsTeacher")]
+        public async Task<IActionResult> ViewAllStudentAssignmentsTeacher(string TeacherId, string SubjectN, string ClassN){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this ");
+         }
+
+         var assignment = context.Assignments.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN).OrderByDescending(R=>R.Id).ToList();
+         if(assignment.Count==0){
+            return BadRequest("No Assignment Found");
+         }
+         return Ok(assignment);
+}
+
+[HttpGet("ViewAllStudentAssignmentsStudent")]
+        public async Task<IActionResult> ViewAllStudentAssignmentsStudent(string StudentId, string SubjectN, string ClassN){
+        var checker = SubjectN+StudentId+ClassN;
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this ");
+         }
+
+         var assignment = context.Assignments.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN).OrderByDescending(R=>R.Id).ToList();
+          if(assignment.Count==0){
+            return BadRequest("No Assignment Found");
+         }
+         return Ok(assignment);
+}
+
+
+
+[HttpGet("ViewAllStudentSolutionsTeacher")]
+        public async Task<IActionResult> ViewAllStudentSolutionsTeacher(string TeacherId, string SubjectN, string ClassN){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this ");
+         }
+
+         var Solutions = context.AssignmentSubmissions.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN).OrderByDescending(R=>R.Id).ToList();
+          if(Solutions.Count==0){
+            return BadRequest("No Solutions Found");
+         }
+         return Ok(Solutions);
+}
+
+
+[HttpGet("ViewAllStudentSolutionsStudent")]
+        public async Task<IActionResult> ViewAllStudentSolutionsStudent(string StudentId, string SubjectN, string ClassN){
+        var checker = SubjectN+StudentId+ClassN;
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this ");
+         }
+
+         var submissions = context.AssignmentSubmissions.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN&&a.StudentId==StudentId).OrderByDescending(R=>R.Id).ToList();
+          if(submissions.Count==0){
+            return BadRequest("No Submission Found");
+         }
+         return Ok(submissions);
+}
 
 
 
 
+private string AssignmentIdGenerator()
+{
+    byte[] randomBytes = new byte[2]; // Increase the array length to 2 for a 4-digit random number
+    using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+    {
+        rng.GetBytes(randomBytes);
+    }
 
+    ushort randomNumber = BitConverter.ToUInt16(randomBytes, 0);
+    int fullNumber = randomNumber; // 109000 is added to ensure the number is 5 digits long
 
+    return fullNumber.ToString("D5");
+}
   
   
   

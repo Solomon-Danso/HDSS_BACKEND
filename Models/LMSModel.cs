@@ -196,6 +196,102 @@ namespace HDSS_BACKEND.Models
 
     
 
+      public class AnnoucementForSubject{
+        public int Id { get; set; }
+         public string? SubjectName { get; set; }
+         public string? Title { get; set; }
+        public string? Content { get; set; }
+        public string? DateAdded { get; set; }
+       public string? ClassName { get; set; }
+        public string? TeacherId { get; set; }
+        public string? TeacherName { get; set; }
+
+    }
+
+public class Discussions{
+    public int Id { get; set; }
+    public string? SenderName { get; set; }
+    public string? Content { get; set; }
+    public string? SenderId { get; set; }
+    public string? DateSent { get; set; }
+    public string? Subject { get; set; }
+     public string? ClassName { get; set; }
+
+}
+
+public class DiscussionsForStudent{
+    public string? StudentName { get; set; }
+    public string? Content { get; set; }
+    public string? StudentId { get; set; }
+    public string? DateSent { get; set; }
+    public string? Subject { get; set; }
+    public string? ClassName { get; set; }
+
+}
+
+
+
+public class DiscussionsForTeacher{
+     public string? ClassName { get; set; }
+    public string? TeacherName { get; set; }
+    public string? Content { get; set; }
+    public string? TeacherId { get; set; }
+    public string? DateSent { get; set; }
+    public string? Subject { get; set; }
+
+}
+
+
+
+
+     public class Assignment{
+        public int Id { get; set; }
+        public string? SubjectName { get; set; }
+        public string? ClassName { get; set; }
+        public string? AssignmentPath { get; set; }
+        public DateTime? StartDate{ get; set; }
+        public DateTime? ExpireDate { get; set; }
+        public string? TeacherId { get; set; }
+        public string? TeacherName { get; set; }
+        public string? AssignmentCode { get; set; }
+
+    }
+
+     public class AssignmentDto{
+  
+        public DateTime? StartDate{ get; set; }
+        public DateTime? ExpireDate { get; set; }
+    
+        public IFormFile? AssignmentFile { get; set; }
+
+    }
+
+
+public class AssignmentSubmission{
+        public int Id { get; set; }
+        public string? SubjectName { get; set; }
+        public string? ClassName { get; set; }
+        public string? AssignmentPath { get; set; }
+        public string? uploadDate{ get; set; }
+        public string? StudentId { get; set; }
+        public string? StudentName { get; set; }
+        public string? AssignmentCode { get; set; }
+        public string? SubmissionPath { get; set; }
+    }
+
+     public class AssignmentSubmissionDto{
+  
+        public DateTime? StartDate{ get; set; }    
+        public IFormFile? AssignmentFile { get; set; }
+
+    }
+
+
+
+
+
+
+
 
 
 }
