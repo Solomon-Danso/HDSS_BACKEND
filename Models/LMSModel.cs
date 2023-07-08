@@ -125,6 +125,76 @@ namespace HDSS_BACKEND.Models
 
 
 
+      public class Syllabus{
+        public int Id { get; set; }
+        public string? SubjectName { get; set; }
+        public string? Title { get; set; }
+        public string? ClassName { get; set; }
+        public string? SyllabusPath { get; set; }
+        public string? DateAdded{ get; set; }
+        public string? TeacherId { get; set; }
+        public string? TeacherName { get; set; }
+
+    }
+
+     public class SyllabusDto{
+  
+        public string? Title { get; set; }
+    
+        public IFormFile? Syllabus { get; set; }
+
+    }
+
+
+      public class Calendar{
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public string? ClassName { get; set; }
+        public string? CalendarPath { get; set; }
+        public string? DateAdded{ get; set; }
+        public string? TeacherId { get; set; }
+        public string? TeacherName { get; set; }
+
+    }
+
+     public class CalendarDto{
+  
+        public string? Title { get; set; }
+    
+        public IFormFile? Calendar { get; set; }
+
+    }
+
+    public class AnnouncementForStudent{
+        public int Id { get; set; }
+        public string? Subject { get; set; }
+        public string? Content { get; set; }
+        public string? DateAdded { get; set; }
+
+    }
+
+    public class AnnouncementForTeachers{
+        public int Id { get; set; }
+        public string? Subject { get; set; }
+        public string? Content { get; set; }
+        public string? DateAdded { get; set; }
+    }
+
+    public class AnnouncementForPTA{
+         public int Id { get; set; }
+        public string? Subject { get; set; }
+        public string? Content { get; set; }
+        public string? DateAdded { get; set; }
+    }
+
+    public class AnnoucementForHOD{
+        public int Id { get; set; }
+        public string? Subject { get; set; }
+        public string? Content { get; set; }
+        public string? DateAdded { get; set; }
+    }
+
+    
 
 
 

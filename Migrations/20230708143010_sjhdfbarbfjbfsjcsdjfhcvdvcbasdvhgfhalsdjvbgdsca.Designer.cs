@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230708143010_sjhdfbarbfjbfsjcsdjfhcvdvcbasdvhgfhalsdjvbgdsca")]
+    partial class sjhdfbarbfjbfsjcsdjfhcvdvcbasdvhgfhalsdjvbgdsca
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,94 +82,6 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AmountsPaid");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.AnnoucementForHOD", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DateAdded")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Subject")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AnnoucementForHOD");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.AnnouncementForPTA", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DateAdded")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Subject")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AnnouncementForPTA");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.AnnouncementForStudent", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DateAdded")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Subject")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AnnouncementForStudents");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.AnnouncementForTeachers", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DateAdded")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Subject")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AnnouncementForTeachers");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.Audio", b =>

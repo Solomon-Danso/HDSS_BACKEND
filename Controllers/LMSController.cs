@@ -609,6 +609,426 @@ namespace HDSS_BACKEND.Controllers
 
 
 
+            [HttpPost("UploadSyllabus")]
+        public async Task<IActionResult> UploadSyllabus(string TeacherId, string SubjectN, string ClassN, [FromForm]SyllabusDto request){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to upload syllabuss");
+         }
+         
+         if (request.Syllabus == null || request.Syllabus.Length == 0)
+    {
+        return BadRequest("Invalid syllabuss");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Syllabuss");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var syllabusExtension = Path.GetExtension(request.Syllabus.FileName);
+
+    // Generate a unique slide name
+    var syllabusName = Guid.NewGuid().ToString() + syllabusExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var syllabusPath = Path.Combine(uploadsDirectory, syllabusName);
+    using (var stream = new FileStream(syllabusPath, FileMode.Create))
+    {
+        await request.Syllabus.CopyToAsync(stream);
+    }
+   
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var syllabus = new Syllabus{
+        //Select the subject name from an option in the frontend
+       SubjectName = SubjectN,
+       Title = request.Title,
+       ClassName = ClassN,
+       DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       SyllabusPath = Path.Combine("LMS/Syllabuss", syllabusName),
+       TeacherId = teacher.StaffID,
+       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+
+    };
+
+    context.Syllabuss.Add(syllabus);
+    await context.SaveChangesAsync();
+
+    return Ok($"{syllabus.Title} for {syllabus.SubjectName} has been Uploaded successfully");
+    
+    }
+
+
+[HttpGet("ViewSyllabusStudent")]
+    public async Task<IActionResult> ViewSyllabusStudent(string StudentId, string SubjectN, string ClassN){
+     var checker = SubjectN+StudentId+ClassN;
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this syllabuss");
+         }
+
+         var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+             if (syllabus.Count == 0) {
+                return BadRequest("No syllabuss found ");
+                 }
+            
+            return Ok(syllabus);
+
+                
+    }
+
+
+        [HttpGet("ViewSyllabussTeachers")]
+    public async Task<IActionResult> ViewSyllabussTeachers(string TeacherId, string SubjectN, string ClassN){
+     var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this slides");
+         }
+
+         var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+           if (syllabus.Count == 0) {
+                return BadRequest("No syllabuss found ");
+                 }
+           
+            return Ok(syllabus);
+                
+    }
+
+
+
+
+
+            [HttpPost("UploadCalendar")]
+        public async Task<IActionResult> UploadCalendar(string TeacherId,  string ClassN, [FromForm]CalendarDto request){
+      
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.StaffID==TeacherId && p.ClassName==ClassN);
+         if(!NoPower){
+            return BadRequest("You dont have permission to upload calendars");
+         }
+         
+         if (request.Calendar == null || request.Calendar.Length == 0)
+    {
+        return BadRequest("Invalid calendars");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Calendars");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var calendarExtension = Path.GetExtension(request.Calendar.FileName);
+
+    // Generate a unique slide name
+    var calendarName = Guid.NewGuid().ToString() + calendarExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var calendarPath = Path.Combine(uploadsDirectory, calendarName);
+    using (var stream = new FileStream(calendarPath, FileMode.Create))
+    {
+        await request.Calendar.CopyToAsync(stream);
+    }
+   
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var calendar = new Calendar{
+        //Select the subject name from an option in the frontend
+       
+       Title = request.Title,
+       ClassName = ClassN,
+       DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       CalendarPath = Path.Combine("LMS/Calendars", calendarName),
+       TeacherId = teacher.StaffID,
+       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+
+    };
+
+    context.Calendars.Add(calendar);
+    await context.SaveChangesAsync();
+
+    return Ok($"{calendar.Title} for {calendar.ClassName} has been Uploaded successfully");
+    
+    }
+
+
+[HttpGet("ViewCalendarStudent")]
+    public async Task<IActionResult> ViewCalendarStudent(string StudentId,  string ClassN){
+  
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentID==StudentId && p.ClassName==ClassN);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this calendars");
+         }
+
+         var calendar = context.Calendars.Where(t=> t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+             if (calendar.Count == 0) {
+                return BadRequest("No calendars found ");
+                 }
+            
+            return Ok(calendar);
+
+                
+    }
+
+
+        [HttpGet("ViewCalendarsTeachers")]
+    public async Task<IActionResult> ViewCalendarsTeachers(string TeacherId, string ClassN){
+     
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.StaffID==TeacherId && p.ClassName==ClassN);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this slides");
+         }
+
+         var calendar = context.Calendars.Where(t=> t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+           if (calendar.Count == 0) {
+                return BadRequest("No calendars found ");
+                 }
+           
+            return Ok(calendar);
+                
+    }
+
+[HttpPost("AddannoucementForStudent")]
+public async Task<IActionResult> AddAnnouncementForStudent([FromBody]AnnouncementForStudent request){
+
+var annoucement = new AnnouncementForStudent{
+
+Subject = request.Subject,
+Content = request.Content,
+DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
+
+};
+context.AnnouncementForStudents.Add(annoucement);
+await context.SaveChangesAsync();
+
+return Ok("Student Annoucement Sent Successfully");
+}
+
+[HttpPut("UpdateannoucementForStudent")]
+public async Task<IActionResult> UpdateAnnouncementForStudent([FromBody]AnnouncementForStudent request, string DateAdded){
+    var annoucement = context.AnnouncementForStudents.FirstOrDefault(x=>x.DateAdded == DateAdded);
+    if (annoucement == null){
+        return BadRequest("No Announcement Found");
+    }
+    annoucement.Subject = request.Subject;
+    annoucement.Content = request.Content;
+
+    await context.SaveChangesAsync();
+    return Ok("Student Annoucement Updated Successfully");
+}
+
+
+[HttpDelete("DeleteannoucementForStudent")]
+public async Task<IActionResult> DeleteAnnouncementForStudent(string DateAdded){
+    var annoucement = context.AnnouncementForStudents.FirstOrDefault(x=>x.DateAdded == DateAdded);
+    if (annoucement == null){
+        return BadRequest("No Announcement Found");
+    } 
+
+    context.AnnouncementForStudents.Remove(annoucement);
+
+        await context.SaveChangesAsync();
+    return Ok("Student Annoucement Deleted Successfully");
+
+}
+
+[HttpGet("GetannoucementForStudent")]
+
+public async Task<IActionResult> GetAnnouncementForStudent(){
+  var annoucement = context.AnnouncementForStudents.ToList();
+  return Ok(annoucement);
+
+}
+
+
+
+[HttpPost("AddannoucementForTeachers")]
+public async Task<IActionResult> AddAnnouncementForTeachers([FromBody]AnnouncementForTeachers request){
+
+var annoucement = new AnnouncementForTeachers{
+
+Subject = request.Subject,
+Content = request.Content,
+DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
+
+};
+context.AnnouncementForTeachers.Add(annoucement);
+await context.SaveChangesAsync();
+
+return Ok("Student Annoucement Sent Successfully");
+}
+
+[HttpPut("UpdateannoucementForTeachers")]
+public async Task<IActionResult> UpdateAnnouncementForTeachers([FromBody]AnnouncementForTeachers request, string DateAdded){
+    var annoucement = context.AnnouncementForTeachers.FirstOrDefault(x=>x.DateAdded == DateAdded);
+    if (annoucement == null){
+        return BadRequest("No Announcement Found");
+    }
+    annoucement.Subject = request.Subject;
+    annoucement.Content = request.Content;
+
+    await context.SaveChangesAsync();
+    return Ok("Student Annoucement Updated Successfully");
+}
+
+
+[HttpDelete("DeleteannoucementForTeachers")]
+public async Task<IActionResult> DeleteAnnouncementForTeachers(string DateAdded){
+    var annoucement = context.AnnouncementForTeachers.FirstOrDefault(x=>x.DateAdded == DateAdded);
+    if (annoucement == null){
+        return BadRequest("No Announcement Found");
+    } 
+
+    context.AnnouncementForTeachers.Remove(annoucement);
+
+        await context.SaveChangesAsync();
+    return Ok("Student Annoucement Deleted Successfully");
+
+}
+
+[HttpGet("GetannoucementForTeachers")]
+
+public async Task<IActionResult> GetAnnouncementForTeachers(){
+  var annoucement = context.AnnouncementForTeachers.ToList();
+  return Ok(annoucement);
+
+}
+
+
+[HttpPost("AddannoucementForPTA")]
+public async Task<IActionResult> AddAnnouncementForPTA([FromBody]AnnouncementForPTA request){
+
+var annoucement = new AnnouncementForPTA{
+
+Subject = request.Subject,
+Content = request.Content,
+DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
+
+};
+context.AnnouncementForPTA.Add(annoucement);
+await context.SaveChangesAsync();
+
+return Ok("Student Annoucement Sent Successfully");
+}
+
+[HttpPut("UpdateannoucementForPTA")]
+public async Task<IActionResult> UpdateAnnouncementForPTA([FromBody]AnnouncementForPTA request, string DateAdded){
+    var annoucement = context.AnnouncementForPTA.FirstOrDefault(x=>x.DateAdded == DateAdded);
+    if (annoucement == null){
+        return BadRequest("No Announcement Found");
+    }
+    annoucement.Subject = request.Subject;
+    annoucement.Content = request.Content;
+
+    await context.SaveChangesAsync();
+    return Ok("Student Annoucement Updated Successfully");
+}
+
+
+[HttpDelete("DeleteannoucementForPTA")]
+public async Task<IActionResult> DeleteAnnouncementForPTA(string DateAdded){
+    var annoucement = context.AnnouncementForPTA.FirstOrDefault(x=>x.DateAdded == DateAdded);
+    if (annoucement == null){
+        return BadRequest("No Announcement Found");
+    } 
+
+    context.AnnouncementForPTA.Remove(annoucement);
+
+        await context.SaveChangesAsync();
+    return Ok("Student Annoucement Deleted Successfully");
+
+}
+
+[HttpGet("GetannoucementForPTA")]
+
+public async Task<IActionResult> GetAnnouncementForPTA(){
+  var annoucement = context.AnnouncementForPTA.ToList();
+  return Ok(annoucement);
+
+}
+
+
+
+
+
+
+[HttpPost("AddannoucementForHOD")]
+public async Task<IActionResult> AddAnnoucementForHOD([FromBody]AnnoucementForHOD request){
+
+var annoucement = new AnnoucementForHOD{
+
+Subject = request.Subject,
+Content = request.Content,
+DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
+
+};
+context.AnnoucementForHOD.Add(annoucement);
+await context.SaveChangesAsync();
+
+return Ok("Student Annoucement Sent Successfully");
+}
+
+[HttpPut("UpdateannoucementForHOD")]
+public async Task<IActionResult> UpdateAnnoucementForHOD([FromBody]AnnoucementForHOD request, string DateAdded){
+    var annoucement = context.AnnoucementForHOD.FirstOrDefault(x=>x.DateAdded == DateAdded);
+    if (annoucement == null){
+        return BadRequest("No Announcement Found");
+    }
+    annoucement.Subject = request.Subject;
+    annoucement.Content = request.Content;
+
+    await context.SaveChangesAsync();
+    return Ok("Student Annoucement Updated Successfully");
+}
+
+
+[HttpDelete("DeleteannoucementForHOD")]
+public async Task<IActionResult> DeleteAnnoucementForHOD(string DateAdded){
+    var annoucement = context.AnnoucementForHOD.FirstOrDefault(x=>x.DateAdded == DateAdded);
+    if (annoucement == null){
+        return BadRequest("No Announcement Found");
+    } 
+
+    context.AnnoucementForHOD.Remove(annoucement);
+
+        await context.SaveChangesAsync();
+    return Ok("Student Annoucement Deleted Successfully");
+
+}
+
+[HttpGet("GetannoucementForHOD")]
+
+public async Task<IActionResult> GetAnnoucementForHOD(){
+  var annoucement = context.AnnoucementForHOD.ToList();
+  return Ok(annoucement);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
