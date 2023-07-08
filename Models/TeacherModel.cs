@@ -31,9 +31,8 @@ public class Teacher
         public string? HealthStatus { get; set; }
         public string? EmergencyContacts { get; set; }
         public string? Salary { get; set; }
-        public List<SchoolBank>? SchoolBankAccount { get; set; }
-        public List<ClassToTeach>? ClassToTeaches { get; set; }
-        public List<SubjectToTeach>? SubjectToTeaches { get; set; }
+        public double? Debit { get; set; }
+        public double? Credit{ get; set; }
         public string? StaffID { get; set; }
 
     public string? FilePath { get; set; }
@@ -77,9 +76,7 @@ public class TeacherDto
         public string? HealthStatus { get; set; }
         public string? EmergencyContacts { get; set; }
         public string? Salary { get; set; }
-        public List<SchoolBank>? SchoolBankAccount { get; set; }
-        public List<ClassToTeach>? ClassToTeaches { get; set; }
-        public List<SubjectToTeach>? SubjectToTeaches { get; set; }
+    
         public string? StaffID { get; set; }
 
     public IFormFile? CertFile { get; set; }
@@ -92,22 +89,7 @@ public class TeacherDto
 }
 
 
-        public class ClassToTeach
-        {
-        public int Id { get; set; }
-        public string? Path { get; set; }
-        public int TeacherId { get; set; }
-        public Teacher Teacher { get; set; }
-        }
-
-        public class SubjectToTeach
-        {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public int TeacherId { get; set; }
-        public Teacher Teacher { get; set; }
-        }
-
+    
         public class SchoolBank
         {
         public int Id { get; set; }

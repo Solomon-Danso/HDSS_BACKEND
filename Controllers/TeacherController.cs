@@ -163,9 +163,7 @@ if (request.AppointFile == null || request.AppointFile.Length == 0)
         HealthStatus = request.HealthStatus,
         EmergencyContacts = request.EmergencyContacts,
         Salary = request.Salary,
-        SchoolBankAccount = request.SchoolBankAccount,
-        ClassToTeaches = request.ClassToTeaches,
-        SubjectToTeaches = request.SubjectToTeaches,
+       
         StaffID = StaffIdGenerator(),
         DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
         FilePath = Path.Combine("Teachers/Profile", fileName),

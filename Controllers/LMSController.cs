@@ -227,6 +227,7 @@ namespace HDSS_BACKEND.Controllers
         }
   
 
+
         [HttpPost("UploadSlide")]
         public async Task<IActionResult> UploadSlide(string TeacherId, string SubjectN, string ClassN, [FromForm]SlidesDto request){
         var checker = SubjectN+TeacherId+ClassN;
@@ -316,9 +317,300 @@ namespace HDSS_BACKEND.Controllers
                  }
            
             return Ok(slide);
+                
+    }
+
+
+            [HttpPost("UploadVideo")]
+        public async Task<IActionResult> UploadVideo(string TeacherId, string SubjectN, string ClassN, [FromForm]VideoDto request){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to upload videos");
+         }
+         
+         if (request.Video == null || request.Video.Length == 0)
+    {
+        return BadRequest("Invalid videos");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Videos");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var videoExtension = Path.GetExtension(request.Video.FileName);
+
+    // Generate a unique slide name
+    var videoName = Guid.NewGuid().ToString() + videoExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var videoPath = Path.Combine(uploadsDirectory, videoName);
+    using (var stream = new FileStream(videoPath, FileMode.Create))
+    {
+        await request.Video.CopyToAsync(stream);
+    }
+   
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var video = new Video{
+        //Select the subject name from an option in the frontend
+       SubjectName = SubjectN,
+       Title = request.Title,
+       ClassName = ClassN,
+       DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       VideoPath = Path.Combine("LMS/Videos", videoName),
+       TeacherId = teacher.StaffID,
+       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+
+    };
+
+    context.Videos.Add(video);
+    await context.SaveChangesAsync();
+
+    return Ok($"{video.Title} for {video.SubjectName} has been Uploaded successfully");
+    
+    }
+
+
+[HttpGet("ViewVideoStudent")]
+    public async Task<IActionResult> ViewVideoStudent(string StudentId, string SubjectN, string ClassN){
+     var checker = SubjectN+StudentId+ClassN;
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this videos");
+         }
+
+         var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+             if (video.Count == 0) {
+                return BadRequest("No videos found ");
+                 }
+            
+            return Ok(video);
 
                 
     }
+
+
+        [HttpGet("ViewVideosTeachers")]
+    public async Task<IActionResult> ViewVideosTeachers(string TeacherId, string SubjectN, string ClassN){
+     var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this slides");
+         }
+
+         var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+           if (video.Count == 0) {
+                return BadRequest("No videos found ");
+                 }
+           
+            return Ok(video);
+                
+    }
+
+
+
+
+            [HttpPost("UploadAudio")]
+        public async Task<IActionResult> UploadAudio(string TeacherId, string SubjectN, string ClassN, [FromForm]AudioDto request){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to upload audios");
+         }
+         
+         if (request.Audio == null || request.Audio.Length == 0)
+    {
+        return BadRequest("Invalid audios");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Audios");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var audioExtension = Path.GetExtension(request.Audio.FileName);
+
+    // Generate a unique slide name
+    var audioName = Guid.NewGuid().ToString() + audioExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var audioPath = Path.Combine(uploadsDirectory, audioName);
+    using (var stream = new FileStream(audioPath, FileMode.Create))
+    {
+        await request.Audio.CopyToAsync(stream);
+    }
+   
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var audio = new Audio{
+        //Select the subject name from an option in the frontend
+       SubjectName = SubjectN,
+       Title = request.Title,
+       ClassName = ClassN,
+       DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       AudioPath = Path.Combine("LMS/Audios", audioName),
+       TeacherId = teacher.StaffID,
+       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+
+    };
+
+    context.Audios.Add(audio);
+    await context.SaveChangesAsync();
+
+    return Ok($"{audio.Title} for {audio.SubjectName} has been Uploaded successfully");
+    
+    }
+
+
+[HttpGet("ViewAudioStudent")]
+    public async Task<IActionResult> ViewAudioStudent(string StudentId, string SubjectN, string ClassN){
+     var checker = SubjectN+StudentId+ClassN;
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this audios");
+         }
+
+         var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+             if (audio.Count == 0) {
+                return BadRequest("No audios found ");
+                 }
+            
+            return Ok(audio);
+
+                
+    }
+
+
+        [HttpGet("ViewAudiosTeachers")]
+    public async Task<IActionResult> ViewAudiosTeachers(string TeacherId, string SubjectN, string ClassN){
+     var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this slides");
+         }
+
+         var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+           if (audio.Count == 0) {
+                return BadRequest("No audios found ");
+                 }
+           
+            return Ok(audio);
+                
+    }
+
+
+            [HttpPost("UploadPicture")]
+        public async Task<IActionResult> UploadPicture(string TeacherId, string SubjectN, string ClassN, [FromForm]PictureDto request){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to upload pictures");
+         }
+         
+         if (request.Picture == null || request.Picture.Length == 0)
+    {
+        return BadRequest("Invalid pictures");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Pictures");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var pictureExtension = Path.GetExtension(request.Picture.FileName);
+
+    // Generate a unique slide name
+    var pictureName = Guid.NewGuid().ToString() + pictureExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var picturePath = Path.Combine(uploadsDirectory, pictureName);
+    using (var stream = new FileStream(picturePath, FileMode.Create))
+    {
+        await request.Picture.CopyToAsync(stream);
+    }
+   
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+
+    var picture = new Picture{
+        //Select the subject name from an option in the frontend
+       SubjectName = SubjectN,
+       Title = request.Title,
+       ClassName = ClassN,
+       DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       PicturePath = Path.Combine("LMS/Pictures", pictureName),
+       TeacherId = teacher.StaffID,
+       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+
+    };
+
+    context.Pictures.Add(picture);
+    await context.SaveChangesAsync();
+
+    return Ok($"{picture.Title} for {picture.SubjectName} has been Uploaded successfully");
+    
+    }
+
+
+[HttpGet("ViewPictureStudent")]
+    public async Task<IActionResult> ViewPictureStudent(string StudentId, string SubjectN, string ClassN){
+     var checker = SubjectN+StudentId+ClassN;
+        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this pictures");
+         }
+
+         var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+             if (picture.Count == 0) {
+                return BadRequest("No pictures found ");
+                 }
+            
+            return Ok(picture);
+
+                
+    }
+
+
+        [HttpGet("ViewPicturesTeachers")]
+    public async Task<IActionResult> ViewPicturesTeachers(string TeacherId, string SubjectN, string ClassN){
+     var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission to view this slides");
+         }
+
+         var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+           if (picture.Count == 0) {
+                return BadRequest("No pictures found ");
+                 }
+           
+            return Ok(picture);
+                
+    }
+
+
+
+
+
 
 
   
