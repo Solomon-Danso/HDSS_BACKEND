@@ -227,7 +227,27 @@ namespace HDSS_BACKEND.Controllers
             return Ok(subject);
         }
   
+    [HttpPost("AddAcademicYear")]
+    public async Task<IActionResult> AddAcademicYear([FromBody]AcademicYear request){
+        var year = new AcademicYear{
+         academicYear = request.academicYear
+        };
+        context.AcademicYears.Add(year);
+      await context.SaveChangesAsync();
+      return Ok($"The academic year for {year.academicYear} has been added.");
 
+    }
+
+    [HttpPost("AddAcademicTerm")]
+    public async Task<IActionResult> AddAcademicTerm([FromBody]AcademicTerm request){
+        var Term = new AcademicTerm{
+         academicTerm = request.academicTerm
+        };
+        context.AcademicTerms.Add(Term);
+      await context.SaveChangesAsync();
+      return Ok($"The academic Term for {Term.academicTerm} has been added.");
+
+    }
 
         [HttpPost("UploadSlide")]
         public async Task<IActionResult> UploadSlide(string TeacherId, string SubjectN, string ClassN, [FromForm]SlidesDto request){
@@ -276,7 +296,8 @@ namespace HDSS_BACKEND.Controllers
        SlidePath = Path.Combine("LMS/Slides", slideName),
        TeacherId = teacher.StaffID,
        TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-
+       AcademicYear = request.AcademicYear,
+       AcademicTerm = request.AcademicTerm
     };
 
     context.Slides.Add(slides);
@@ -287,14 +308,14 @@ namespace HDSS_BACKEND.Controllers
     }
 
     [HttpGet("ViewSlidesStudent")]
-    public async Task<IActionResult> ViewSlidesStudent(string StudentId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewSlidesStudent(string StudentId, string SubjectN, string ClassN, string Term, string Year){
      var checker = SubjectN+StudentId+ClassN;
         bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this slides");
          }
 
-         var slide = context.Slides.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var slide = context.Slides.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN && t.AcademicTerm==Term&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
              if (slide.Count == 0) {
                 return BadRequest("No slides found ");
                  }
@@ -304,15 +325,16 @@ namespace HDSS_BACKEND.Controllers
                 
     }
 
+
         [HttpGet("ViewSlidesTeachers")]
-    public async Task<IActionResult> ViewSlidesTeachers(string TeacherId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewSlidesTeachers(string TeacherId, string SubjectN, string ClassN,string Term, string Year){
      var checker = SubjectN+TeacherId+ClassN;
         bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this slides");
          }
 
-         var slide = context.Slides.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var slide = context.Slides.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
            if (slide.Count == 0) {
                 return BadRequest("No slides found ");
                  }
@@ -369,6 +391,8 @@ namespace HDSS_BACKEND.Controllers
        VideoPath = Path.Combine("LMS/Videos", videoName),
        TeacherId = teacher.StaffID,
        TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+        AcademicYear = request.AcademicYear,
+       AcademicTerm = request.AcademicTerm
 
     };
 
@@ -381,14 +405,14 @@ namespace HDSS_BACKEND.Controllers
 
 
 [HttpGet("ViewVideoStudent")]
-    public async Task<IActionResult> ViewVideoStudent(string StudentId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewVideoStudent(string StudentId, string SubjectN, string ClassN,string Term, string Year){
      var checker = SubjectN+StudentId+ClassN;
         bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this videos");
          }
 
-         var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term && t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
              if (video.Count == 0) {
                 return BadRequest("No videos found ");
                  }
@@ -400,14 +424,14 @@ namespace HDSS_BACKEND.Controllers
 
 
         [HttpGet("ViewVideosTeachers")]
-    public async Task<IActionResult> ViewVideosTeachers(string TeacherId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewVideosTeachers(string TeacherId, string SubjectN, string ClassN, string Term, string Year){
      var checker = SubjectN+TeacherId+ClassN;
         bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this slides");
          }
 
-         var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term && t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
            if (video.Count == 0) {
                 return BadRequest("No videos found ");
                  }
@@ -466,7 +490,8 @@ namespace HDSS_BACKEND.Controllers
        AudioPath = Path.Combine("LMS/Audios", audioName),
        TeacherId = teacher.StaffID,
        TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-
+        AcademicYear = request.AcademicYear,
+        AcademicTerm = request.AcademicTerm,
     };
 
     context.Audios.Add(audio);
@@ -478,14 +503,14 @@ namespace HDSS_BACKEND.Controllers
 
 
 [HttpGet("ViewAudioStudent")]
-    public async Task<IActionResult> ViewAudioStudent(string StudentId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewAudioStudent(string StudentId, string SubjectN, string ClassN, string Term, string Year){
      var checker = SubjectN+StudentId+ClassN;
         bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this audios");
          }
 
-         var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
              if (audio.Count == 0) {
                 return BadRequest("No audios found ");
                  }
@@ -497,14 +522,14 @@ namespace HDSS_BACKEND.Controllers
 
 
         [HttpGet("ViewAudiosTeachers")]
-    public async Task<IActionResult> ViewAudiosTeachers(string TeacherId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewAudiosTeachers(string TeacherId, string SubjectN, string ClassN,string Year, string Term){
      var checker = SubjectN+TeacherId+ClassN;
         bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this slides");
          }
 
-         var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term && t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
            if (audio.Count == 0) {
                 return BadRequest("No audios found ");
                  }
@@ -561,7 +586,8 @@ namespace HDSS_BACKEND.Controllers
        PicturePath = Path.Combine("LMS/Pictures", pictureName),
        TeacherId = teacher.StaffID,
        TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-
+        AcademicYear = request.AcademicYear,
+        AcademicTerm = request.AcademicTerm,
     };
 
     context.Pictures.Add(picture);
@@ -573,14 +599,14 @@ namespace HDSS_BACKEND.Controllers
 
 
 [HttpGet("ViewPictureStudent")]
-    public async Task<IActionResult> ViewPictureStudent(string StudentId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewPictureStudent(string StudentId, string SubjectN, string ClassN, string Year, string Term){
      var checker = SubjectN+StudentId+ClassN;
         bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this pictures");
          }
 
-         var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicYear==Year&&t.AcademicTerm==Term).OrderByDescending(t => t.Id).ToList();
              if (picture.Count == 0) {
                 return BadRequest("No pictures found ");
                  }
@@ -592,14 +618,14 @@ namespace HDSS_BACKEND.Controllers
 
 
         [HttpGet("ViewPicturesTeachers")]
-    public async Task<IActionResult> ViewPicturesTeachers(string TeacherId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewPicturesTeachers(string TeacherId, string SubjectN, string ClassN,string Year, string Term){
      var checker = SubjectN+TeacherId+ClassN;
         bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this slides");
          }
 
-         var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN &&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
            if (picture.Count == 0) {
                 return BadRequest("No pictures found ");
                  }
@@ -657,7 +683,8 @@ namespace HDSS_BACKEND.Controllers
        SyllabusPath = Path.Combine("LMS/Syllabuss", syllabusName),
        TeacherId = teacher.StaffID,
        TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-
+        AcademicTerm = request.AcademicTerm,
+        AcademicYear = request.AcademicYear
     };
 
     context.Syllabuss.Add(syllabus);
@@ -669,14 +696,14 @@ namespace HDSS_BACKEND.Controllers
 
 
 [HttpGet("ViewSyllabusStudent")]
-    public async Task<IActionResult> ViewSyllabusStudent(string StudentId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewSyllabusStudent(string StudentId, string SubjectN, string ClassN,string Term, string Year){
      var checker = SubjectN+StudentId+ClassN;
         bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this syllabuss");
          }
 
-         var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
              if (syllabus.Count == 0) {
                 return BadRequest("No syllabuss found ");
                  }
@@ -688,14 +715,14 @@ namespace HDSS_BACKEND.Controllers
 
 
         [HttpGet("ViewSyllabussTeachers")]
-    public async Task<IActionResult> ViewSyllabussTeachers(string TeacherId, string SubjectN, string ClassN){
+    public async Task<IActionResult> ViewSyllabussTeachers(string TeacherId, string SubjectN, string ClassN, string Year, string Term){
      var checker = SubjectN+TeacherId+ClassN;
         bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this slides");
          }
 
-         var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
+         var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
            if (syllabus.Count == 0) {
                 return BadRequest("No syllabuss found ");
                  }
@@ -755,7 +782,8 @@ namespace HDSS_BACKEND.Controllers
        CalendarPath = Path.Combine("LMS/Calendars", calendarName),
        TeacherId = teacher.StaffID,
        TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-
+       AcademicTerm = request.AcademicTerm,
+       AcademicYear = request.AcademicYear
     };
 
     context.Calendars.Add(calendar);
@@ -769,11 +797,7 @@ namespace HDSS_BACKEND.Controllers
 [HttpGet("ViewCalendarStudent")]
     public async Task<IActionResult> ViewCalendarStudent(string StudentId,  string ClassN){
   
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentID==StudentId && p.ClassName==ClassN);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this calendars");
-         }
-
+       
          var calendar = context.Calendars.Where(t=> t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
              if (calendar.Count == 0) {
                 return BadRequest("No calendars found ");
@@ -788,10 +812,7 @@ namespace HDSS_BACKEND.Controllers
         [HttpGet("ViewCalendarsTeachers")]
     public async Task<IActionResult> ViewCalendarsTeachers(string TeacherId, string ClassN){
      
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.StaffID==TeacherId && p.ClassName==ClassN);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this slides");
-         }
+        
 
          var calendar = context.Calendars.Where(t=> t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
            if (calendar.Count == 0) {
@@ -810,6 +831,8 @@ var annoucement = new AnnouncementForStudent{
 Subject = request.Subject,
 Content = request.Content,
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
+AcademicTerm = request.AcademicTerm,
+AcademicYear = request.AcademicYear
 
 };
 context.AnnouncementForStudents.Add(annoucement);
@@ -864,6 +887,8 @@ var annoucement = new AnnouncementForTeachers{
 Subject = request.Subject,
 Content = request.Content,
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
+AcademicTerm = request.AcademicTerm,
+AcademicYear = request.AcademicYear
 
 };
 context.AnnouncementForTeachers.Add(annoucement);
@@ -917,6 +942,8 @@ var annoucement = new AnnouncementForPTA{
 Subject = request.Subject,
 Content = request.Content,
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
+AcademicTerm = request.AcademicTerm,
+AcademicYear = request.AcademicYear
 
 };
 context.AnnouncementForPTA.Add(annoucement);
@@ -974,6 +1001,8 @@ var annoucement = new AnnoucementForHOD{
 Subject = request.Subject,
 Content = request.Content,
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
+AcademicTerm = request.AcademicTerm,
+AcademicYear = request.AcademicYear
 
 };
 context.AnnoucementForHOD.Add(annoucement);
@@ -1180,8 +1209,15 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
        AssignmentPath = Path.Combine("LMS/AssignmentFiles", slideName),
        TeacherId = teacher.StaffID,
        TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-       AssignmentCode = AssignmentIdGenerator()
+       AssignmentNumber = request.AssignmentNumber,
+       AcademicYear = request.AcademicYear,
+       AcademicTerm = request.AcademicTerm,
+       AssignmentToken = SubjectN+ClassN+ request.AcademicYear + request.AcademicTerm + request.AssignmentNumber,
     };
+    bool assignmentExist = await context.Assignments.AnyAsync(a=>a.AssignmentToken==assignment.AssignmentToken);
+    if(assignmentExist){
+        return BadRequest("Assignment already exists");
+    }
 
     context.Assignments.Add(assignment);
     await context.SaveChangesAsync();
@@ -1192,22 +1228,22 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
 
 
 
-
-
-
-
     [HttpPost("UploadAssignmentSolutions")]
-        public async Task<IActionResult> UploadAssignmentSolutions(string StudentId, string SubjectN, string ClassN,string Code, [FromForm]AssignmentSubmissionDto request){
+        public async Task<IActionResult> UploadAssignmentSolutions(string StudentId, string SubjectN, string ClassN, string Year,string Term,string assignmentNumber, [FromForm]AssignmentSubmissionDto request){
         var checker = SubjectN+StudentId+ClassN;
         bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to view this assignment");
          }
-         var question = context.Assignments.FirstOrDefault(a=>a.AssignmentCode == Code);
-         if (question == null||question.ClassName!=ClassN||question.SubjectName!=SubjectN){
+         var assignmentToken = SubjectN+ClassN+ Year + Term + assignmentNumber;
+ 
+         var question = context.Assignments.FirstOrDefault(a=>a.AssignmentToken == assignmentToken);
+         if (question == null){
             return BadRequest("No Assignment Found");
          }
-         
+         if (question.ExpireDate<DateTime.Now){
+            return BadRequest("Assignment has expired");
+         }
          if (request.AssignmentFile == null || request.AssignmentFile.Length == 0)
     {
         return BadRequest("Invalid assignment file");
@@ -1247,7 +1283,9 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
         uploadDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
        StudentId = student.StudentId,
        StudentName = student.Title+". "+student.FirstName+" "+student.OtherName+" " + student.LastName,
-       AssignmentCode = question.AssignmentCode
+       AssignmentToken = question.AssignmentToken,
+       AcademicYear = request.AcademicYear,
+       AcademicTerm = request.AcademicTerm,
     };
 
     context.AssignmentSubmissions.Add(submission);

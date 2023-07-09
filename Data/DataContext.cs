@@ -47,6 +47,8 @@ public DbSet<AnnoucementForSubject>AnnoucementForSubjects { get; set;}
 public DbSet<Discussions>Discussions { get; set; }
 public DbSet<Assignment>Assignments { get; set; }
 public DbSet<AssignmentSubmission>AssignmentSubmissions { get; set; }
+public DbSet<AcademicYear>AcademicYears { get; set; }
+public DbSet<AcademicTerm>AcademicTerms { get; set; }
 
 
 

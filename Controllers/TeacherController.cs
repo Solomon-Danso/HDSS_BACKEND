@@ -264,14 +264,14 @@ public async Task<IActionResult> GetTeachers(){
     return Ok(teacherList);
 }
 
-[HttpGet("getSpecificUser")]
+[HttpGet("getTeacherInfo")]
 public async Task<IActionResult> GetSpecificUser(string StaffID){
 var tutor = context.Teachers.FirstOrDefault(e=>e.StaffID == StaffID);
 return Ok(tutor);
 }
 
 
-[HttpDelete("deleteSpecificUser")]
+[HttpDelete("deleteTeacherAccount")]
 public async Task<IActionResult> DeleteSpecificUser(string StaffID){
 var tutor =  context.Teachers.FirstOrDefault(e=>e.StaffID == StaffID);
 if(tutor == null){

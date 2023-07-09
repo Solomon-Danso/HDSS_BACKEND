@@ -40,6 +40,15 @@ namespace HDSS_BACKEND.Models
           public string? ClassName { get; set; }
     }
 
+    public class AcademicYear{
+        public int Id { get; set; }
+        public string? academicYear { get; set; }
+    }
+    public class AcademicTerm{
+        public int Id { get; set; }
+        public string? academicTerm { get; set; }
+    }
+
     public class Slide{
         public int Id { get; set; }
         public string? SubjectName { get; set; }
@@ -47,6 +56,8 @@ namespace HDSS_BACKEND.Models
         public string? ClassName { get; set; }
         public string? SlidePath { get; set; }
         public string? DateAdded{ get; set; }
+        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
         public string? TeacherId { get; set; }
         public string? TeacherName { get; set; }
 
@@ -55,7 +66,8 @@ namespace HDSS_BACKEND.Models
      public class SlidesDto{
   
         public string? Title { get; set; }
-    
+        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
         public IFormFile? Slide { get; set; }
 
     }
@@ -70,13 +82,16 @@ namespace HDSS_BACKEND.Models
         public string? DateAdded{ get; set; }
         public string? TeacherId { get; set; }
         public string? TeacherName { get; set; }
+              public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
 
     }
 
      public class VideoDto{
   
         public string? Title { get; set; }
-    
+          public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
         public IFormFile? Video { get; set; }
 
     }
@@ -89,6 +104,8 @@ namespace HDSS_BACKEND.Models
         public string? AudioPath { get; set; }
         public string? DateAdded{ get; set; }
         public string? TeacherId { get; set; }
+              public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
         public string? TeacherName { get; set; }
 
     }
@@ -96,6 +113,8 @@ namespace HDSS_BACKEND.Models
      public class AudioDto{
   
         public string? Title { get; set; }
+              public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
     
         public IFormFile? Audio { get; set; }
 
@@ -111,6 +130,8 @@ namespace HDSS_BACKEND.Models
         public string? PicturePath { get; set; }
         public string? DateAdded{ get; set; }
         public string? TeacherId { get; set; }
+              public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
         public string? TeacherName { get; set; }
 
     }
@@ -118,6 +139,8 @@ namespace HDSS_BACKEND.Models
      public class PictureDto{
   
         public string? Title { get; set; }
+              public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
     
         public IFormFile? Picture { get; set; }
 
@@ -134,12 +157,16 @@ namespace HDSS_BACKEND.Models
         public string? DateAdded{ get; set; }
         public string? TeacherId { get; set; }
         public string? TeacherName { get; set; }
+              public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
 
     }
 
      public class SyllabusDto{
   
         public string? Title { get; set; }
+              public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
     
         public IFormFile? Syllabus { get; set; }
 
@@ -154,13 +181,17 @@ namespace HDSS_BACKEND.Models
         public string? DateAdded{ get; set; }
         public string? TeacherId { get; set; }
         public string? TeacherName { get; set; }
+              public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
 
     }
 
      public class CalendarDto{
   
         public string? Title { get; set; }
-    
+           public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+
         public IFormFile? Calendar { get; set; }
 
     }
@@ -170,6 +201,8 @@ namespace HDSS_BACKEND.Models
         public string? Subject { get; set; }
         public string? Content { get; set; }
         public string? DateAdded { get; set; }
+        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
 
     }
 
@@ -178,17 +211,24 @@ namespace HDSS_BACKEND.Models
         public string? Subject { get; set; }
         public string? Content { get; set; }
         public string? DateAdded { get; set; }
+               public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+
     }
 
     public class AnnouncementForPTA{
-         public int Id { get; set; }
+         public int Id { get; set; }        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+
         public string? Subject { get; set; }
         public string? Content { get; set; }
         public string? DateAdded { get; set; }
     }
 
     public class AnnoucementForHOD{
-        public int Id { get; set; }
+        public int Id { get; set; }        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+
         public string? Subject { get; set; }
         public string? Content { get; set; }
         public string? DateAdded { get; set; }
@@ -197,7 +237,9 @@ namespace HDSS_BACKEND.Models
     
 
       public class AnnoucementForSubject{
-        public int Id { get; set; }
+        public int Id { get; set; }        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+
          public string? SubjectName { get; set; }
          public string? Title { get; set; }
         public string? Content { get; set; }
@@ -209,7 +251,9 @@ namespace HDSS_BACKEND.Models
     }
 
 public class Discussions{
-    public int Id { get; set; }
+    public int Id { get; set; }        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+
     public string? SenderName { get; set; }
     public string? Content { get; set; }
     public string? SenderId { get; set; }
@@ -245,7 +289,9 @@ public class DiscussionsForTeacher{
 
 
      public class Assignment{
-        public int Id { get; set; }
+        public int Id { get; set; }      
+        public string? AcademicTerm{ get; set; }
+         public string? AcademicYear{ get; set; }
         public string? SubjectName { get; set; }
         public string? ClassName { get; set; }
         public string? AssignmentPath { get; set; }
@@ -253,7 +299,8 @@ public class DiscussionsForTeacher{
         public DateTime? ExpireDate { get; set; }
         public string? TeacherId { get; set; }
         public string? TeacherName { get; set; }
-        public string? AssignmentCode { get; set; }
+        public string? AssignmentNumber { get; set; }
+        public string? AssignmentToken { get; set; }
 
     }
 
@@ -261,14 +308,19 @@ public class DiscussionsForTeacher{
   
         public DateTime? StartDate{ get; set; }
         public DateTime? ExpireDate { get; set; }
-    
+        public string? AcademicTerm{ get; set; }
+        public string? AcademicYear{ get; set; }
         public IFormFile? AssignmentFile { get; set; }
+         public string? AssignmentNumber { get; set; }
 
     }
 
 
 public class AssignmentSubmission{
-        public int Id { get; set; }
+        public int Id { get; set; }     
+           public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+
         public string? SubjectName { get; set; }
         public string? ClassName { get; set; }
         public string? AssignmentPath { get; set; }
@@ -277,12 +329,16 @@ public class AssignmentSubmission{
         public string? StudentName { get; set; }
         public string? AssignmentCode { get; set; }
         public string? SubmissionPath { get; set; }
+        public string? AssignmentToken { get; set; }
     }
 
      public class AssignmentSubmissionDto{
   
-        public DateTime? StartDate{ get; set; }    
+     
         public IFormFile? AssignmentFile { get; set; }
+        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+
 
     }
 

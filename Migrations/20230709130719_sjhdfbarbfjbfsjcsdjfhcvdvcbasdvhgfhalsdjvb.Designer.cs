@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230709130719_sjhdfbarbfjbfsjcsdjfhcvdvcbasdvhgfhalsdjvb")]
+    partial class sjhdfbarbfjbfsjcsdjfhcvdvcbasdvhgfhalsdjvb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,12 +124,6 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -148,12 +145,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
@@ -189,12 +180,6 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -216,12 +201,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -245,12 +224,6 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -273,19 +246,10 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssignmentNumber")
+                    b.Property<string>("AssignmentCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AssignmentPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssignmentToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClassName")
@@ -319,19 +283,10 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("AssignmentCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AssignmentPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssignmentToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClassName")
@@ -364,12 +319,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AudioPath")
                         .HasColumnType("nvarchar(max)");
@@ -404,12 +353,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CalendarPath")
                         .HasColumnType("nvarchar(max)");
@@ -460,12 +403,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
@@ -676,12 +613,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
@@ -923,12 +854,6 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
 
@@ -1099,12 +1024,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
