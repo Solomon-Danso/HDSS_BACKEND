@@ -1228,6 +1228,70 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
 
 
 
+    [HttpPost("EditAssignment")]
+        public async Task<IActionResult> EditAssignment(string TeacherId, string SubjectN, string ClassN, [FromForm]AssignmentDto request){
+        var checker = SubjectN+TeacherId+ClassN;
+        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+         if(!NoPower){
+            return BadRequest("You dont have permission ");
+         }
+         
+         if (request.AssignmentFile == null || request.AssignmentFile.Length == 0)
+    {
+        return BadRequest("Invalid assignment file");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "AssignmentFiles");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.AssignmentFile.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.AssignmentFile.CopyToAsync(stream);
+    }
+   
+    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
+    if (teacher == null){
+    return Unauthorized();
+    }
+    var Token = SubjectN+ClassN+ request.AcademicYear + request.AcademicTerm + request.AssignmentNumber;
+
+    var oldWork = context.Assignments.FirstOrDefault(a=> a.AssignmentToken == Token);
+    if (oldWork == null){
+        return BadRequest("Assignment not found");
+    }
+        //Select the subject name from an option in the frontend
+       oldWork.SubjectName = SubjectN;
+       oldWork.StartDate = request.StartDate;
+       oldWork.ExpireDate = request.ExpireDate;
+       oldWork.ClassName = ClassN;
+       oldWork.AssignmentPath = Path.Combine("LMS/AssignmentFiles", slideName);
+       oldWork.TeacherId = teacher.StaffID;
+       oldWork.TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName;
+       oldWork.AssignmentNumber = request.AssignmentNumber;
+       oldWork.AcademicYear = request.AcademicYear;
+       oldWork.AcademicTerm = request.AcademicTerm;
+       oldWork.AssignmentToken = SubjectN+ClassN+ request.AcademicYear + request.AcademicTerm + request.AssignmentNumber;
+    
+    
+    await context.SaveChangesAsync();
+
+    return Ok($"Assignment has been updated succesfully ");
+    
+    }
+
+
     [HttpPost("UploadAssignmentSolutions")]
         public async Task<IActionResult> UploadAssignmentSolutions(string StudentId, string SubjectN, string ClassN, string Year,string Term,string assignmentNumber, [FromForm]AssignmentSubmissionDto request){
         var checker = SubjectN+StudentId+ClassN;
@@ -1241,7 +1305,7 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
          if (question == null){
             return BadRequest("No Assignment Found");
          }
-         if (question.ExpireDate<DateTime.Now){
+         if (DateTime.Now>question.ExpireDate){
             return BadRequest("Assignment has expired");
          }
          if (request.AssignmentFile == null || request.AssignmentFile.Length == 0)
@@ -1284,11 +1348,16 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
        StudentId = student.StudentId,
        StudentName = student.Title+". "+student.FirstName+" "+student.OtherName+" " + student.LastName,
        AssignmentToken = question.AssignmentToken,
-       AcademicYear = request.AcademicYear,
-       AcademicTerm = request.AcademicTerm,
+       AcademicYear = Year,
+       AcademicTerm = Term,
     };
-
-    context.AssignmentSubmissions.Add(submission);
+     bool assignmentExist = await context.Assignments.AnyAsync(a=>a.AssignmentToken==submission.AssignmentToken);
+    if(assignmentExist){
+        return BadRequest("You have already submitted a solution for this assignment");
+    }
+    else{
+        context.AssignmentSubmissions.Add(submission);
+    } 
     await context.SaveChangesAsync();
 
     return Ok($"{submission.SubjectName} solution has been sent succesfully ");

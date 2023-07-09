@@ -112,10 +112,8 @@ private string StudentIdGenerator()
 [HttpPost("updateStudent")]
 public async Task<IActionResult> UpdateStudent(string Id, [FromForm]StudentDto request){
   var student = context.Students.FirstOrDefault(s=>s.StudentId == Id);
-  var amtpaid = context.AmountsPaid.FirstOrDefault(s=>s.StudentId == Id);
-  var amtowed = context.AmountsOwing.FirstOrDefault(s=>s.StudentId ==Id);
-  var schoolfees = context.SchoolFeeTransactions.FirstOrDefault(s=>s.StudentId == Id);
-  if(student == null|| amtowed == null|| amtpaid==null||schoolfees == null){
+
+  if(student == null){
     return BadRequest("Student does not exist");
   }
 
@@ -146,9 +144,6 @@ public async Task<IActionResult> UpdateStudent(string Id, [FromForm]StudentDto r
 
 
 student.StudentId = request.StudentId;
-amtpaid.StudentId = request.StudentId;
-amtowed.StudentId = request.StudentId;
-schoolfees.StudentId = request.StudentId;
 student.Title = request.Title;
 student.FirstName = request.FirstName;
 student.OtherName = request.OtherName;
