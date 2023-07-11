@@ -49,8 +49,8 @@ public DbSet<Assignment>Assignments { get; set; }
 public DbSet<AssignmentSubmission>AssignmentSubmissions { get; set; }
 public DbSet<AcademicYear>AcademicYears { get; set; }
 public DbSet<AcademicTerm>AcademicTerms { get; set; }
-
-
+public DbSet<ClassScore>ClassScores { get; set; }
+public DbSet<ClassScoreSummary>ClassScoresSummarys { get; set; }
 
 
 

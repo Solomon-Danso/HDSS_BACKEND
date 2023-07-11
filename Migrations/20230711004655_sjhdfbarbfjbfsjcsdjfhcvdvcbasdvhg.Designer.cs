@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230711004655_sjhdfbarbfjbfsjcsdjfhcvdvcbasdvhg")]
+    partial class sjhdfbarbfjbfsjcsdjfhcvdvcbasdvhg
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -460,6 +463,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<double?>("Score")
                         .HasColumnType("float");
 
+                    b.Property<string>("ScoreIncreaserToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("StudentId")
                         .HasColumnType("nvarchar(max)");
 
@@ -467,6 +473,9 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SubjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SumToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TeacherId")
@@ -477,6 +486,9 @@ namespace HDSS_BACKEND.Migrations
 
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("TotalScore")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
