@@ -34,6 +34,7 @@ public class Teacher
         public double? Debit { get; set; }
         public double? Credit{ get; set; }
         public string? StaffID { get; set; }
+         
 
     public string? FilePath { get; set; }
     public string? CertPath { get; set; }
@@ -82,6 +83,7 @@ public class TeacherDto
     public IFormFile? CertFile { get; set; }
     public IFormFile? IdCardsFile { get; set; }
     public IFormFile? AppointFile { get; set; }
+     
 }
 
 

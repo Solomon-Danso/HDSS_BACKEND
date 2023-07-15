@@ -26,11 +26,7 @@ namespace HDSS_BACKEND.Controllers
 
  [HttpPost("registerStudent")]
         public async Task<IActionResult> CreateStudent([FromForm]StudentDto studentDto){
-     bool stu = await context.Students.AnyAsync(s => s.StudentId == studentDto.StudentId);
-    if (stu)
-    {
-        return BadRequest("Student already exists");
-    }
+    
 
 
     if (studentDto.File == null || studentDto.File.Length == 0)
@@ -77,20 +73,24 @@ namespace HDSS_BACKEND.Controllers
         GuardianName = studentDto.GuardianName,
         GuardianContact = studentDto.GuardianContact,
         MedicalIInformation = studentDto.MedicalIInformation,
-        BasicLevel = studentDto.BasicLevel,
+        Level = studentDto.Level,
         amountOwing = studentDto.amountOwing,
         creditAmount = studentDto.creditAmount,
         AdmissionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
         SchoolBankAccount = studentDto.SchoolBankAccount,
         ProfilePic = Path.Combine("Students/Profile", fileName),
     };
-
+    bool IdExist = await context.Students.AnyAsync(x => x.StudentId == student.StudentId);
+    if(IdExist){
+        studentDto.StudentId = StudentIdGenerator();
+    }
+  
     context.Students.Add(student);
     await context.SaveChangesAsync();
-    return Ok("Working");
+    return Ok("Student admmission is successful");
     
     }
-
+   
 
 private string StudentIdGenerator()
 {
@@ -160,7 +160,7 @@ student.MothersContact = request.MothersContact;
 student.GuardianName = request.GuardianName;
 student.GuardianContact = request.GuardianContact;
 student.MedicalIInformation = request.MedicalIInformation;
-student.BasicLevel = request.BasicLevel;
+student.Level = request.Level;
 student.amountOwing = request.amountOwing;
 student.creditAmount = request.creditAmount;
 student.AdmissionDate = request.AdmissionDate;

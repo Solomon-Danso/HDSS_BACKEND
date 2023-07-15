@@ -25,17 +25,17 @@ namespace HDSS_BACKEND.Controllers
          if(!NoPower){
             return BadRequest("You dont have permission to upload this class scores");
          }
+          bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
 
-         var checker2 = SubjectN+StudentId+ClassN;
-        bool NoPower2 = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker2);
-        var student = context.Students.FirstOrDefault(s=>s.StudentId == StudentId);
+          var student = context.Students.FirstOrDefault(s=>s.StudentId == StudentId);
         if(student==null){
             return BadRequest("Student with id "+StudentId+" does not exist in the school");
         }
 
-         if(!NoPower){
-            return BadRequest($"{student.Title}, {student.FirstName} {student.LastName}  has not registered for this course ");
-         }
+       
           var assignmentToken = SubjectN+ClassN+ Year + Term + assignmentNumber;
  
          var q = context.Assignments.FirstOrDefault(a=>a.AssignmentToken == assignmentToken);

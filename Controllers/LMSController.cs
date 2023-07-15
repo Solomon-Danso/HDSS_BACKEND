@@ -110,43 +110,7 @@ namespace HDSS_BACKEND.Controllers
 
         }
  
-        [HttpPost("AddStudentToSubject")]
-        public async Task<IActionResult> AddStudentToSubject(string subjects, string StudentID,string Stage,[FromBody]StudentForSubject request){
-
-          var subject = context.Subjects.FirstOrDefault(s => s.SubjectName == subjects);
-         var student = context.Students.FirstOrDefault(t=> t.StudentId == StudentID);
-         if (subject == null||student == null){
-            return BadRequest("Subject or Student not found");
-         }
-          var classy = context.Classess.FirstOrDefault(c => c.ClassName == Stage);
-            if (classy == null){
-                return BadRequest("Enter A Valid Class Name");
-            }
-
-         var code =  subject.SubjectName+student.StudentId+classy.ClassName;
-         bool studentAlreadyExist =await context.StudentForSubjects.AnyAsync(t => t.StudentCode == code);
-         if(studentAlreadyExist) {
-            return BadRequest("Student Already Registered");
-         }
-
-
-         var studentforsub = new StudentForSubject{
-            StudentID  = student.StudentId ,
-            StudentName = student.Title+". "+student.FirstName+" "+student.OtherName+" " + student.LastName,
-            SubjectName = subject.SubjectName,
-            ClassName = classy.ClassName,
-            StudentCode = code
-
-         };
-
-         context.StudentForSubjects.Add(studentforsub);
-         await context.SaveChangesAsync();
-
-         return Ok($"{studentforsub.StudentName} has been assigned to {studentforsub.SubjectName}");
-
- 
-        }
-
+      
   
         
         [HttpDelete("removeTeacherFromSubject")]
@@ -175,31 +139,7 @@ namespace HDSS_BACKEND.Controllers
         }
         
 
-        [HttpDelete("removeStudentFromSubject")]
-        public async Task<IActionResult> RemoveStudentFromSubject(string subjects, string StaffID,string Stage){
-            
-            var subject = context.Subjects.FirstOrDefault(s => s.SubjectName == subjects);
-            var student = context.Students.FirstOrDefault(t=> t.StudentId == StaffID);
-            if (subject == null||student == null){
-            return BadRequest("Subject or Student not found");
-         }  
-           var classy = context.Classess.FirstOrDefault(c => c.ClassName == Stage);
-            if (classy == null){
-                return BadRequest("Enter A Valid Class Name");
-            }
-
-         var code =  subject.SubjectName+student.StudentId+classy.ClassName;
-            var studentcode = context.StudentForSubjects.FirstOrDefault(t => t.StudentCode == code);
-            if (studentcode == null){
-                return BadRequest("Student not found");
-            }
-
-            context.StudentForSubjects.Remove(studentcode);
-            await context.SaveChangesAsync();
-            return Ok("Student has been removed");
-
-        }
-
+      
 
 
         [HttpGet("ViewTeachersInSubject")]
@@ -215,17 +155,7 @@ namespace HDSS_BACKEND.Controllers
         }
   
 
-        [HttpGet("ViewStudentsInSubject")]
-        public async Task<IActionResult> ViewStudentsInSubject(string SubjectName,string Stage){
-            var subject = context.StudentForSubjects.Where(t=>t.SubjectName == SubjectName && t.ClassName==Stage).OrderByDescending(t => t.Id).ToList();
-            return Ok(subject);
-        }
-
-        [HttpGet("ViewStudentRegisteredSubjects")]
-        public async Task<IActionResult> ViewStudentsAllSubject(string StudentId){
-            var subject = context.StudentForSubjects.Where(t=>t.StudentID == StudentId).OrderByDescending(t => t.Id).ToList();
-            return Ok(subject);
-        }
+   
   
     [HttpPost("AddAcademicYear")]
     public async Task<IActionResult> AddAcademicYear([FromBody]AcademicYear request){
@@ -309,11 +239,11 @@ namespace HDSS_BACKEND.Controllers
 
     [HttpGet("ViewSlidesStudent")]
     public async Task<IActionResult> ViewSlidesStudent(string StudentId, string SubjectN, string ClassN, string Term, string Year){
-     var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this slides");
-         }
+       bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
+
 
          var slide = context.Slides.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN && t.AcademicTerm==Term&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
              if (slide.Count == 0) {
@@ -406,11 +336,10 @@ namespace HDSS_BACKEND.Controllers
 
 [HttpGet("ViewVideoStudent")]
     public async Task<IActionResult> ViewVideoStudent(string StudentId, string SubjectN, string ClassN,string Term, string Year){
-     var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this videos");
-         }
+      bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
 
          var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term && t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
              if (video.Count == 0) {
@@ -504,11 +433,10 @@ namespace HDSS_BACKEND.Controllers
 
 [HttpGet("ViewAudioStudent")]
     public async Task<IActionResult> ViewAudioStudent(string StudentId, string SubjectN, string ClassN, string Term, string Year){
-     var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this audios");
-         }
+      bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
 
          var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
              if (audio.Count == 0) {
@@ -600,11 +528,10 @@ namespace HDSS_BACKEND.Controllers
 
 [HttpGet("ViewPictureStudent")]
     public async Task<IActionResult> ViewPictureStudent(string StudentId, string SubjectN, string ClassN, string Year, string Term){
-     var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this pictures");
-         }
+      bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
 
          var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicYear==Year&&t.AcademicTerm==Term).OrderByDescending(t => t.Id).ToList();
              if (picture.Count == 0) {
@@ -697,11 +624,10 @@ namespace HDSS_BACKEND.Controllers
 
 [HttpGet("ViewSyllabusStudent")]
     public async Task<IActionResult> ViewSyllabusStudent(string StudentId, string SubjectN, string ClassN,string Term, string Year){
-     var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this syllabuss");
-         }
+      bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
 
          var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
              if (syllabus.Count == 0) {
@@ -796,7 +722,10 @@ namespace HDSS_BACKEND.Controllers
 
 [HttpGet("ViewCalendarStudent")]
     public async Task<IActionResult> ViewCalendarStudent(string StudentId,  string ClassN){
-  
+         bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
        
          var calendar = context.Calendars.Where(t=> t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
              if (calendar.Count == 0) {
@@ -830,6 +759,8 @@ var annoucement = new AnnouncementForStudent{
 
 Subject = request.Subject,
 Content = request.Content,
+TheId = AssignmentIdGenerator(),
+
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
 AcademicTerm = request.AcademicTerm,
 AcademicYear = request.AcademicYear
@@ -842,8 +773,8 @@ return Ok("Student Annoucement Sent Successfully");
 }
 
 [HttpPut("UpdateannoucementForStudent")]
-public async Task<IActionResult> UpdateAnnouncementForStudent([FromBody]AnnouncementForStudent request, string DateAdded){
-    var annoucement = context.AnnouncementForStudents.FirstOrDefault(x=>x.DateAdded == DateAdded);
+public async Task<IActionResult> UpdateAnnouncementForStudent([FromBody]AnnouncementForStudent request, string TheId){
+    var annoucement = context.AnnouncementForStudents.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     }
@@ -856,8 +787,8 @@ public async Task<IActionResult> UpdateAnnouncementForStudent([FromBody]Announce
 
 
 [HttpDelete("DeleteannoucementForStudent")]
-public async Task<IActionResult> DeleteAnnouncementForStudent(string DateAdded){
-    var annoucement = context.AnnouncementForStudents.FirstOrDefault(x=>x.DateAdded == DateAdded);
+public async Task<IActionResult> DeleteAnnouncementForStudent(string TheId){
+    var annoucement = context.AnnouncementForStudents.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     } 
@@ -886,6 +817,7 @@ var annoucement = new AnnouncementForTeachers{
 
 Subject = request.Subject,
 Content = request.Content,
+TheId = AssignmentIdGenerator(),
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
 AcademicTerm = request.AcademicTerm,
 AcademicYear = request.AcademicYear
@@ -898,8 +830,8 @@ return Ok("Student Annoucement Sent Successfully");
 }
 
 [HttpPut("UpdateannoucementForTeachers")]
-public async Task<IActionResult> UpdateAnnouncementForTeachers([FromBody]AnnouncementForTeachers request, string DateAdded){
-    var annoucement = context.AnnouncementForTeachers.FirstOrDefault(x=>x.DateAdded == DateAdded);
+public async Task<IActionResult> UpdateAnnouncementForTeachers([FromBody]AnnouncementForTeachers request, string TheId){
+    var annoucement = context.AnnouncementForTeachers.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     }
@@ -912,8 +844,8 @@ public async Task<IActionResult> UpdateAnnouncementForTeachers([FromBody]Announc
 
 
 [HttpDelete("DeleteannoucementForTeachers")]
-public async Task<IActionResult> DeleteAnnouncementForTeachers(string DateAdded){
-    var annoucement = context.AnnouncementForTeachers.FirstOrDefault(x=>x.DateAdded == DateAdded);
+public async Task<IActionResult> DeleteAnnouncementForTeachers(string TheId){
+    var annoucement = context.AnnouncementForTeachers.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     } 
@@ -941,6 +873,7 @@ var annoucement = new AnnouncementForPTA{
 
 Subject = request.Subject,
 Content = request.Content,
+TheId = AssignmentIdGenerator(),
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
 AcademicTerm = request.AcademicTerm,
 AcademicYear = request.AcademicYear
@@ -953,8 +886,8 @@ return Ok("Student Annoucement Sent Successfully");
 }
 
 [HttpPut("UpdateannoucementForPTA")]
-public async Task<IActionResult> UpdateAnnouncementForPTA([FromBody]AnnouncementForPTA request, string DateAdded){
-    var annoucement = context.AnnouncementForPTA.FirstOrDefault(x=>x.DateAdded == DateAdded);
+public async Task<IActionResult> UpdateAnnouncementForPTA([FromBody]AnnouncementForPTA request, string TheId){
+    var annoucement = context.AnnouncementForPTA.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     }
@@ -967,8 +900,8 @@ public async Task<IActionResult> UpdateAnnouncementForPTA([FromBody]Announcement
 
 
 [HttpDelete("DeleteannoucementForPTA")]
-public async Task<IActionResult> DeleteAnnouncementForPTA(string DateAdded){
-    var annoucement = context.AnnouncementForPTA.FirstOrDefault(x=>x.DateAdded == DateAdded);
+public async Task<IActionResult> DeleteAnnouncementForPTA(string TheId){
+    var annoucement = context.AnnouncementForPTA.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     } 
@@ -1000,6 +933,7 @@ var annoucement = new AnnoucementForHOD{
 
 Subject = request.Subject,
 Content = request.Content,
+TheId = AssignmentIdGenerator(),
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
 AcademicTerm = request.AcademicTerm,
 AcademicYear = request.AcademicYear
@@ -1012,8 +946,8 @@ return Ok("Student Annoucement Sent Successfully");
 }
 
 [HttpPut("UpdateannoucementForHOD")]
-public async Task<IActionResult> UpdateAnnoucementForHOD([FromBody]AnnoucementForHOD request, string DateAdded){
-    var annoucement = context.AnnoucementForHOD.FirstOrDefault(x=>x.DateAdded == DateAdded);
+public async Task<IActionResult> UpdateAnnoucementForHOD([FromBody]AnnoucementForHOD request, string TheId){
+    var annoucement = context.AnnoucementForHOD.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     }
@@ -1026,8 +960,8 @@ public async Task<IActionResult> UpdateAnnoucementForHOD([FromBody]AnnoucementFo
 
 
 [HttpDelete("DeleteannoucementForHOD")]
-public async Task<IActionResult> DeleteAnnoucementForHOD(string DateAdded){
-    var annoucement = context.AnnoucementForHOD.FirstOrDefault(x=>x.DateAdded == DateAdded);
+public async Task<IActionResult> DeleteAnnoucementForHOD(string TheId){
+    var annoucement = context.AnnoucementForHOD.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     } 
@@ -1068,6 +1002,7 @@ public async Task<IActionResult> GetAnnoucementForHOD(){
         //Select the subject name from an option in the frontend
        SubjectName = SubjectN,
        Content = request.Content,
+TheId = AssignmentIdGenerator(),
        Title = request.Title,
        ClassName = ClassN,
        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
@@ -1103,6 +1038,7 @@ public async Task<IActionResult> GetAnnoucementForHOD(){
 
        Subject = SubjectN,
        Content = request.Content,
+       TheId = AssignmentIdGenerator(),
        ClassName = ClassN,
        DateSent = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
        SenderId = teacher.StaffID,
@@ -1120,11 +1056,11 @@ public async Task<IActionResult> GetAnnoucementForHOD(){
 
   [HttpPost("subjectDiscussionStudent")]
         public async Task<IActionResult> SubjectDiscussionStuden(string StudentId, string SubjectN, string ClassN, [FromBody]DiscussionsForStudent request){
-        var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to write a comment on this subject");
-         }
+         bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
+
          
     
     var teacher = context.Students.FirstOrDefault(t=> t.StudentId == StudentId);
@@ -1136,6 +1072,7 @@ public async Task<IActionResult> GetAnnoucementForHOD(){
 
        Subject = SubjectN,
        Content = request.Content,
+TheId = AssignmentIdGenerator(),
        ClassName = ClassN,
        DateSent = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
        SenderId = teacher.StudentId,
@@ -1294,11 +1231,11 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
 
     [HttpPost("UploadAssignmentSolutions")]
         public async Task<IActionResult> UploadAssignmentSolutions(string StudentId, string SubjectN, string ClassN, string Year,string Term,string assignmentNumber, [FromForm]AssignmentSubmissionDto request){
-        var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this assignment");
-         }
+         bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
+
          var assignmentToken = SubjectN+ClassN+ Year + Term + assignmentNumber;
  
          var question = context.Assignments.FirstOrDefault(a=>a.AssignmentToken == assignmentToken);
@@ -1351,7 +1288,7 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
        AcademicYear = Year,
        AcademicTerm = Term,
     };
-     bool assignmentExist = await context.Assignments.AnyAsync(a=>a.AssignmentToken==submission.AssignmentToken);
+     bool assignmentExist = await context.AssignmentSubmissions.AnyAsync(a=>a.AssignmentToken==submission.AssignmentToken);
     if(assignmentExist){
         return BadRequest("You have already submitted a solution for this assignment");
     }
@@ -1360,7 +1297,7 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
     } 
     await context.SaveChangesAsync();
 
-    return Ok($"{submission.SubjectName} solution has been sent succesfully ");
+    return Ok($"{submission.SubjectName} solution has been submitted succesfully ");
     
     }
 
@@ -1382,11 +1319,11 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
 
 [HttpGet("ViewAllStudentAssignmentsStudent")]
         public async Task<IActionResult> ViewAllStudentAssignmentsStudent(string StudentId, string SubjectN, string ClassN){
-        var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this ");
-         }
+        bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
+
 
          var assignment = context.Assignments.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN).OrderByDescending(R=>R.Id).ToList();
           if(assignment.Count==0){
@@ -1415,11 +1352,11 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
 
 [HttpGet("ViewAllStudentSolutionsStudent")]
         public async Task<IActionResult> ViewAllStudentSolutionsStudent(string StudentId, string SubjectN, string ClassN){
-        var checker = SubjectN+StudentId+ClassN;
-        bool NoPower = await context.StudentForSubjects.AnyAsync(p=>p.StudentCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this ");
-         }
+        bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
+       if (!IsValidStudent){
+        return BadRequest("You are not in the specified class");
+       }
+
 
          var submissions = context.AssignmentSubmissions.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN&&a.StudentId==StudentId).OrderByDescending(R=>R.Id).ToList();
           if(submissions.Count==0){

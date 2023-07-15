@@ -199,7 +199,8 @@ namespace HDSS_BACKEND.Models
     public class AnnouncementForStudent{
         public int Id { get; set; }
         public string? Subject { get; set; }
-        public string? Content { get; set; }
+            public string? Content { get; set; }
+    public string? TheId { get; set; }
         public string? DateAdded { get; set; }
         public string? AcademicYear{ get; set; }
         public string? AcademicTerm{ get; set; }
@@ -209,7 +210,8 @@ namespace HDSS_BACKEND.Models
     public class AnnouncementForTeachers{
         public int Id { get; set; }
         public string? Subject { get; set; }
-        public string? Content { get; set; }
+            public string? Content { get; set; }
+    public string? TheId { get; set; }
         public string? DateAdded { get; set; }
                public string? AcademicYear{ get; set; }
         public string? AcademicTerm{ get; set; }
@@ -221,7 +223,8 @@ namespace HDSS_BACKEND.Models
         public string? AcademicTerm{ get; set; }
 
         public string? Subject { get; set; }
-        public string? Content { get; set; }
+            public string? Content { get; set; }
+    public string? TheId { get; set; }
         public string? DateAdded { get; set; }
     }
 
@@ -230,7 +233,8 @@ namespace HDSS_BACKEND.Models
         public string? AcademicTerm{ get; set; }
 
         public string? Subject { get; set; }
-        public string? Content { get; set; }
+            public string? Content { get; set; }
+    public string? TheId { get; set; }
         public string? DateAdded { get; set; }
     }
 
@@ -242,7 +246,8 @@ namespace HDSS_BACKEND.Models
 
          public string? SubjectName { get; set; }
          public string? Title { get; set; }
-        public string? Content { get; set; }
+            public string? Content { get; set; }
+    public string? TheId { get; set; }
         public string? DateAdded { get; set; }
        public string? ClassName { get; set; }
         public string? TeacherId { get; set; }
@@ -251,11 +256,13 @@ namespace HDSS_BACKEND.Models
     }
 
 public class Discussions{
-    public int Id { get; set; }        public string? AcademicYear{ get; set; }
+    public int Id { get; set; }     
+       public string? AcademicYear{ get; set; }
         public string? AcademicTerm{ get; set; }
 
     public string? SenderName { get; set; }
-    public string? Content { get; set; }
+        public string? Content { get; set; }
+    public string? TheId { get; set; }
     public string? SenderId { get; set; }
     public string? DateSent { get; set; }
     public string? Subject { get; set; }
@@ -265,7 +272,8 @@ public class Discussions{
 
 public class DiscussionsForStudent{
     public string? StudentName { get; set; }
-    public string? Content { get; set; }
+        public string? Content { get; set; }
+    public string? TheId { get; set; }
     public string? StudentId { get; set; }
     public string? DateSent { get; set; }
     public string? Subject { get; set; }
@@ -278,7 +286,8 @@ public class DiscussionsForStudent{
 public class DiscussionsForTeacher{
      public string? ClassName { get; set; }
     public string? TeacherName { get; set; }
-    public string? Content { get; set; }
+        public string? Content { get; set; }
+    public string? TheId { get; set; }
     public string? TeacherId { get; set; }
     public string? DateSent { get; set; }
     public string? Subject { get; set; }
