@@ -16,6 +16,7 @@ namespace HDSS_BACKEND.Controllers
         private readonly DataContext context;
         public static double? credit1;
         public static double? owe2;
+        Constants constant = new Constants();
 
         public StudentController(DataContext ctx)
         {
@@ -79,15 +80,26 @@ namespace HDSS_BACKEND.Controllers
         AdmissionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
         SchoolBankAccount = studentDto.SchoolBankAccount,
         ProfilePic = Path.Combine("Students/Profile", fileName),
+        Role = constant.Student,
     };
     bool IdExist = await context.Students.AnyAsync(x => x.StudentId == student.StudentId);
     if(IdExist){
         studentDto.StudentId = StudentIdGenerator();
     }
-  
+    var rawPassword = StudentIdGenerator();
+     var Auth = new AuthenticationModel{
+        Name = student.FirstName+" " + student.OtherName+" " + student.LastName,
+        UserId = student.StudentId,
+        Role = student.Role,
+        UserPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword),
+
+     };
+    
+    context.AuthenticationModels.Add(Auth);
+
     context.Students.Add(student);
     await context.SaveChangesAsync();
-    return Ok("Student admmission is successful");
+    return Ok($"Student admmission is successful Id = {student.StudentId} Password = {rawPassword}");
     
     }
    

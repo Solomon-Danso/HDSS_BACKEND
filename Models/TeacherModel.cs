@@ -34,6 +34,7 @@ public class Teacher
         public double? Debit { get; set; }
         public double? Credit{ get; set; }
         public string? StaffID { get; set; }
+        public string? Role { get; set; }
          
 
     public string? FilePath { get; set; }

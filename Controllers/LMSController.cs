@@ -180,11 +180,13 @@ namespace HDSS_BACKEND.Controllers
     }
 
         [HttpPost("UploadSlide")]
-        public async Task<IActionResult> UploadSlide(string TeacherId, string SubjectN, string ClassN, [FromForm]SlidesDto request){
+        public async Task<IActionResult> UploadSlide(string TeacherId, string SubjectN, string ClassN,string Password, [FromForm]SlidesDto request){
         var checker = SubjectN+TeacherId+ClassN;
         bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
          if(!NoPower){
-            return BadRequest("You dont have permission to upload slides");
+                return BadRequest("You dont have permission to upload slides");
+            
+            
          }
          
          if (request.Slide == null || request.Slide.Length == 0)

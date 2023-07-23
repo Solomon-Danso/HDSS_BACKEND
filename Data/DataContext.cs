@@ -15,6 +15,7 @@ namespace HDSS_BACKEND.Data
                 //Empty constructor
 public DataContext(): base(){
 }
+
 //Database Connection String
 protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
@@ -51,7 +52,8 @@ public DbSet<AcademicYear>AcademicYears { get; set; }
 public DbSet<AcademicTerm>AcademicTerms { get; set; }
 public DbSet<ClassScore>ClassScores { get; set; }
 public DbSet<ClassScoreSummary>ClassScoresSummarys { get; set; }
-
+public DbSet<SchoolDirector> SchoolDirectors { get; set; }
+public DbSet<AuthenticationModel>AuthenticationModels { get; set; }
 
 
 

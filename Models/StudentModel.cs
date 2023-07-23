@@ -31,6 +31,7 @@ namespace HDSS_BACKEND.Models
         public string? AdmissionDate { get; set; }
         public double? SchoolBankAccount { get; set; }
         public string? ProfilePic { get; set; }
+        public string? Role { get; set; }
 
 
 

@@ -4,16 +4,19 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HDSS_BACKEND.Migrations
+namespace HDSS_BACKEND.Migrations.OnlineData
 {
-    [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(OnlineDataContext))]
+    [Migration("20230723190411_sdgfkvbdfdfvmdnfvkjbfdjkgncsd")]
+    partial class sdgfkvbdfdfvmdnfvkjbfdjkgncsd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -859,6 +862,9 @@ namespace HDSS_BACKEND.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Contact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DirectorID")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")

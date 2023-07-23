@@ -7,6 +7,7 @@ using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 
 namespace HDSS_BACKEND.Controllers
 {
@@ -15,9 +16,12 @@ namespace HDSS_BACKEND.Controllers
 
     public class TeacherController : ControllerBase
     {
+        Constants constant = new Constants();
        private readonly DataContext context;
+    
         public TeacherController(DataContext ctx){
             context = ctx;
+            
 
         }          
 
@@ -163,7 +167,7 @@ if (request.AppointFile == null || request.AppointFile.Length == 0)
         HealthStatus = request.HealthStatus,
         EmergencyContacts = request.EmergencyContacts,
         Salary = request.Salary,
-        
+        Role =  constant.Teacher,
        
         StaffID = StaffIdGenerator(),
         DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
@@ -176,11 +180,25 @@ if (request.AppointFile == null || request.AppointFile.Length == 0)
     if (StaffID){
         tutor.StaffID = StaffIdGenerator();
     }
+    var rawPassword = StaffIdGenerator();
+    var Auth = new AuthenticationModel{
+        UserId = tutor.StaffID,
+        Role = tutor.Role,
+        Name = tutor.FirstName+" " +tutor.OtherName+" " +tutor.LastName,
+        UserPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword),
+    };
 
+    bool hasInternetConnection = NetworkInterface.GetIsNetworkAvailable();
+    
+         context.AuthenticationModels.Add(Auth);
     context.Teachers.Add(tutor);
     await context.SaveChangesAsync();
+    
 
-    return Ok("Tutor admitted successfully");
+
+   
+
+return Ok($"Tutor admitted successfully Id = {tutor.StaffID} Password = {rawPassword}");
 }
 
 private string StaffIdGenerator()
