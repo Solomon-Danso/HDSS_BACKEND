@@ -10,6 +10,7 @@ namespace HDSS_BACKEND.Models
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? Role { get; set; }
+        public string? SpecificUserRole { get; set; }
         public string? UserId { get; set; }
         public string? UserPassword { get; set; }
         public string? TwoSteps { get; set; }
@@ -17,5 +18,13 @@ namespace HDSS_BACKEND.Models
         public string? PasswordToken { get; set; }
         public DateTime? PasswordTokenExpire { get; set; }
 
+
+    }
+    public class OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
+       public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Role { get; set; }
+        public string? UserId { get; set; }
+        public string? UserPassword { get; set; } 
     }
 }

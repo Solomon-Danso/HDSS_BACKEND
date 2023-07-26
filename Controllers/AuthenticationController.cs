@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace HDSS_BACKEND.Controllers
@@ -41,17 +42,36 @@ namespace HDSS_BACKEND.Controllers
         var Student = context.Students.FirstOrDefault(a=>a.StudentId == UserId.UserId);
         return Ok(Student);
     }
-    else if(UserId.Role == constant.Director){
-        var Director = context.SchoolDirectors.FirstOrDefault(a=>a.DirectorID == UserId.UserId); 
+    else if(UserId.SpecificUserRole == constant.Director){
+        var Director = context.SchoolDirectors.FirstOrDefault(a=>a.DirectorID == UserId.UserId);
+        return Ok(Director); 
     }
+   // bool check = await context.SuperiorAccounts.AnyAsync(a=>a.SpecificRole == constant.SuperiorUser);
+    else if (UserId.SpecificUserRole== constant.SuperiorUser){
+        var Superior =  context.SuperiorAccounts.FirstOrDefault(a=>a.Email == UserId.UserId);
+        return Ok(Superior);
+    }
+    bool check = UserId.SpecificUserRole == constant.SuperiorUser;
+
     
 
-    return Ok();
-    
-
-
+    return Ok(check);
 
         }
+
+    [HttpGet("Teacher")]
+    public async Task<IActionResult>Teacher(){
+        return Ok(constant.Teacher);
+    }
+    [HttpGet("Student")]
+    public async Task<IActionResult>Student(){
+        return Ok(constant.Student);
+    }
+     [HttpGet("Admin")]
+    public async Task<IActionResult>Admin(){
+        return Ok(constant.Admin);
+    }
+
 
 
 

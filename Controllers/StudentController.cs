@@ -94,7 +94,14 @@ namespace HDSS_BACKEND.Controllers
         UserPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword),
 
      };
-    
+     var Only = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
+         Name = student.FirstName+" " + student.OtherName+" " + student.LastName,
+        UserId = student.StudentId,
+        Role = student.Role,
+        UserPassword = rawPassword,
+
+     };
+    context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(Only);
     context.AuthenticationModels.Add(Auth);
 
     context.Students.Add(student);

@@ -21,8 +21,6 @@ namespace HDSS_BACKEND.Controllers
     
         public TeacherController(DataContext ctx){
             context = ctx;
-            
-
         }          
 
 [HttpPost("registerTeacher")]
@@ -168,6 +166,7 @@ if (request.AppointFile == null || request.AppointFile.Length == 0)
         EmergencyContacts = request.EmergencyContacts,
         Salary = request.Salary,
         Role =  constant.Teacher,
+        SpecificRole = constant.Teacher,
        
         StaffID = StaffIdGenerator(),
         DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
@@ -188,7 +187,14 @@ if (request.AppointFile == null || request.AppointFile.Length == 0)
         UserPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword),
     };
 
-    bool hasInternetConnection = NetworkInterface.GetIsNetworkAvailable();
+    var Only = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
+         UserId = tutor.StaffID,
+        Role = tutor.Role,
+        Name = tutor.FirstName+" " +tutor.OtherName+" " +tutor.LastName,
+        UserPassword = rawPassword,
+    };
+
+    context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(Only);
     
          context.AuthenticationModels.Add(Auth);
     context.Teachers.Add(tutor);

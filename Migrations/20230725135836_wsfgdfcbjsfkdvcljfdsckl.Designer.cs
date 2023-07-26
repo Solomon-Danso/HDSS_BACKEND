@@ -4,16 +4,19 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HDSS_BACKEND.Migrations.OnlineData
+namespace HDSS_BACKEND.Migrations
 {
-    [DbContext(typeof(OnlineDataContext))]
-    partial class OnlineDataContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(DataContext))]
+    [Migration("20230725135836_wsfgdfcbjsfkdvcljfdsckl")]
+    partial class wsfgdfcbjsfkdvcljfdsckl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -432,6 +435,9 @@ namespace HDSS_BACKEND.Migrations.OnlineData
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Specific")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TwoSteps")
                         .HasColumnType("nvarchar(max)");
 
@@ -810,6 +816,65 @@ namespace HDSS_BACKEND.Migrations.OnlineData
                     b.ToTable("LessonNotesUpload");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.Managers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManagerID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecificRole")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Managers");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.OnlySuperiorsCanViewThisDueToSecurityReasonsNtia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OnlySuperiorsCanViewThisDueToSecurityReasons");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.Picture", b =>
                 {
                     b.Property<int>("Id")
@@ -870,23 +935,14 @@ namespace HDSS_BACKEND.Migrations.OnlineData
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("ProfilePicturePath")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("PasswordTokenExpire")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TwoSteps")
+                    b.Property<string>("SpecificRole")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TwoStepsExpire")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -1102,6 +1158,40 @@ namespace HDSS_BACKEND.Migrations.OnlineData
                     b.ToTable("Subjects");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.SuperiorAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecificRole")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SuperiorID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SuperiorAccounts");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.Syllabus", b =>
                 {
                     b.Property<int>("Id")
@@ -1210,15 +1300,6 @@ namespace HDSS_BACKEND.Migrations.OnlineData
                     b.Property<string>("OtherName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordResetToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordResetTokenExpire")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -1231,6 +1312,9 @@ namespace HDSS_BACKEND.Migrations.OnlineData
                     b.Property<string>("Salary")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SpecificRole")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("StaffID")
                         .HasColumnType("nvarchar(max)");
 
@@ -1241,12 +1325,6 @@ namespace HDSS_BACKEND.Migrations.OnlineData
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TwoStepsAuthToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TwoStepsAuthTokenExpire")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

@@ -54,7 +54,9 @@ public DbSet<ClassScore>ClassScores { get; set; }
 public DbSet<ClassScoreSummary>ClassScoresSummarys { get; set; }
 public DbSet<SchoolDirector> SchoolDirectors { get; set; }
 public DbSet<AuthenticationModel>AuthenticationModels { get; set; }
-
+public DbSet<SuperiorAccount>SuperiorAccounts { get; set; }
+public DbSet<Managers>Managers { get; set; }
+public DbSet<OnlySuperiorsCanViewThisDueToSecurityReasonsNtia>OnlySuperiorsCanViewThisDueToSecurityReasons {get; set; }
 
 
 

@@ -12,6 +12,8 @@ namespace HDSS_BACKEND.Models
         public string HeadTeacher = "HeadTeacher";
         public string DepartmentHead = "DepartmentHead";
         public string Accountant = "Accountant";
+        public string Admin = "Admin";
+        public string SuperiorUser = "SuperiorUser";
         
 
     }

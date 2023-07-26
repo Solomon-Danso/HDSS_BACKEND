@@ -35,6 +35,7 @@ public class Teacher
         public double? Credit{ get; set; }
         public string? StaffID { get; set; }
         public string? Role { get; set; }
+        public string? SpecificRole { get; set; }
          
 
     public string? FilePath { get; set; }
@@ -42,12 +43,6 @@ public class Teacher
     public string? AppointmentLetter { get; set; }
     public string? IdCards { get; set; }
     public string? DateAdded { get; set; }
-
-    public string? Password { get; set; }
-    public string? PasswordResetToken { get; set; }
-    public string? PasswordResetTokenExpire { get; set; }
-    public string? TwoStepsAuthToken { get; set; }
-    public string? TwoStepsAuthTokenExpire { get; set; }
 
 }
 
