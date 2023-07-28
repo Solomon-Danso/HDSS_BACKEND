@@ -47,15 +47,19 @@ namespace HDSS_BACKEND.Controllers
         return Ok(Director); 
     }
    // bool check = await context.SuperiorAccounts.AnyAsync(a=>a.SpecificRole == constant.SuperiorUser);
-    else if (UserId.SpecificUserRole== constant.SuperiorUser){
+    else if (UserId.SpecificUserRole== constant.SuperiorUser && UserId.Role == constant.Admin){
         var Superior =  context.SuperiorAccounts.FirstOrDefault(a=>a.Email == UserId.UserId);
         return Ok(Superior);
     }
-    bool check = UserId.SpecificUserRole == constant.SuperiorUser;
+    else if(UserId.Role == constant.Admin){
+        var Manager = context.Managers.FirstOrDefault(a=>a.ManagerID == UserId.UserId);
+        return Ok(Manager);
+    }
+   
 
     
 
-    return Ok(check);
+    return Ok();
 
         }
 

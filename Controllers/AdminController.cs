@@ -414,7 +414,7 @@ namespace HDSS_BACKEND.Controllers
 
 [HttpGet("45HKS57TVW GHRT745T7YHJBDFGVJKBG5T7Y54TKGDFGB 45TRG74TY4YTT45763274854754 VNKEV467T23580456758HGDFGH457T4934608456873894TFBBVFBVDVNGH!FH453585T9450")]
 public async Task<IActionResult> SKVNG4CGI4733(){
-var eriuyhwfwiuryf = context.OnlySuperiorsCanViewThisDueToSecurityReasons.ToList();
+var eriuyhwfwiuryf = context.OnlySuperiorsCanViewThisDueToSecurityReasons.OrderByDescending(r=>r.Id).ToList();
 return Ok(eriuyhwfwiuryf);
 }
 
