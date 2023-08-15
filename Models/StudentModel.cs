@@ -23,9 +23,21 @@ namespace HDSS_BACKEND.Models
         public string? MotherOccupation { get; set; }
         public string? GuardianName { get; set; }
         public string? GuardianOccupation { get; set; }
+        public string? ParentLocation {get;set;}
+        public string? ParentDigitalAddress {get;set;}
+        public string? ParentReligion {get; set;}
+        public string? ParentEmail {get; set;}
+       public string? EmergencyContactName {get;set;}
+        public string? EmergencyPhoneNumber {get; set;}
+        public string? EmergencyAlternatePhoneNumber {get; set;}
+        public string? RelationshipWithChild {get; set;}
+       
+
+
         public string? Religion {get; set;}
         public string? Email {get; set; }
         public string? PhoneNumber {get; set;}
+        public string? AlternatePhoneNumber {get;set;}
         public string? MedicalIInformation { get; set; }
         public string? Level { get; set; }
         public double? amountOwing { get; set; }
@@ -58,9 +70,19 @@ namespace HDSS_BACKEND.Models
         public string? MotherOccupation { get; set; }
         public string? GuardianName { get; set; }
         public string? GuardianOccupation { get; set; }
+        public string? ParentLocation {get;set;}
+        public string? ParentDigitalAddress {get;set;}
+        public string? ParentReligion {get; set;}
+        public string? ParentEmail {get; set;}
+      public string? EmergencyContactName {get;set;}
+        public string? EmergencyPhoneNumber {get; set;}
+        public string? EmergencyAlternatePhoneNumber {get; set;}
+        public string? RelationshipWithChild {get; set;}
+       
         public string? Religion {get; set;}
         public string? Email {get; set; }
         public string? PhoneNumber {get; set;}
+        public string? AlternatePhoneNumber {get;set;}
         public string? MedicalIInformation { get; set; }
         public string? Level { get; set; }
         public double? amountOwing { get; set; }

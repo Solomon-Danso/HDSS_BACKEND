@@ -45,7 +45,7 @@ namespace HDSS_BACKEND.Controllers
         
         var e = new ClassScore{
           StudentId = student.StudentId,
-          StudentName = $"{student.Title}, {student.FirstName} {student.LastName} ",
+          StudentName = $"{student.FirstName} {student.LastName} ",
           SubjectName = q.SubjectName,
           Assignmentnumber = q.AssignmentNumber,
           Score= request.Score,
@@ -54,7 +54,7 @@ namespace HDSS_BACKEND.Controllers
           AcademicTerm = q.AcademicTerm,
           AcademicYear= q.AcademicYear,
           ClassName = q.ClassName,
-          Token = student.StudentId+ $"{student.Title}, {student.FirstName} {student.LastName} "+ q.ClassName+q.SubjectName + q.AssignmentNumber+q.AcademicTerm+q.AcademicYear,
+          Token = student.StudentId+ $"{student.FirstName} {student.LastName} "+ q.ClassName+q.SubjectName + q.AssignmentNumber+q.AcademicTerm+q.AcademicYear,
           DateScored =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
         };
 
@@ -67,7 +67,7 @@ namespace HDSS_BACKEND.Controllers
 
         var cSummary = new ClassScoreSummary{
            StudentId = student.StudentId,
-           StudentName = $"{student.Title}, {student.FirstName} {student.LastName} ",
+           StudentName = $"{student.FirstName} {student.LastName} ",
            ClassName = q.ClassName,
             SubjectName = q.SubjectName,
             AcademicTerm = q.AcademicTerm,

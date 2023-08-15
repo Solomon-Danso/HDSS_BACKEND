@@ -14,6 +14,7 @@ namespace HDSS_BACKEND.Models
         public string Accountant = "Accountant";
         public string Admin = "Admin";
         public string SuperiorUser = "SuperiorUser";
+        public string Parent = "Parent";
         
 
     }

@@ -57,8 +57,7 @@ namespace HDSS_BACKEND.Controllers
 
  var student = new Student
     {
-        StudentId = StudentIdGenerator(),
-       
+        StudentId = StudentIdGenerator(),      
         FirstName = studentDto.FirstName,
         OtherName = studentDto.OtherName,
         LastName = studentDto.LastName,
@@ -74,9 +73,18 @@ namespace HDSS_BACKEND.Controllers
         GuardianName = studentDto.GuardianName,
       GuardianOccupation = studentDto.GuardianOccupation,
         MedicalIInformation = studentDto.MedicalIInformation,
+        ParentLocation = studentDto.ParentLocation,
+        ParentDigitalAddress = studentDto.ParentDigitalAddress,
+        ParentReligion = studentDto.ParentReligion,
+        ParentEmail = studentDto.ParentEmail,
+        EmergencyContactName = studentDto.EmergencyContactName,
+        EmergencyPhoneNumber = studentDto.EmergencyPhoneNumber,
+        EmergencyAlternatePhoneNumber = studentDto.EmergencyAlternatePhoneNumber,
+        RelationshipWithChild = studentDto.RelationshipWithChild,
         Religion = studentDto.Religion,
         Email = studentDto.Email,
         PhoneNumber = studentDto.PhoneNumber,
+        AlternatePhoneNumber = studentDto.AlternatePhoneNumber,
         Level = studentDto.Level,
         amountOwing = studentDto.amountOwing,
         creditAmount = studentDto.creditAmount,
@@ -107,7 +115,68 @@ namespace HDSS_BACKEND.Controllers
     context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(Only);
     context.AuthenticationModels.Add(Auth);
 
+    var parent = new ParentsModel{
+        ParentId = StudentIdGenerator(),
+        StudentPicture = student.ProfilePic,
+        StudentName = student.FirstName+" " + student.OtherName+" "+student.LastName,
+        StudentId = student.StudentId,
+        StudentLevel = student.Level,
+        FathersName = student.FathersName,
+        FatherOccupation = student.FatherOccupation,
+        MothersName = student.MothersName,
+        MotherOccupation = student.MotherOccupation,
+        GuardianName = student.GuardianName,
+        GuardianOccupation = student.GuardianOccupation,
+        ParentLocation = student.ParentLocation,
+        ParentDigitalAddress = student.ParentDigitalAddress,
+        ParentReligion = student.ParentReligion,
+        ParentEmail = student.ParentEmail,
+       EmergencyContactName = student.EmergencyContactName,
+       EmergencyPhoneNumber = student.EmergencyPhoneNumber,
+       EmergencyAlternatePhoneNumber = student.EmergencyAlternatePhoneNumber,
+       RelationshipWithChild = student.RelationshipWithChild,
+        NumberOfWards = 1,
+        Role = constant.Parent,
+        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+
+    }; 
+
+    bool checker = await context.Parents.AnyAsync(p=>p.EmergencyPhoneNumber==parent.EmergencyPhoneNumber||p.EmergencyPhoneNumber==parent.EmergencyAlternatePhoneNumber||p.EmergencyAlternatePhoneNumber==parent.EmergencyPhoneNumber||p.EmergencyAlternatePhoneNumber==parent.EmergencyAlternatePhoneNumber);
+    if (checker){
+        var ck = context.Parents.FirstOrDefault(p=>p.EmergencyPhoneNumber==parent.EmergencyPhoneNumber||p.EmergencyPhoneNumber==parent.EmergencyAlternatePhoneNumber||p.EmergencyAlternatePhoneNumber==parent.EmergencyPhoneNumber||p.EmergencyAlternatePhoneNumber==parent.EmergencyAlternatePhoneNumber);
+        if (ck!=null){
+            ck.NumberOfWards = ck.NumberOfWards+1;
+        }
+    }
+    else{
+   
+
+     var ParentrawPassword = StudentIdGenerator();
+     var ParentAuth = new AuthenticationModel{
+        Name =constant.Parent +" Of "+student.FirstName+" " + student.OtherName+" " + student.LastName,
+        UserId = parent.ParentId,
+        Role = parent.Role,
+        UserPassword = BCrypt.Net.BCrypt.HashPassword(ParentrawPassword),
+
+     };
+     var ParentOnly = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
+         Name = constant.Parent +" Of "+student.FirstName+" " + student.OtherName+" " + student.LastName,
+        UserId = parent.ParentId,
+        Role = parent.Role,
+        UserPassword = ParentrawPassword
+
+     };
+    context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(ParentOnly);
+    context.AuthenticationModels.Add(ParentAuth);
+    context.Parents.Add(parent);
+
+    }
+
+
+ 
+
     context.Students.Add(student);
+    
     await context.SaveChangesAsync();
     return Ok($"Student admmission is successful Id = {student.StudentId} Password = {rawPassword}");
     
@@ -190,6 +259,16 @@ student.SchoolBankAccount = request.SchoolBankAccount;
 student.Religion = request.Religion;
 student.Email = request.Email;
 student.PhoneNumber = request.PhoneNumber;
+student.AlternatePhoneNumber = request.AlternatePhoneNumber;
+student.ParentLocation = request.ParentLocation;
+student.ParentDigitalAddress = request.ParentDigitalAddress;
+student.ParentReligion = request.ParentReligion;
+student.ParentEmail = request.ParentEmail;
+student.EmergencyContactName = request.EmergencyContactName;
+student.EmergencyPhoneNumber = request.EmergencyPhoneNumber;
+student.EmergencyAlternatePhoneNumber = request.EmergencyAlternatePhoneNumber;
+student.RelationshipWithChild = request.RelationshipWithChild;
+
 student.ProfilePic = Path.Combine("Students/Profile", fileName);
 
 await context.SaveChangesAsync();

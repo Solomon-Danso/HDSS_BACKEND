@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230815105418_wyKGFDVBDRKYUFSGVHDFUVGJHDSFVDSUKFGHFDVHSDGFHVJBDFBN")]
+    partial class wyKGFDVBDRKYUFSGVHDFUVGJHDSFVDSUKFGHFDVHSDGFHVJBDFBN
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -880,9 +883,6 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DateAdded")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("EmergencyAlternatePhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -1108,9 +1108,6 @@ namespace HDSS_BACKEND.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AdmissionDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AlternatePhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")

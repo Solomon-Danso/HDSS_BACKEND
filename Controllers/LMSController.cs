@@ -1074,11 +1074,11 @@ TheId = AssignmentIdGenerator(),
 
        Subject = SubjectN,
        Content = request.Content,
-TheId = AssignmentIdGenerator(),
+      TheId = AssignmentIdGenerator(),
        ClassName = ClassN,
        DateSent = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
        SenderId = teacher.StudentId,
-       SenderName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+       SenderName = teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
 
     };
 
@@ -1285,7 +1285,7 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
        SubmissionPath = Path.Combine("LMS/SubmissionFiles", slideName),
         uploadDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
        StudentId = student.StudentId,
-       StudentName = student.Title+". "+student.FirstName+" "+student.OtherName+" " + student.LastName,
+       StudentName = student.FirstName+" "+student.OtherName+" " + student.LastName,
        AssignmentToken = question.AssignmentToken,
        AcademicYear = Year,
        AcademicTerm = Term,

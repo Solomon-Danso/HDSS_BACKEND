@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230815085309_wyKGFDVBDRKYUFSGVHDFUVGJHDSFVDSUKFGHFDVHSDGFHVJBDFB")]
+    partial class wyKGFDVBDRKYUFSGVHDFUVGJHDSFVDSUKFGHFDVHSDGFHVJBDFB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -872,85 +875,6 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("OnlySuperiorsCanViewThisDueToSecurityReasons");
                 });
 
-            modelBuilder.Entity("HDSS_BACKEND.Models.ParentsModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DateAdded")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmergencyAlternatePhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmergencyContactName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmergencyPhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FatherOccupation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FathersName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GuardianName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GuardianOccupation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MotherOccupation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MothersName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("NumberOfWards")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ParentDigitalAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParentEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParentLocation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParentReligion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RelationshipWithChild")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentLevel")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentPicture")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Parents");
-                });
-
             modelBuilder.Entity("HDSS_BACKEND.Models.Picture", b =>
                 {
                     b.Property<int>("Id")
@@ -1110,9 +1034,6 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("AdmissionDate")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AlternatePhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
@@ -1120,15 +1041,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmergencyAlternatePhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmergencyContactName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmergencyPhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FatherOccupation")
@@ -1173,25 +1085,10 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("OtherName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ParentDigitalAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParentEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParentLocation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ParentReligion")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfilePic")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RelationshipWithChild")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Religion")
