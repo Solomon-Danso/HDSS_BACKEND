@@ -279,11 +279,14 @@ return Ok("Student update was successful");
 
 
 [HttpGet("getStudents")]
-public async Task<IActionResult> GetStudents(){
-    var studentList = context.Students.ToList();
+public async Task<IActionResult> GetStudents(string stage)
+{
+    var studentList = context.Students.Where(s=>s.Level==stage).OrderBy(student => student.LastName).ToList();
     
     return Ok(studentList);
 }
+
+
 
 [HttpGet("getSpecificUser")]
 public async Task<IActionResult> GetSpecificUser(string StudentId){
