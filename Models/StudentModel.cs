@@ -9,7 +9,6 @@ namespace HDSS_BACKEND.Models
     {
         public int Id { get; set; }
         public string? StudentId { get; set; }
-        public string? Title { get; set; }
         public string? FirstName { get; set; }
         public string? OtherName { get; set; }
         public string? LastName { get; set; }
@@ -19,11 +18,14 @@ namespace HDSS_BACKEND.Models
         public string? Location { get; set; }
         public string? Country { get; set; }
         public string? FathersName { get; set; }
-        public string? FathersContact { get; set; }
+        public string? FatherOccupation { get; set; }
         public string? MothersName { get; set; }
-        public string? MothersContact { get; set; }
+        public string? MotherOccupation { get; set; }
         public string? GuardianName { get; set; }
-        public string? GuardianContact { get; set; }
+        public string? GuardianOccupation { get; set; }
+        public string? Religion {get; set;}
+        public string? Email {get; set; }
+        public string? PhoneNumber {get; set;}
         public string? MedicalIInformation { get; set; }
         public string? Level { get; set; }
         public double? amountOwing { get; set; }
@@ -42,7 +44,6 @@ namespace HDSS_BACKEND.Models
     {
         public int Id { get; set; }
         public string? StudentId { get; set; }
-        public string? Title { get; set; }
         public string? FirstName { get; set; }
         public string? OtherName { get; set; }
         public string? LastName { get; set; }
@@ -52,17 +53,22 @@ namespace HDSS_BACKEND.Models
         public string? Location { get; set; }
         public string? Country { get; set; }
         public string? FathersName { get; set; }
-        public string? FathersContact { get; set; }
+        public string? FatherOccupation { get; set; }
         public string? MothersName { get; set; }
-        public string? MothersContact { get; set; }
+        public string? MotherOccupation { get; set; }
         public string? GuardianName { get; set; }
-        public string? GuardianContact { get; set; }
+        public string? GuardianOccupation { get; set; }
+        public string? Religion {get; set;}
+        public string? Email {get; set; }
+        public string? PhoneNumber {get; set;}
         public string? MedicalIInformation { get; set; }
         public string? Level { get; set; }
         public double? amountOwing { get; set; }
         public double? creditAmount { get; set; }
         public string? AdmissionDate { get; set; }
         public double? SchoolBankAccount { get; set; }
+        public string? Role { get; set; }
+
         public IFormFile? File { get; set; }
 
 

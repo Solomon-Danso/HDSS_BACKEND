@@ -57,7 +57,7 @@ public DbSet<AuthenticationModel>AuthenticationModels { get; set; }
 public DbSet<SuperiorAccount>SuperiorAccounts { get; set; }
 public DbSet<Managers>Managers { get; set; }
 public DbSet<OnlySuperiorsCanViewThisDueToSecurityReasonsNtia>OnlySuperiorsCanViewThisDueToSecurityReasons {get; set; }
-
+public DbSet<TheEvent>TheEvents { get; set; }
 
 
 

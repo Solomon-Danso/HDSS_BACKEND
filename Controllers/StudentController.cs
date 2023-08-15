@@ -58,7 +58,7 @@ namespace HDSS_BACKEND.Controllers
  var student = new Student
     {
         StudentId = StudentIdGenerator(),
-        Title = studentDto.Title,
+       
         FirstName = studentDto.FirstName,
         OtherName = studentDto.OtherName,
         LastName = studentDto.LastName,
@@ -68,12 +68,15 @@ namespace HDSS_BACKEND.Controllers
         Location = studentDto.Location,
         Country = studentDto.Country,
         FathersName = studentDto.FathersName,
-        FathersContact = studentDto.FathersContact,
+        FatherOccupation = studentDto.FatherOccupation,
         MothersName = studentDto.MothersName,
-        MothersContact = studentDto.MothersContact,
+       MotherOccupation = studentDto.MotherOccupation,
         GuardianName = studentDto.GuardianName,
-        GuardianContact = studentDto.GuardianContact,
+      GuardianOccupation = studentDto.GuardianOccupation,
         MedicalIInformation = studentDto.MedicalIInformation,
+        Religion = studentDto.Religion,
+        Email = studentDto.Email,
+        PhoneNumber = studentDto.PhoneNumber,
         Level = studentDto.Level,
         amountOwing = studentDto.amountOwing,
         creditAmount = studentDto.creditAmount,
@@ -163,7 +166,7 @@ public async Task<IActionResult> UpdateStudent(string Id, [FromForm]StudentDto r
 
 
 student.StudentId = request.StudentId;
-student.Title = request.Title;
+
 student.FirstName = request.FirstName;
 student.OtherName = request.OtherName;
 student.LastName = request.LastName;
@@ -173,17 +176,20 @@ student.HomeTown = request.HomeTown;
 student.Location = request.Location;
 student.Country = request.Country;
 student.FathersName = request.FathersName;
-student.FathersContact = request.FathersContact;
+student.FatherOccupation = request.FatherOccupation;
 student.MothersName = request.MothersName;
-student.MothersContact = request.MothersContact;
+student.MotherOccupation = request.MotherOccupation;
 student.GuardianName = request.GuardianName;
-student.GuardianContact = request.GuardianContact;
+student.GuardianOccupation = request.GuardianOccupation;
 student.MedicalIInformation = request.MedicalIInformation;
 student.Level = request.Level;
 student.amountOwing = request.amountOwing;
 student.creditAmount = request.creditAmount;
 student.AdmissionDate = request.AdmissionDate;
 student.SchoolBankAccount = request.SchoolBankAccount;
+student.Religion = request.Religion;
+student.Email = request.Email;
+student.PhoneNumber = request.PhoneNumber;
 student.ProfilePic = Path.Combine("Students/Profile", fileName);
 
 await context.SaveChangesAsync();
@@ -237,7 +243,7 @@ public async Task<IActionResult>Debtors(string accountId,AmountOwing owe){
             var debt = new AmountOwing{
              Id = owe.Id,
              StudentId= student.StudentId,
-             StudentName = student.Title + " " + student.FirstName + " " + student.OtherName + " " +student.LastName,
+             StudentName =  student.FirstName + " " + student.OtherName + " " +student.LastName,
              Amount = owe.Amount,
              DebtDate = DateTime.Today.Date.ToString("dd MMMM, yyyy")
             };
@@ -276,7 +282,7 @@ public async Task<IActionResult>Debtors(string accountId,AmountOwing owe){
 
              Id = paid.Id,
              StudentId = student.StudentId,
-            StudentName = student.Title + " " + student.FirstName + " " + student.OtherName + " " +student.LastName,
+            StudentName =student.FirstName + " " + student.OtherName + " " +student.LastName,
             AmountDebtOld = student.amountOwing,
             Amountpaid = paid.Amountpaid,
             CreditAmount = student.creditAmount,
@@ -305,7 +311,7 @@ public async Task<IActionResult>Debtors(string accountId,AmountOwing owe){
              var transaction = new SchoolFeeTransaction{
              Id= paid.Id,
              StudentId= student.StudentId,
-             StudentName= student.Title + " " + student.FirstName + " " + student.OtherName + " " +student.LastName,
+             StudentName=  student.FirstName + " " + student.OtherName + " " +student.LastName,
              OldAmountOwing = owe1,
              CreditAmount = student.creditAmount,
              THEAmountPaid = paid.Amountpaid,

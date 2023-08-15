@@ -418,8 +418,53 @@ var eriuyhwfwiuryf = context.OnlySuperiorsCanViewThisDueToSecurityReasons.OrderB
 return Ok(eriuyhwfwiuryf);
 }
 
+[HttpPost("AddEvent")]
+public async Task<IActionResult> AddEvents([FromBody] TheEvent request){
 
+var TheEvent = new TheEvent{
+    Title = request.Title,
+    Start = request.Start,
+    End = request.End,
+};
+context.TheEvents.Add(TheEvent);
+await context.SaveChangesAsync();
+return Ok("Event Saved Successfully");
 
+}
+
+[HttpGet("ViewEvents")]
+public async Task<IActionResult>ViewEvents(){
+    var theEvents = context.TheEvents.OrderByDescending(r=>r.Id).ToList();
+    return Ok(theEvents);
+}
+
+[HttpPost("UpdateEvents")]
+public async Task<IActionResult>UpdateEvents([FromBody] TheEvent request, int Id){
+    var theEvents = context.TheEvents.FirstOrDefault(u=>u.Id == Id);
+    if (theEvents==null){
+        return BadRequest("Event not found");
+    }
+
+    theEvents.Title = request.Title;
+    theEvents.Start = request.Start;
+    theEvents.End = request.End;
+    await context.SaveChangesAsync();
+    return Ok("Updated Successfully");
+
+}
+
+[HttpDelete("DeleteEvents")]
+public async Task<IActionResult>DeleteEvents(int Id){
+    var theEvents = context.TheEvents.FirstOrDefault(u=>u.Id == Id);
+    if (theEvents==null){
+        return BadRequest("Event not found");
+    }
+
+    context.TheEvents.Remove(theEvents);
+    await context.SaveChangesAsync();
+    return Ok("Deleted Successfully");
+
+}
 
 
 
