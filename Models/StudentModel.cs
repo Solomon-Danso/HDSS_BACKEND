@@ -31,12 +31,13 @@ namespace HDSS_BACKEND.Models
         public string? EmergencyPhoneNumber {get; set;}
         public string? EmergencyAlternatePhoneNumber {get; set;}
         public string? RelationshipWithChild {get; set;}
-       
+       public string? ParentPhoneNumber {get; set;}
 
 
         public string? Religion {get; set;}
         public string? Email {get; set; }
         public string? PhoneNumber {get; set;}
+
         public string? AlternatePhoneNumber {get;set;}
         public string? MedicalIInformation { get; set; }
         public string? Level { get; set; }
@@ -78,6 +79,7 @@ namespace HDSS_BACKEND.Models
         public string? EmergencyPhoneNumber {get; set;}
         public string? EmergencyAlternatePhoneNumber {get; set;}
         public string? RelationshipWithChild {get; set;}
+        public string? ParentPhoneNumber {get; set;}
        
         public string? Religion {get; set;}
         public string? Email {get; set; }

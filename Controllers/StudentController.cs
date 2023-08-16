@@ -84,6 +84,7 @@ namespace HDSS_BACKEND.Controllers
         Religion = studentDto.Religion,
         Email = studentDto.Email,
         PhoneNumber = studentDto.PhoneNumber,
+        ParentPhoneNumber = studentDto.ParentPhoneNumber,
         AlternatePhoneNumber = studentDto.AlternatePhoneNumber,
         Level = studentDto.Level,
         amountOwing = studentDto.amountOwing,
@@ -264,6 +265,7 @@ student.ParentLocation = request.ParentLocation;
 student.ParentDigitalAddress = request.ParentDigitalAddress;
 student.ParentReligion = request.ParentReligion;
 student.ParentEmail = request.ParentEmail;
+student.ParentPhoneNumber = request.ParentPhoneNumber;
 student.EmergencyContactName = request.EmergencyContactName;
 student.EmergencyPhoneNumber = request.EmergencyPhoneNumber;
 student.EmergencyAlternatePhoneNumber = request.EmergencyAlternatePhoneNumber;
