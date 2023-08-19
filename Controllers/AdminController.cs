@@ -434,7 +434,7 @@ return Ok("Event Saved Successfully");
 
 [HttpGet("ViewEvents")]
 public async Task<IActionResult>ViewEvents(){
-    var theEvents = context.TheEvents.OrderByDescending(r=>r.Id).ToList();
+    var theEvents = context.TheEvents.Where(a=>DateTime.Now.AddMinutes(-1)<=a.End).OrderByDescending(r=>r.Id).ToList();
     return Ok(theEvents);
 }
 
@@ -469,11 +469,39 @@ public async Task<IActionResult>DeleteEvents(int Id){
 
 
 
+ [HttpPost("Search")]
+        public async Task<IActionResult> SearchVideo(string searchTerm){
+            var searchResult = context.Students.ToList().Where(v=>v.LastName != null && v.LastName.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) || v.FirstName != null && v.FirstName.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) || v.Level != null && v.Level.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) ||v.StudentId != null && v.StudentId.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) ).OrderByDescending(r=>r.LastName).ToList();
+            if(searchResult.Count()==0){
+                return NotFound("No Result Found");
+            }
+            return Ok(searchResult);    
+        }
 
 
+[HttpGet("AllStudents")]
+public async Task<IActionResult> GetAllStudent(){
+    var students =  context.Students.OrderBy(r=>r.LastName).ToList();
+    return Ok(students);
+}
 
+[HttpGet("AllStudentsCount")]
+public async Task<IActionResult> GetAllStudentCount(){
+    var students =  context.Students.Count();
+    return Ok(students);
+}
 
+[HttpGet("AllTeachersCount")]
+public async Task<IActionResult> GetAllTeacherCount(){
+    var Teachers =  context.Teachers.Count();
+    return Ok(Teachers);
+}
 
+[HttpGet("AllParentsCount")]
+public async Task<IActionResult> GetAllParentCount(){
+    var Parents =  context.Parents.Count();
+    return Ok(Parents);
+}
 
 
 
