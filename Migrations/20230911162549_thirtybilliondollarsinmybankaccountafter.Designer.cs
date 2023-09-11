@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230911162549_thirtybilliondollarsinmybankaccountafter")]
+    partial class thirtybilliondollarsinmybankaccountafter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -537,17 +540,8 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double?>("ClosingBalance")
                         .HasColumnType("float");
-
-                    b.Property<string>("Level")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("OpeningBalance")
                         .HasColumnType("float");
@@ -557,9 +551,6 @@ namespace HDSS_BACKEND.Migrations
 
                     b.Property<double?>("Transaction")
                         .HasColumnType("float");
-
-                    b.Property<string>("TransactionDate")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

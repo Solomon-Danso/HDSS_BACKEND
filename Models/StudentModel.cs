@@ -32,7 +32,7 @@ namespace HDSS_BACKEND.Models
         public string? EmergencyAlternatePhoneNumber {get; set;}
         public string? RelationshipWithChild {get; set;}
        public string? ParentPhoneNumber {get; set;}
-
+        public double? Balance { get; set; }
 
         public string? Religion {get; set;}
         public string? Email {get; set; }
@@ -47,6 +47,8 @@ namespace HDSS_BACKEND.Models
         public double? SchoolBankAccount { get; set; }
         public string? ProfilePic { get; set; }
         public string? Role { get; set; }
+        public string? TheAcademicYear { get; set; }
+        public string? TheAcademicTerm { get; set;}
 
 
 
@@ -87,12 +89,13 @@ namespace HDSS_BACKEND.Models
         public string? AlternatePhoneNumber {get;set;}
         public string? MedicalIInformation { get; set; }
         public string? Level { get; set; }
-        public double? amountOwing { get; set; }
-        public double? creditAmount { get; set; }
+        public double? Balance { get; set; }
         public string? AdmissionDate { get; set; }
         public double? SchoolBankAccount { get; set; }
         public string? Role { get; set; }
 
+        public string? TheAcademicYear { get; set; }
+        public string? TheAcademicTerm { get; set;}
         public IFormFile? File { get; set; }
 
 

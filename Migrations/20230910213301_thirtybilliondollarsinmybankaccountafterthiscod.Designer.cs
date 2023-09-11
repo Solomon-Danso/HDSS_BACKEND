@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230910213301_thirtybilliondollarsinmybankaccountafterthiscod")]
+    partial class thirtybilliondollarsinmybankaccountafterthiscod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,28 +55,6 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AcademicYears");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.AdmissionFee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Amount")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Level")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AdmissionFees");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.AdmissionLetter", b =>
@@ -121,6 +102,9 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentImage")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -529,43 +513,6 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("AuthenticationModels");
                 });
 
-            modelBuilder.Entity("HDSS_BACKEND.Models.BillingCard", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("ClosingBalance")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Level")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("OpeningBalance")
-                        .HasColumnType("float");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Transaction")
-                        .HasColumnType("float");
-
-                    b.Property<string>("TransactionDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BillingCards");
-                });
-
             modelBuilder.Entity("HDSS_BACKEND.Models.Calendar", b =>
                 {
                     b.Property<int>("Id")
@@ -746,34 +693,6 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Discussions");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.Fee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Amount")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Level")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Fees");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.Instituition", b =>
@@ -1280,9 +1199,6 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("AlternatePhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Balance")
-                        .HasColumnType("float");
-
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
@@ -1377,12 +1293,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TheAcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TheAcademicYear")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("amountOwing")

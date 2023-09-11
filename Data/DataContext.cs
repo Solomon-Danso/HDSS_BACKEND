@@ -59,6 +59,11 @@ public DbSet<Managers>Managers { get; set; }
 public DbSet<OnlySuperiorsCanViewThisDueToSecurityReasonsNtia>OnlySuperiorsCanViewThisDueToSecurityReasons {get; set; }
 public DbSet<TheEvent>TheEvents { get; set; }
 public DbSet<ParentsModel> Parents {get; set;}
+public DbSet<Instituition> Instituitions{get; set;}
+public DbSet<AdmissionLetter> AdmissionLetters {get; set;}
+public DbSet<Fee> Fees {get; set;}
+public DbSet<AdmissionFee> AdmissionFees {get; set;}
+public DbSet<BillingCard> BillingCards {get; set;}
 
 
 

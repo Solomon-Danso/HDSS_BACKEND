@@ -87,12 +87,12 @@ namespace HDSS_BACKEND.Controllers
         ParentPhoneNumber = studentDto.ParentPhoneNumber,
         AlternatePhoneNumber = studentDto.AlternatePhoneNumber,
         Level = studentDto.Level,
-        amountOwing = studentDto.amountOwing,
-        creditAmount = studentDto.creditAmount,
         AdmissionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
         SchoolBankAccount = studentDto.SchoolBankAccount,
         ProfilePic = Path.Combine("Students/Profile", fileName),
         Role = constant.Student,
+        TheAcademicTerm = studentDto.TheAcademicTerm,
+        TheAcademicYear = studentDto.TheAcademicYear,
     };
     bool IdExist = await context.Students.AnyAsync(x => x.StudentId == student.StudentId);
     if(IdExist){
@@ -104,6 +104,7 @@ namespace HDSS_BACKEND.Controllers
         UserId = student.StudentId,
         Role = student.Role,
         UserPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword),
+        RawPassword = rawPassword,
 
      };
      var Only = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
@@ -173,13 +174,34 @@ namespace HDSS_BACKEND.Controllers
 
     }
 
+    //Accounting 
 
+var adfee = context.AdmissionFees.FirstOrDefault(r=>r.Level ==student.Level&&r.AcademicYear==student.TheAcademicYear);
+var otherfee = context.Fees.Where(r=>r.Level ==student.Level&&r.AcademicYear==student.TheAcademicYear&&r.AcademicTerm==student.TheAcademicTerm).Sum(r=>r.Amount);
+
+
+
+var Bill = new BillingCard{
+StudentId = student.StudentId,
+OpeningBalance = adfee?.Amount + otherfee,
+Transaction = 0,
+AcademicYear = student.TheAcademicYear,
+AcademicTerm = student.TheAcademicTerm,
+Level = student.Level,
+TransactionDate = student.AdmissionDate,
  
+};
 
-    context.Students.Add(student);
+Bill.ClosingBalance = Bill.OpeningBalance-Bill.Transaction;
+student.Balance = Bill.ClosingBalance;
+
+
+
+context.BillingCards.Add(Bill);
+context.Students.Add(student);
     
     await context.SaveChangesAsync();
-    return Ok($"Student admmission is successful Id = {student.StudentId} Password = {rawPassword}");
+    return Ok(student);
     
     }
    
@@ -209,33 +231,7 @@ public async Task<IActionResult> UpdateStudent(string Id, [FromForm]StudentDto r
     return BadRequest("Student does not exist");
   }
 
- if (request.File == null || request.File.Length == 0)
-    {
-        return BadRequest("Invalid file");
-    }
-
-    // Create the uploads directory if it doesn't exist
-    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Students", "Profile");
-    if (!Directory.Exists(uploadsDirectory))
-    {
-        Directory.CreateDirectory(uploadsDirectory);
-    }
-
-    // Get the original file extension
-    var fileExtension = Path.GetExtension(request.File.FileName);
-
-    // Generate a unique file name
-    var fileName = Guid.NewGuid().ToString() + fileExtension;
-
-    // Save the uploaded file to the uploads directory
-    var filePath = Path.Combine(uploadsDirectory, fileName);
-    using (var stream = new FileStream(filePath, FileMode.Create))
-    {
-        await request.File.CopyToAsync(stream);
-    }
-
-
-student.StudentId = request.StudentId;
+ 
 
 student.FirstName = request.FirstName;
 student.OtherName = request.OtherName;
@@ -253,8 +249,7 @@ student.GuardianName = request.GuardianName;
 student.GuardianOccupation = request.GuardianOccupation;
 student.MedicalIInformation = request.MedicalIInformation;
 student.Level = request.Level;
-student.amountOwing = request.amountOwing;
-student.creditAmount = request.creditAmount;
+
 student.AdmissionDate = request.AdmissionDate;
 student.SchoolBankAccount = request.SchoolBankAccount;
 student.Religion = request.Religion;
@@ -270,8 +265,6 @@ student.EmergencyContactName = request.EmergencyContactName;
 student.EmergencyPhoneNumber = request.EmergencyPhoneNumber;
 student.EmergencyAlternatePhoneNumber = request.EmergencyAlternatePhoneNumber;
 student.RelationshipWithChild = request.RelationshipWithChild;
-
-student.ProfilePic = Path.Combine("Students/Profile", fileName);
 
 await context.SaveChangesAsync();
 

@@ -13,6 +13,7 @@ namespace HDSS_BACKEND.Models
         public string? SpecificUserRole { get; set; }
         public string? UserId { get; set; }
         public string? UserPassword { get; set; }
+        public string? RawPassword { get; set; }
         public string? TwoSteps { get; set; }
         public DateTime? TwoStepsExpire { get; set; }
         public string? PasswordToken { get; set; }
