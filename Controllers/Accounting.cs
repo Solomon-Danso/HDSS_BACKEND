@@ -14,6 +14,7 @@ namespace HDSS_BACKEND.Controllers
     public class Accounting : ControllerBase
     {
         private readonly DataContext context;
+        Constants constant = new Constants();
         public Accounting(DataContext ctx){
             context = ctx;
         }
@@ -144,7 +145,8 @@ namespace HDSS_BACKEND.Controllers
                 AcademicYear = stu.TheAcademicYear,
                 AcademicTerm = stu.TheAcademicTerm,
                 Level = stu.Level,
-                TransactionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy")
+                TransactionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+                Action = constant.FeesPayment
             };
             Bill.Transaction = request.Amount;
             Bill.ClosingBalance = Bill.OpeningBalance-Bill.Transaction;
@@ -153,8 +155,12 @@ namespace HDSS_BACKEND.Controllers
             await context.SaveChangesAsync();
             return Ok("Payment is Successful");
 
+        }
 
-
+        [HttpGet("PaymentHis")]
+        public async Task<IActionResult> GetPaymentHis(string StudentId){
+            var stu = context.BillingCards.Where(a=>a.StudentId==StudentId).ToList();
+            return Ok(stu);
         }
 
         [HttpPost("BillAClass")]
@@ -162,11 +168,30 @@ namespace HDSS_BACKEND.Controllers
         var fees = context.Fees.Where(r=>r.Level==Level && r.AcademicTerm ==Term && r.AcademicYear==Year).Sum(r=>r.Amount);
         var studentList = context.Students.Where(r => r.Level==Level).ToList();
         foreach (var student in studentList){
+            var Bill = new BillingCard{
+                StudentId = student.StudentId,
+                OpeningBalance = student.Balance,
+                AcademicYear = Year,
+                AcademicTerm = Term,
+                Level = Level,
+                TransactionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+                Action = constant.TermFees,
+                Bills = fees
+            };
+            Bill.Transaction = 0;
             var newBalance = student.Balance+fees;
+            Bill.ClosingBalance = newBalance;
+            context.BillingCards.Add(Bill);
+
+            
             student.Balance = newBalance;
              student.Level = Level;
             student.TheAcademicTerm = Term;
             student.TheAcademicYear = Year;
+
+        
+
+
             await context.SaveChangesAsync();
         }
 
@@ -179,6 +204,21 @@ namespace HDSS_BACKEND.Controllers
         var studentList = context.Students.Where(r => r.Level==Level).ToList();
         foreach (var student in studentList){
             var newBalance = student.Balance-fees;
+
+              var Bill = new BillingCard{
+                StudentId = student.StudentId,
+                OpeningBalance = student.Balance,
+                AcademicYear = student.TheAcademicYear,
+                AcademicTerm = student.TheAcademicTerm,
+                Level = student.Level,
+                TransactionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+                Action = constant.TermFeesUnbilling,
+                Bills=fees
+            };
+            Bill.Transaction = 0;
+            Bill.ClosingBalance = newBalance;
+            context.BillingCards.Add(Bill);
+
             student.Balance = newBalance;
            
             await context.SaveChangesAsync();
@@ -202,6 +242,10 @@ public async Task<IActionResult> DiscountedFees(int discountRate, string Student
         double discount = (double)(rate * student.Balance.Value); 
         double newBalance = student.Balance.Value - discount;
         student.Balance = newBalance;
+
+        
+        
+
         await context.SaveChangesAsync();
 
         return Ok(discount); // Return the result, or adjust this as needed

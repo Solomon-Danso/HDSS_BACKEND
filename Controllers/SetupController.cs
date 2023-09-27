@@ -54,6 +54,7 @@ namespace HDSS_BACKEND.Controllers
         SchoolName = request.SchoolName,
         Location = request.Location,
         AdminName = request.AdminName,
+        Position = request.Position
         
     };
 
@@ -67,6 +68,7 @@ namespace HDSS_BACKEND.Controllers
         ist.SchoolName = insti.SchoolName;
         ist.Location = insti.Location;
         ist.AdminName = insti.AdminName;
+        ist.Position = insti.Position;
     }
     else{
         context.Instituitions.Add(insti);

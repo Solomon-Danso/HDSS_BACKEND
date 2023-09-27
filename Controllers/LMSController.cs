@@ -168,6 +168,12 @@ namespace HDSS_BACKEND.Controllers
 
     }
 
+    [HttpGet("ViewAcademicYear")]
+    public async Task<IActionResult> ViewAcademicYear(){
+        var year = context.AcademicYears.OrderByDescending(r=>r.Id).ToList();
+        return Ok(year);
+    }
+
     [HttpPost("AddAcademicTerm")]
     public async Task<IActionResult> AddAcademicTerm([FromBody]AcademicTerm request){
         var Term = new AcademicTerm{
@@ -177,6 +183,12 @@ namespace HDSS_BACKEND.Controllers
       await context.SaveChangesAsync();
       return Ok($"The academic Term for {Term.academicTerm} has been added.");
 
+    }
+
+    [HttpGet("ViewAcademicTerm")]
+    public async Task<IActionResult> ViewAcademicTerm(){
+        var term = context.AcademicTerms.ToList();
+        return Ok(term);
     }
 
         [HttpPost("UploadSlide")]

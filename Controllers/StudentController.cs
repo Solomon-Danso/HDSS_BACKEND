@@ -179,8 +179,27 @@ namespace HDSS_BACKEND.Controllers
 var adfee = context.AdmissionFees.FirstOrDefault(r=>r.Level ==student.Level&&r.AcademicYear==student.TheAcademicYear);
 var otherfee = context.Fees.Where(r=>r.Level ==student.Level&&r.AcademicYear==student.TheAcademicYear&&r.AcademicTerm==student.TheAcademicTerm).Sum(r=>r.Amount);
 
+if(adfee==null){
+  var Bill = new BillingCard{
+StudentId = student.StudentId,
+OpeningBalance =  otherfee,
+Transaction = 0,
+AcademicYear = student.TheAcademicYear,
+AcademicTerm = student.TheAcademicTerm,
+Level = student.Level,
+TransactionDate = student.AdmissionDate,
+ 
+};
+
+Bill.ClosingBalance = Bill.OpeningBalance-Bill.Transaction;
+student.Balance = Bill.ClosingBalance;
 
 
+
+context.BillingCards.Add(Bill);
+  
+}
+else{
 var Bill = new BillingCard{
 StudentId = student.StudentId,
 OpeningBalance = adfee?.Amount + otherfee,
@@ -198,6 +217,10 @@ student.Balance = Bill.ClosingBalance;
 
 
 context.BillingCards.Add(Bill);
+}
+
+
+
 context.Students.Add(student);
     
     await context.SaveChangesAsync();

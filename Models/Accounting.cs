@@ -29,10 +29,12 @@ namespace HDSS_BACKEND.Models
         public double? OpeningBalance{ get; set;}
         public double? Transaction{ get; set;}
         public double? ClosingBalance{ get; set;}
+        public double? Bills {get; set;}
         public string? AcademicYear  {get; set;}
         public string? AcademicTerm  {get; set;}
         public string? Level {get; set;}
         public string? TransactionDate {get; set;}
+        public string? Action {get; set;}
 
     }
 

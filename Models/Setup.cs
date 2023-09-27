@@ -11,12 +11,14 @@ namespace HDSS_BACKEND.Models
        public string? Logo { get; set; }
        public string? SchoolName { get; set; }
        public string? Location { get; set;}  
-       public string? AdminName { get; set; }    
+       public string? AdminName { get; set; }   
+       public string? Position {get;set;} 
     }
 
     public class InstituitionDto
     {
        public int Id { get; set; }
+       public string? Position {get;set;} 
        public IFormFile? File { get; set; }
        public string? SchoolName { get; set; }
        public string? Location { get; set;}  

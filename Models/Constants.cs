@@ -15,6 +15,9 @@ namespace HDSS_BACKEND.Models
         public string Admin = "Admin";
         public string SuperiorUser = "SuperiorUser";
         public string Parent = "Parent";
+        public string FeesPayment = "Fees Payment";
+        public string TermFees = "Term Fees Billing";
+        public string TermFeesUnbilling = "Term Fees Correction";
         
 
     }
