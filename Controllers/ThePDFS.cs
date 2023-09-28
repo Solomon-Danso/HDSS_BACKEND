@@ -129,7 +129,10 @@ string htmlelement = $@"<!DOCTYPE html>
     }}
     .bold{{
         
-        font-size: 18px;
+        font-size: 15px;
+           float: left; /* Float the left div to the left */
+    text-align: left; /* Align text to the left within the left div */
+
     }}
     .lightbold{{
         
@@ -225,6 +228,221 @@ string htmlelement = $@"<!DOCTYPE html>
             return File(response,"application/pdf",$"{fullname}.pdf");
 
         }
+
+
+
+
+ [HttpGet("FeesPayment")]
+        public async Task<IActionResult>FeesPayment(string Id, string PayId){
+
+        var student = context.Students.FirstOrDefault(r=>r.StudentId==Id);
+        var inst = context.Instituitions.FirstOrDefault(r=>r.Id>0);
+        var bill = context.BillingCards.FirstOrDefault(r=>r.TransactionId==PayId);
+        
+        if(student==null || inst==null|| bill==null ){
+            return BadRequest("Student Not Found");
+        }
+
+
+          
+       
+    
+       
+        
+
+            var document = new PdfDocument();
+
+           
+           string schoolImage = "http://" + HttpContext.Request.Host.Value + "/"+ inst.Logo;
+           var schoolname = inst.SchoolName;
+           var Location = inst.Location;
+           var Registerer = inst.AdminName;
+           var fullname =  student.FirstName+" "+ student.OtherName+ " "+student.LastName;
+
+
+string htmlelement = $@"<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {{
+        font-family: 'Open Sans', sans-serif;
+        font-size: 14px;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }}
+
+    .container {{
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        animation: fade-in 0.5s ease-out;
+        
+    }}
+
+    .container img {{
+        width: 120px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }}
+
+    .header {{
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin-top: 20px;
+    }}
+
+    .center{{
+        text-align: center;
+    }}
+
+   
+
+
+    .school-name {{
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 20px;
+    }}
+
+    .content {{
+        text-align: justify;
+    }}
+
+    .contentp {{
+        font-size: 18px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+        font-weight: 900;
+    }}
+
+
+    .spacer{{
+        margin-left: 90px;
+    }}
+    .spacer2{{
+        margin-left: 180px;
+    }}
+    .bold{{
+        
+        font-size: 18px;
+    }}
+    .lightbold{{
+        
+        font-size: 15px;
+    }}
+    .school{{
+        
+        font-size: 30px;
+    }}
+
+    /* Add individual styles for .left, .center, and .right */
+.left {{
+    float: left; /* Float the left div to the left */
+   text-align: left; /* Align text to the left within the left div */
+   padding: 9px;
+}}
+
+
+
+.right {{
+    float: right; /* Float the right div to the left */
+    padding: 10px; /* Add padding for spacing */
+    box-sizing: border-box; /* Include padding and border in the width */
+    text-align: right; /* Align text to the right within the right div */
+    margin-left:120px;
+    margin-top: -2300rem;
+
+}}
+
+
+
+
+</style>
+</head>
+<body>
+    <div class='container'>
+    <div class='center'> 
+       <img src='{schoolImage}' alt='School Logo' />
+</div>
+
+<br/>
+<div class='center'> 
+      <div class='school'>{schoolname}</div>
+      <div class='bold'>{Location}</div>
+
+</div>
+<br/>
+        <div >
+           <span class='bold'>ID: {bill.StudentId},</span>
+            <span class='spacer2 lightbold'>ReceiptNo: {bill.TransactionId}</span>
+        </div>
+
+<br/>
+        <div >
+           <span class='bold'> {fullname},</span>
+            <span class='spacer lightbold'> {bill.TransactionDate}</span>
+        </div>
+
+<br/>
+        <div >
+           <span class='bold'> {bill.Level},</span>
+            <span class='spacer2 lightbold'> {bill.AcademicYear}</span>
+        </div>
+
+
+<hr/>
+       
+        <div class='content'>
+           
+   <table style='width: 100%; border-collapse: collapse;'>
+        <tr>
+            <th style='border: 1px solid #000; font-size:16px;'>Payment Type</th>
+            <th style='border: 1px solid #000; font-size:16px;'>Opening Balance</th>
+            <th style='border: 1px solid #000; font-size:16px;'>Amount Paid</th>
+            <th style='border: 1px solid #000; font-size:16px;'>New Balance</th>
+        </tr>
+        <tr class'center'>
+            <td style='border: 1px solid #000; font-size:16px;'>{bill.Action}</td>
+            <td style='border: 1px solid #000; font-size:16px;'>{bill.OpeningBalance}</td>
+            <td style='border: 1px solid #000; font-size:16px;'>{bill.Transaction}</td>
+            <td style='border: 1px solid #000; font-size:16px;'>{bill.ClosingBalance}</td>
+        </tr>
+   
+    </table>
+    <br/>
+    <div class='left'>
+    Paid With: {bill.PaymentMethod}<br/>
+    Authorised By: {bill.StaffName}<br/><br/>
+    Signature: ..............................................
+    </div>
+    <hr/>
+    <div class='center'>
+    All above mentioned Amount once paid are non refundable in any case whatsoever
+
+    </div>
+ 
+    </div>
+</body>
+</html>";
+
+
+
+            PdfGenerator.AddPdfPages(document,htmlelement,PageSize.A5);
+            byte[] response = null;
+            using (MemoryStream ms = new MemoryStream()){
+               document.Save(ms);
+               response = ms.ToArray();
+            }
+            return File(response,"application/pdf",$"{fullname}.pdf");
+
+        }
+
+
 
 
     }

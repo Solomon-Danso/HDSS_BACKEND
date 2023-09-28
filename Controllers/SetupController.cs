@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HDSS_BACKEND.Controllers
 {
@@ -80,45 +81,51 @@ namespace HDSS_BACKEND.Controllers
     
     }
 
+[HttpPost("AssignRoles")]
+public async Task<IActionResult>AssignRoles([FromBody]Role request){
 
-[HttpPost("AdmissionLetter")]
-public async Task<IActionResult> AdmissionLetter(string StudentId){
-
-var student = context.Students.FirstOrDefault(r=>r.StudentId==StudentId);
-var auth = context.AuthenticationModels.FirstOrDefault(r=>r.UserId==StudentId);
-var inst = context.Instituitions.FirstOrDefault(r=>r.Id>0);
-if (student == null|| inst==null || auth==null){
-    return BadRequest("Student not found");
+var role = new Role{
+FullName = request.FullName,
+StaffId = request.StaffId,
+Position = request.Position
+};
+bool checker = await context.Roles.AnyAsync(a=>a.FullName==role.FullName&&a.StaffId==role.StaffId&&a.Position==role.Position);
+if (checker){
+    return BadRequest("User With That Role already exists");
 }
-
-var admission = new AdmissionLetter{
-StudentId = student.StudentId,
-
-SchoolName = inst.SchoolName,
-Location = inst.Location,
-Name = $"Dear {student.FirstName} {student.OtherName} {student.LastName}, ",
-Paragraph1 = $"We are delighted to extend an offer of admission to {inst.SchoolName} for this academic year. It brings us great pleasure to welcome you to our school community, and we are excited about the prospect of having you as a student in our school.",
-Paragraph2 = $"Your application to {inst.SchoolName} was thoroughly reviewed by our admissions committee, and we were impressed by your academic potential, your eagerness to learn, and the positive qualities you exhibited during the admission process. Your enthusiasm for education and your readiness to engage with the our school curriculum make you an excellent fit for our school.",
-Paragraph3 = $"At {inst.SchoolName}, we are committed to providing a nurturing and stimulating learning environment that encourages the holistic development of each child. Our dedicated faculty and staff are excited to work with you to help you reach your full potential academically, socially, and emotionally.",
-Paragraph4 = $"Your student identification number is {student.StudentId} This is the number that you will use throughout your studies in this school. Your Password is {auth.RawPassword}, do well not to misplace this information",
-Paragraph5 = $"If you have any questions or require further assistance, please feel free to contact our admissions office. We look forward to having you join our {inst.SchoolName} family and embark on an exciting educational adventure. We are confident that your time with us will be filled with learning, growth, and lasting friendships.",
-Paragraph6 = $"Congratulations once again on your admission to {inst.SchoolName}. We can't wait to get to know you better and watch you thrive as a member of our school community.",
-AdmissionDate = student.AdmissionDate,
-AdminName = inst.AdminName,
-}
-;
-
-context.AdmissionLetters.Add(admission);
+else{
+context.Roles.Add(role);
 await context.SaveChangesAsync();
-return Ok(admission);
-
 }
 
 
+return Ok(role);
 
 
+}
 
+[HttpGet("UserRoles")]
+public async Task<IActionResult>UserRoles(){
+    var userRole = context.Roles.OrderBy(x=>x.Position).ToList();
+    return Ok(userRole);
+}
 
+[HttpGet("SpecificUserRole")]
+public async Task<IActionResult>SpecificUser(string UserId){
+    var userRole = context.Roles.Where(x=>x.StaffId==UserId).ToList();
+    return Ok(userRole);
+}
+
+[HttpDelete("DeleteSpecificUserRole")]
+public async Task<IActionResult>DeleteSpecificUser(string UserId, string Position){
+    var userRole = context.Roles.FirstOrDefault(x=>x.StaffId==UserId&&x.Position==Position);
+    if (userRole == null){
+        return BadRequest("User Role not found");
+    }
+    context.Roles.Remove(userRole);
+    await context.SaveChangesAsync();
+    return Ok("Deleted Successfully");
+}
 
 
 

@@ -9,7 +9,7 @@ namespace HDSS_BACKEND.Models
 public class SuperiorAccount
     {
         public int Id { get; set; }
-         public string? SuperiorID { get; set; }
+         public string? StaffID { get; set; }
         public string? Name { get; set; }
         public string? Contact { get; set; }
         public string? Email { get; set; }
@@ -22,7 +22,7 @@ public class SuperiorAccount
 public class SuperiorAccountDto
     {
         public int Id { get; set; }
-         public string? SuperiorID { get; set; }
+         public string? StaffID { get; set; }
         public string? Name { get; set; }
         public string? Contact { get; set; }
         public string? Email { get; set; }

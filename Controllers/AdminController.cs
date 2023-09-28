@@ -53,7 +53,7 @@ namespace HDSS_BACKEND.Controllers
     }
 
             var supi =  new SuperiorAccount{
-                SuperiorID = AdminIdGenerator(),
+                StaffID = AdminIdGenerator(),
                 Name = request.Name,
                 Contact = request.Contact,
                 Email = request.Email,

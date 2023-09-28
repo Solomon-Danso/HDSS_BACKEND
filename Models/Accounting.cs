@@ -34,12 +34,18 @@ namespace HDSS_BACKEND.Models
         public string? AcademicTerm  {get; set;}
         public string? Level {get; set;}
         public string? TransactionDate {get; set;}
+        public string? TransactionId {get; set;}
         public string? Action {get; set;}
+        public string? PaymentMethod{get;set;}
+        public string? StaffId {get; set;}
+        public string? StaffName {get; set;}
 
     }
 
     public class Payment{
         public double Amount {get; set;}
+        public string? PaymentMethod {get;set;}
+        public string? Action {get;set;}
     }
 
 

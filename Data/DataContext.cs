@@ -64,7 +64,7 @@ public DbSet<AdmissionLetter> AdmissionLetters {get; set;}
 public DbSet<Fee> Fees {get; set;}
 public DbSet<AdmissionFee> AdmissionFees {get; set;}
 public DbSet<BillingCard> BillingCards {get; set;}
-
+public DbSet<Role> Roles {get; set;}
 
 
 

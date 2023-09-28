@@ -25,6 +25,14 @@ namespace HDSS_BACKEND.Models
        public string? AdminName { get; set; }      
     }
 
+    public class Role{
+        public int Id { get; set; }
+        public string? FullName { get; set; }
+        public string? StaffId { get; set; }
+        public string? Position {get; set;}
+
+    }
+
     public class AdmissionLetter{
         public int Id { get; set;}
         public string? StudentId { get; set;}

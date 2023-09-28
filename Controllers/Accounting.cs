@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Transactions;
 using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HDSS_BACKEND.Controllers
 {
@@ -133,11 +136,17 @@ namespace HDSS_BACKEND.Controllers
         }
 
         [HttpPost("PayFees")]
-        public async Task<IActionResult>FeesPayment(string StudentId, [FromBody]Payment request){
+        public async Task<IActionResult>FeesPayment(string StudentId, [FromBody]Payment request, string StaffId){
             var stu = context.Students.FirstOrDefault(r=>r.StudentId==StudentId);
+            var Staff = context.Roles.FirstOrDefault(r=>r.StaffId==StaffId&&r.Position==constant.Accountant);
+             if(Staff==null){
+                return BadRequest("You dont have the permission to perform this activity");
+            }
+            
             if (stu == null){
                 return BadRequest("Student not found");
             }
+           
 
             var Bill = new BillingCard{
                 StudentId = stu.StudentId,
@@ -146,14 +155,27 @@ namespace HDSS_BACKEND.Controllers
                 AcademicTerm = stu.TheAcademicTerm,
                 Level = stu.Level,
                 TransactionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-                Action = constant.FeesPayment
+                Action = request.Action,
+                TransactionId = TransactionIdGenerator(),
+                StaffId = Staff.StaffId,
+                StaffName = Staff.FullName,
+                PaymentMethod = request.PaymentMethod
+
             };
+            
             Bill.Transaction = request.Amount;
             Bill.ClosingBalance = Bill.OpeningBalance-Bill.Transaction;
             stu.Balance = Bill.ClosingBalance;
-            context.BillingCards.Add(Bill);
+            if(Bill.PaymentMethod.IsNullOrEmpty()|| Bill.Action.IsNullOrEmpty()){
+                return BadRequest("All Fields are required");
+            }
+            else{
+                 context.BillingCards.Add(Bill);
             await context.SaveChangesAsync();
-            return Ok("Payment is Successful");
+            }
+
+           
+            return Ok(Bill);
 
         }
 
@@ -255,6 +277,21 @@ public async Task<IActionResult> DiscountedFees(int discountRate, string Student
         // Handle the case where student.Balance is null (if needed)
         return BadRequest("Student balance is null.");
     }
+}
+
+
+private string TransactionIdGenerator()
+{
+    byte[] randomBytes = new byte[2]; // Increase the array length to 2 for a 4-digit random number
+    using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+    {
+        rng.GetBytes(randomBytes);
+    }
+
+    ushort randomNumber = BitConverter.ToUInt16(randomBytes, 0);
+    int fullNumber = randomNumber; // 109000 is added to ensure the number is 5 digits long
+
+    return fullNumber.ToString("D5");
 }
 
 
