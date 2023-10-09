@@ -18,7 +18,45 @@ namespace HDSS_BACKEND.Models
         public string FeesPayment = "Fees Payment";
         public string TermFees = "Term Fees Billing";
         public string TermFeesUnbilling = "Term Fees Correction";
-        
+        public string AdmitStudent = "Student Admission";
+        public string UpdateStudent = "Update Student Information";
+        public string GetStudent = "Get All Students ";
+        public string GetSpecificStudent = "Get A Specific Student Information ";
+        public string DeleteStudent = "Deleted A Student ";
+        public string SuperiorAccount = "Create A Superior Account";
+        public string ChangePicture = "Superior Picture Change";
+        public string ChangeDetails = "Superior Details Change";
+        public string ChangePassword = "Password Change";
+        public string RegisterSchooDirector = "Register School Director ";
+        public string UpdateDirector = "Update School Director Profile Picture";
+        public string UpdateDirectorInfo = "Update School Director Details";
+
+        public string UserLogin = "User Login";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }

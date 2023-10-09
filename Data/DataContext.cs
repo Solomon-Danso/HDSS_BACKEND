@@ -65,6 +65,7 @@ public DbSet<Fee> Fees {get; set;}
 public DbSet<AdmissionFee> AdmissionFees {get; set;}
 public DbSet<BillingCard> BillingCards {get; set;}
 public DbSet<Role> Roles {get; set;}
+public DbSet<AuditTrial> AuditTrials {get;set;}
 
 
 
