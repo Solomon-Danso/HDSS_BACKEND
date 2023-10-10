@@ -78,6 +78,19 @@ public class SuperiorAccountDto
         public string? SpecificRole { get; set; }
 
     }
+
+     public class Admin
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Contact { get; set; }
+        public string? Email { get; set; }
+        public string? AdminID { get; set; }
+        public string? Role { get; set; }
+       public string? SpecificRole { get; set; }
+       public string? ProfilePic {get; set;}
+
+    }
  public class ManagersDto
     {
         public int Id { get; set; }

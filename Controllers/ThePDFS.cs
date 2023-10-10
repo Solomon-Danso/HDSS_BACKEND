@@ -21,6 +21,186 @@ namespace HDSS_BACKEND.Controllers
             context = ctx;
         } 
 
+        [HttpGet("Appointment")]
+        public async Task<IActionResult>AppointmentLetter(string Id){
+
+        var Teacher = context.Teachers.FirstOrDefault(r=>r.StaffID==Id);
+        var inst = context.Instituitions.FirstOrDefault(r=>r.Id>0);
+        var auth = context.AuthenticationModels.FirstOrDefault(r=>r.UserId==Id);
+        if(Teacher==null || inst==null || auth==null){
+            return BadRequest("Teacher Not Found");
+        }
+          
+      
+    
+       
+        
+
+            var document = new PdfDocument();
+
+           
+           string teacherImage = "http://" + HttpContext.Request.Host.Value + "/" + Teacher.FilePath;
+           string schoolImage = "http://" + HttpContext.Request.Host.Value + "/"+ inst.Logo;
+           var schoolname = inst.SchoolName;
+           var Location = inst.Location;
+           var Registerer = inst.AdminName;
+           var fullname =  Teacher.FirstName+" "+ Teacher.OtherName+ " "+Teacher.LastName;
+
+
+string htmlelement = $@"<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {{
+        font-family: 'Open Sans', sans-serif;
+        font-size: 14px;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }}
+
+    .container {{
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        animation: fade-in 0.5s ease-out;
+        
+    }}
+
+    .container img {{
+        width: 120px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }}
+
+    .header {{
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin-top: 20px;
+    }}
+
+    .center {{
+        text-align: center;
+    }}
+
+    .school-name {{
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 20px;
+    }}
+
+    .content {{
+        text-align: justify;
+    }}
+
+    .contentp {{
+        font-size: 18px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+        font-weight: 900;
+    }}
+
+    .spacer {{
+        margin-left: 200px;
+    }}
+
+    .bold {{
+        font-size: 15px;
+        float: left;
+        text-align: left;
+    }}
+
+.locbold {{
+        font-size: 15px;
+        float: left;
+        text-align: center;
+    }}
+
+
+    .lightbold {{
+        font-size: 15px;
+    }}
+
+    .school {{
+        font-size: 30px;
+    }}
+
+    /* Add individual styles for .left, .center, and .right */
+    .left {{
+        float: left;
+        width: 30%;
+        padding: 10px;
+        box-sizing: border-box;
+        text-align: left;
+    }}
+
+    .right {{
+        float: right;
+        padding: 10px;
+        box-sizing: border-box;
+        text-align: right;
+        margin-left: 120px;
+        margin-top: -2300rem;
+    }}
+</style>
+</head>
+<body>
+    <div class='container'>
+        <div class='center'>
+            <img src='{schoolImage}' alt='School Logo' />
+        </div>
+        <br/>
+        <div>
+            <span class='bold'>Dear {Teacher.Title} {fullname},</span>
+            <span class='spacer lightbold'>{Teacher.DateAdded}</span>
+        </div>
+        <br/>
+        <div class='center'>
+            <div class='school'>{schoolname}</div>
+            <div class='locbold'>{Location}</div>
+        </div>
+        <hr/>
+       <div class='content'>
+    <p class='contentp'>1. We take great pleasure in extending to you an official appointment as a distinguished educator at <b>{schoolname}</b>. Your profound expertise and unwavering commitment to the field of education render you a valuable asset to our esteemed teaching faculty, and it is with genuine enthusiasm that we welcome you to our esteemed educational community.</p>
+    <p class='contentp'>2. Your esteemed role within our institution shall be that of {Teacher.Position}, accompanied by the responsibilities outlined in the attached document detailing your professional obligations. We firmly believe that your extensive experience and commendable skill set will significantly enrich the educational journey of our students and further enhance the overall achievements of our esteemed institution.</p>
+    <p class='contentp'>3. Your official tenure commences on {Teacher.StartDate}. Kindly ensure your punctual presence at {Teacher.ReportingTime} at the school premises each day, in accordance with our established schedule.</p>
+    <p class='contentp'>4. In recognition of your appointment, you will be entitled to an initial salary of {Teacher.Salary}. Comprehensive details pertaining to your remuneration package, inclusive of benefits and the specifics of your employment terms, will be thoughtfully presented to you on the inaugural day of your service at our institution.</p>
+    <p class='contentp'>5. Should you require any clarifications or seek additional information, please do not hesitate to reach out to our Human Resources department. We are genuinely excited to have you join our esteemed team, and we eagerly anticipate our collaborative efforts in the provision of outstanding education to our cherished students.</p>
+</div>
+
+        <div class='right'>
+            Sincerely,<br/>
+            .........................<br/>
+            {Registerer}<br/>
+            HR Manager
+        </div>
+        <br/><br/>
+        <div class='center'>
+            <img src='{teacherImage}' alt='Teacher Image' />
+        </div>
+    </div>
+</body>
+</html>";
+
+
+
+            PdfGenerator.AddPdfPages(document,htmlelement,PageSize.A4);
+            byte[] response = null;
+            using (MemoryStream ms = new MemoryStream()){
+               document.Save(ms);
+               response = ms.ToArray();
+            }
+            return File(response,"application/pdf",$"{fullname}.pdf");
+
+        }
+
+
+
+
         [HttpGet("generator")]
         public async Task<IActionResult>GenPdfWithImage(string Id){
 

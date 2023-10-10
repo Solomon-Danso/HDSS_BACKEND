@@ -19,7 +19,7 @@ builder.Services.Configure<FormOptions>(options =>
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.Limits.MaxRequestBodySize = long.MaxValue;
-
+    serverOptions.ListenAnyIP(5000);
 });
 
 

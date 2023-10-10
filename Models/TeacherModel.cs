@@ -25,11 +25,11 @@ public class Teacher
         public string? Email { get; set; }
         public string? Education { get; set; }
         public string? TeachingExperience { get; set; }
-        public string? NationalIds { get; set; }
         public string? TaxNumber { get; set; }
         public string? SSNITNumber { get; set; }
         public string? HealthStatus { get; set; }
         public string? EmergencyContacts { get; set; }
+         public string? EmergencyPhone { get; set; }
         public string? Salary { get; set; }
         public double? Debit { get; set; }
         public double? Credit{ get; set; }
@@ -40,9 +40,12 @@ public class Teacher
 
     public string? FilePath { get; set; }
     public string? CertPath { get; set; }
-    public string? AppointmentLetter { get; set; }
     public string? IdCards { get; set; }
     public string? DateAdded { get; set; }
+
+    public string? Position {get; set;}
+    public string? ReportingTime {get;set;}
+    public string? StartDate {get;set;}
 
 }
 
@@ -55,9 +58,13 @@ public class TeacherDto
    // public int Id { get; set; }
     public IFormFile? File { get; set; }
     public string? Title { get; set; }
+        public string? Position {get; set;}
+    public string? ReportingTime {get;set;}
+    public string? StartDate {get;set;}
         public string? FirstName { get; set; }
         public string? OtherName { get; set; }
         public string? LastName { get; set; }
+         public string? EmergencyPhone { get; set; }
         public string? DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public string? MaritalStatus { get; set; }
@@ -67,7 +74,6 @@ public class TeacherDto
         public string? Email { get; set; }
         public string? Education { get; set; }
         public string? TeachingExperience { get; set; }
-        public string? NationalIds { get; set; }
         public string? TaxNumber { get; set; }
         public string? SSNITNumber { get; set; }
         public string? HealthStatus { get; set; }
@@ -78,7 +84,7 @@ public class TeacherDto
 
     public IFormFile? CertFile { get; set; }
     public IFormFile? IdCardsFile { get; set; }
-    public IFormFile? AppointFile { get; set; }
+   
      
 }
 

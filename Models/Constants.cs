@@ -32,6 +32,7 @@ namespace HDSS_BACKEND.Models
         public string UpdateDirectorInfo = "Update School Director Details";
 
         public string UserLogin = "User Login";
+        public string AdmitTeacher = "Admitted Teacher";
 
 
 

@@ -146,7 +146,8 @@ public async Task StudentAuditor(string StudentId,string Action)
         Email= user.Email,
         ActionDescription = Action,
         Role = user.Role,
-        Level = user.Level
+        Level = user.Level,
+        ProfilePic = user.ProfilePic
 
     };
 
@@ -159,7 +160,7 @@ public async Task StudentAuditor(string StudentId,string Action)
 [ApiExplorerSettings(IgnoreApi = true)] 
 public async Task AdminAuditor(string StaffId, string Action)
 {
-    var user = context.SuperiorAccounts.FirstOrDefault(a => a.StaffID == StaffId);
+    var user = context.Admins.FirstOrDefault(a => a.AdminID == StaffId);
     if (user == null)
     {
           BadRequest("User not found");
@@ -230,6 +231,7 @@ public async Task AdminAuditor(string StaffId, string Action)
         Email = user.Email,
         ActionDescription = Action,
         Role = user.Role,
+        ProfilePic = user.ProfilePic
     };
 
     context.AuditTrials.Add(audit);
@@ -299,7 +301,8 @@ public async Task TeacherAuditor(string StudentId,string Action)
         Email= user.Email,
         ActionDescription = Action,
         Role = user.Role,
-        Level = user.Level
+        Level = user.Level,
+        ProfilePic= user.ProfilePic
 
     };
 

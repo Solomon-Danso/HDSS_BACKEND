@@ -21,6 +21,7 @@ namespace HDSS_BACKEND.Models
        public string? TheDateStamp {get;set;}
        public  string?  TheTimeStamp { get; set; }
        public string? UserId {get;set;}
+       public string? ProfilePic {get;set;}
        
     }
 

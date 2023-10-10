@@ -4,6 +4,7 @@ using HDSS_BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HDSS_BACKEND.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231010175217_shdjfgbsdfv")]
+    partial class shdjfgbsdfv
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,40 +55,6 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AcademicYears");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.Admin", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AdminID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Contact")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProfilePic")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SpecificRole")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.AdmissionFee", b =>
@@ -553,9 +522,6 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Maker")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProfilePic")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
