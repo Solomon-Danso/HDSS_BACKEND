@@ -18,6 +18,9 @@ namespace HDSS_BACKEND.Models
     {
         public int Id { get; set; }
         public string? ClassName { get; set; }
+        public string? ClassCode {get;set;}
+        public string? Campus {get;set;}
+        public string? ClassTeacher{get;set;}
         public string? DateAdded { get; set; }
 
     }

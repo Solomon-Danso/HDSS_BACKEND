@@ -807,7 +807,16 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Campus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ClassName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassTeacher")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DateAdded")

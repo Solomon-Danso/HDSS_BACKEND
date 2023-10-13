@@ -13,7 +13,7 @@ using System.Globalization;
 namespace HDSS_BACKEND.Controllers
 {
     [ApiController]
-    [Route("api/Admin")]
+    [Route("api/Teacher")]
 
     public class TeacherController : ControllerBase
     {
@@ -199,40 +199,25 @@ private string StaffIdGenerator()
 
     return fullNumber.ToString("D5");
 }
+[HttpGet("viewTeacher")]
+public async Task<IActionResult> ViewTeacher([FromForm]TeacherDto request, string StaffId, string ID){
+var teacher =  context.Teachers.FirstOrDefault(t=>t.StaffID == StaffId);
+if(teacher == null){
+    return BadRequest("Teacher not found");
+}
+return Ok(teacher);
+
+}
+
+
 
 [HttpPost("updateTeacher")]
-public async Task<IActionResult> UpdateTeacher(TeacherDto request, string StaffId, string ID){
+public async Task<IActionResult> UpdateTeacher([FromForm]TeacherDto request, string StaffId, string ID){
 var teacher =  context.Teachers.FirstOrDefault(t=>t.StaffID == StaffId);
 if(teacher == null){
     return BadRequest("Teacher not found");
 }
 
- if (request.File == null || request.File.Length == 0)
-    {
-        return BadRequest("Invalid file");
-    }
-
-    // Create the uploads directory if it doesn't exist
-    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Teachers", "Profile");
-    if (!Directory.Exists(uploadsDirectory))
-    {
-        Directory.CreateDirectory(uploadsDirectory);
-    }
-
-    // Get the original file extension
-    var fileExtension = Path.GetExtension(request.File.FileName);
-
-    // Generate a unique file name
-    var fileName = Guid.NewGuid().ToString() + fileExtension;
-
-    // Save the uploaded file to the uploads directory
-    var filePath = Path.Combine(uploadsDirectory, fileName);
-    using (var stream = new FileStream(filePath, FileMode.Create))
-    {
-        await request.File.CopyToAsync(stream);
-    }
-
-teacher.FilePath = Path.Combine("Teachers/Profile", fileName);
 teacher.Title = request.Title;
 teacher.FirstName = request.FirstName;
 teacher.LastName = request.LastName;
@@ -254,37 +239,40 @@ teacher.HealthStatus = request.HealthStatus;
 teacher.EmergencyContacts = request.EmergencyContacts;
 teacher.Salary = request.Salary;
 teacher.Position = request.Position;
+teacher.ReportingTime = request.ReportingTime;
+teacher.EmergencyPhone = request.EmergencyPhone;
 
 
 await context.SaveChangesAsync();
-
+await AdminAuditor(ID, constant.UpdaTeacher);
 
 return Ok("Tutor successfully Updated");
 }
 
 [HttpGet("getTeachers")]
-public async Task<IActionResult> GetTeachers(){
+public async Task<IActionResult> GetTeachers(string SID){
     var teacherList = context.Teachers.ToList();
-    
+    await AdminAuditor(SID,constant.GetTeacher);
     return Ok(teacherList);
 }
 
-[HttpGet("getTeacherInfo")]
-public async Task<IActionResult> GetSpecificUser(string StaffID){
+[HttpGet("getOneTeacher")]
+public async Task<IActionResult> GetSpecificUser(string StaffID, string ID){
 var tutor = context.Teachers.FirstOrDefault(e=>e.StaffID == StaffID);
+await AdminAuditor(ID, constant.ViewOneTeacher);
 return Ok(tutor);
 }
 
 
 [HttpDelete("deleteTeacherAccount")]
-public async Task<IActionResult> DeleteSpecificUser(string StaffID){
+public async Task<IActionResult> DeleteSpecificUser(string StaffID, string ID){
 var tutor =  context.Teachers.FirstOrDefault(e=>e.StaffID == StaffID);
 if(tutor == null){
     return BadRequest("Teacher does not exist");
 }
 context.Teachers.Remove(tutor);
 await context.SaveChangesAsync();
-
+await AdminAuditor(ID, constant.DeletedTeacher);
 return Ok("Teacher Account Deleted");
 }
 

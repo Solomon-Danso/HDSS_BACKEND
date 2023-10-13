@@ -507,6 +507,28 @@ public async Task<IActionResult>DeleteEvents(int Id){
             return Ok(searchResult);    
         }
 
+[HttpPost("SearchTeacher")]
+        public async Task<IActionResult> SearchTeacher(string searchTerm){
+            var searchResult = context.Teachers.ToList().Where(v=>v.LastName != null && v.LastName.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) || v.FirstName != null && v.FirstName.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) || v.Position != null && v.Position.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) ||v.StaffID != null && v.StaffID.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) ).OrderByDescending(r=>r.LastName).ToList();
+            if(searchResult.Count()==0){
+                return NotFound("No Result Found");
+            }
+            return Ok(searchResult);    
+        }
+
+[HttpPost("SearchClass")]
+        public async Task<IActionResult> SearchClass(string searchTerm){
+            var searchResult = context.Classess.ToList().Where(
+                v=>v.ClassName != null && v.ClassName.Contains(searchTerm,StringComparison.OrdinalIgnoreCase)
+                 || v.ClassCode != null && v.ClassCode.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) 
+                 || v.Campus != null && v.Campus.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) 
+                 ||v.ClassTeacher != null && v.ClassTeacher.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) ).OrderByDescending(r=>r.Id).ToList();
+            if(searchResult.Count()==0){
+                return NotFound("No Result Found");
+            }
+            return Ok(searchResult);    
+        }
+
 
 [HttpGet("AllStudents")]
 public async Task<IActionResult> GetAllStudent(){

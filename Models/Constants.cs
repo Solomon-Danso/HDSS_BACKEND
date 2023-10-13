@@ -21,6 +21,8 @@ namespace HDSS_BACKEND.Models
         public string AdmitStudent = "Student Admission";
         public string UpdateStudent = "Update Student Information";
         public string GetStudent = "Get All Students ";
+        public string GetTeacher = "Get All Teachers ";
+         public string DeletedTeacher = "Deleted Teacher Account ";
         public string GetSpecificStudent = "Get A Specific Student Information ";
         public string DeleteStudent = "Deleted A Student ";
         public string SuperiorAccount = "Create A Superior Account";
@@ -33,7 +35,11 @@ namespace HDSS_BACKEND.Models
 
         public string UserLogin = "User Login";
         public string AdmitTeacher = "Admitted Teacher";
-
+        public string UpdaTeacher = "Updated Teacher Information";
+         public string ViewOneTeacher = "Viewed Teacher Information";
+        public string AddAClass = "Added A Class";
+         public string UpdatAClass = "Updated A Class";
+          public string DeletAClass = "Deleted A Class";
 
 
 

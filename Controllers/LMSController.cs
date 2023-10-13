@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -15,6 +16,11 @@ namespace HDSS_BACKEND.Controllers
     public class LMSController : ControllerBase
     {
         private readonly DataContext context;
+         string Country;
+        string City;
+        double latitude;
+        double logitude;
+         Constants constant = new Constants();
         public LMSController(DataContext ctx){
             context = ctx;
         }
@@ -51,27 +57,71 @@ namespace HDSS_BACKEND.Controllers
 
 
         [HttpPost("AddClass")]
-        public async Task<IActionResult>AddClass([FromBody]Classes request){
+        public async Task<IActionResult>AddClass([FromBody]Classes request, string ID){
             bool classAlreadyExist = await context.Classess.AnyAsync(c=>c.ClassName == request.ClassName);
             if (classAlreadyExist){
                 return BadRequest("Class already exists");
             }
             var classy = new Classes{
                 ClassName = request.ClassName,
-                 DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+                ClassCode = request.ClassCode,
+                Campus = request.Campus,
+                ClassTeacher = request.ClassTeacher,
+                DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+
+
             };
             context.Classess.Add(classy);
             await context.SaveChangesAsync();
+            await AdminAuditor(ID,constant.AddAClass);
             return Ok($"{classy.ClassName} created successfully");
 
 
         }
+
+        [HttpPost("UpdateClass")]
+        public async Task<IActionResult>UpdateClass([FromBody]Classes request,int Id, string SID){
+            var cla = context.Classess.FirstOrDefault(x=>x.Id==Id);
+            if (cla==null){
+                return BadRequest("Class does not exist");
+            }
+            cla.ClassName = request.ClassName;
+            cla.ClassCode = request.ClassCode;
+            cla.Campus = request.Campus;
+            cla.ClassTeacher = request.ClassTeacher;
+            await context.SaveChangesAsync();
+            await AdminAuditor(SID,constant.UpdatAClass);
+            return Ok("Updated Successfully");
+        }
+
+        [HttpDelete("deleteClass")]
+        public async Task<IActionResult>DeleteClass(int Id, string SID){
+             var cla = context.Classess.FirstOrDefault(x=>x.Id==Id);
+            if (cla==null){
+                return BadRequest("Class does not exist");
+            }
+            context.Classess.Remove(cla);
+            await context.SaveChangesAsync();
+            await AdminAuditor(SID,constant.DeletAClass);
+            return Ok("Class Deleted Successfully");
+        }
+
  
           [HttpGet("viewAllClasses")]
         public async Task<IActionResult> ViewAllClasses(){
             var classy = context.Classess.OrderByDescending(R=>R.Id).ToList();
+            
             return Ok(classy);
         }
+
+         [HttpGet("countStudentInClass")]
+        public async Task<IActionResult> ViewAllClasses(string ClassN){
+            var classy = context.Students.Where(x=>x.Level==ClassN).Count();
+            
+            return Ok(classy);
+        }
+
+
 
 
 
@@ -713,7 +763,7 @@ namespace HDSS_BACKEND.Controllers
     return Unauthorized();
     }
 
-    var calendar = new Calendar{
+    var calendar = new Models.Calendar{
         //Select the subject name from an option in the frontend
        
        Title = request.Title,
@@ -1396,7 +1446,341 @@ private string AssignmentIdGenerator()
     return fullNumber.ToString("D5");
 }
   
-  
+
+
+
+[ApiExplorerSettings(IgnoreApi = true)] 
+public async Task StudentAuditor(string StudentId,string Action)
+{
+
+
+    var user = context.Students.FirstOrDefault(a => a.StudentId==StudentId);
+    if (user ==null){
+         BadRequest("Student not found");
+    }
+
+    var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+    var deviceCategory = GetDeviceCategory(userAgent);
+     //var ipAddress = "41.155.45.174";
+    if (string.IsNullOrEmpty(ipAddress))
+    {
+        ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+    }
+
+        try
+    {
+        using (var client = new HttpClient())
+        {
+            var response = await client.GetFromJsonAsync<IpApiLocationResponse>($"http://ip-api.com/json/{ipAddress}");
+
+            Country = response.country;
+            City = response.city;
+            latitude = response.lat;
+            logitude = response.lon;
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        // Handle the exception or log it as needed
+        // You can set default values for Country, City, latitude, and longitude here
+        // For example:
+        Country = "Unknown";
+        City = "Unknown";
+        latitude = 0.0;
+        logitude = 0.0;
+    }
+
+//fast
+ string formattedTime = DateTime.Now.ToString(@"hh:mm:ss tt", CultureInfo.InvariantCulture);
+
+
+    var audit = new AuditTrial
+    {
+        IpAddress = ipAddress,
+        BrowserType = userAgent,
+        DeviceType = deviceCategory,
+        UserLocation = $"https://www.google.com/maps?q={latitude},{logitude}",
+        Country = Country,
+        City = City,
+        Maker = user.FirstName+" "+user.OtherName+" "+user.LastName,
+        TheDateStamp = DateTime.Today.Date.ToString("MMMM dd, yyyy"),
+       TheTimeStamp = formattedTime,
+        Email= user.Email,
+        ActionDescription = Action,
+        Role = user.Role,
+        Level = user.Level,
+        ProfilePic = user.ProfilePic
+
+    };
+
+    context.AuditTrials.Add(audit);
+    await context.SaveChangesAsync();
+
+   
+}
+
+[ApiExplorerSettings(IgnoreApi = true)] 
+public async Task AdminAuditor(string StaffId, string Action)
+{
+    var user = context.Admins.FirstOrDefault(a => a.AdminID == StaffId);
+    if (user == null)
+    {
+          BadRequest("User not found");
+    }
+
+    var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+    var deviceCategory = GetDeviceCategory(userAgent);
+
+    // Ensure ipAddress is not null or empty
+    if (string.IsNullOrEmpty(ipAddress))
+    {
+        ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+    }
+
+    try
+    {
+        using (var client = new HttpClient())
+        {
+            var response = await client.GetFromJsonAsync<IpApiLocationResponse>($"http://ip-api.com/json/{ipAddress}");
+
+            if (response != null)
+            {
+                Country = response.country;
+                City = response.city;
+                latitude = response.lat;
+                logitude = response.lon;
+            }
+            else
+            {
+                // Log a message when the response is null
+                // You can replace this with your preferred logging mechanism
+                Console.WriteLine("IP API response is null");
+                Country = "Unknown";
+                City = "Unknown";
+                latitude = 0.0;
+                logitude = 0.0;
+            }
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        // Log the exception
+        // You can replace this with your preferred logging mechanism
+        Console.WriteLine($"HttpRequestException: {ex.Message}");
+
+        // Set default values for Country, City, latitude, and longitude
+        Country = "Unknown";
+        City = "Unknown";
+        latitude = 0.0;
+        logitude = 0.0;
+    }
+
+    // Fast
+    string formattedTime = DateTime.Now.ToString(@"hh:mm:ss tt", CultureInfo.InvariantCulture);
+
+    var audit = new AuditTrial
+    {
+        IpAddress = ipAddress,
+        BrowserType = userAgent,
+        DeviceType = deviceCategory,
+        UserLocation = $"https://www.google.com/maps?q={latitude},{logitude}",
+        Country = Country,
+        City = City,
+        Maker = user.Name,
+        TheDateStamp = DateTime.Today.Date.ToString("MMMM dd, yyyy"),
+        TheTimeStamp = formattedTime,
+        Email = user.Email,
+        ActionDescription = Action,
+        Role = user.Role,
+        ProfilePic = user.ProfilePic
+    };
+
+    context.AuditTrials.Add(audit);
+    await context.SaveChangesAsync();
+
+      Ok();
+}
+
+[ApiExplorerSettings(IgnoreApi = true)] 
+public async Task TeacherAuditor(string StudentId,string Action)
+{
+
+
+    var user = context.Students.FirstOrDefault(a => a.StudentId==StudentId);
+    if (user ==null){
+         BadRequest("Student not found");
+    }
+
+    var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+    var deviceCategory = GetDeviceCategory(userAgent);
+     //var ipAddress = "41.155.45.174";
+    if (string.IsNullOrEmpty(ipAddress))
+    {
+        ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+    }
+
+        try
+    {
+        using (var client = new HttpClient())
+        {
+            var response = await client.GetFromJsonAsync<IpApiLocationResponse>($"http://ip-api.com/json/{ipAddress}");
+
+            Country = response.country;
+            City = response.city;
+            latitude = response.lat;
+            logitude = response.lon;
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        // Handle the exception or log it as needed
+        // You can set default values for Country, City, latitude, and longitude here
+        // For example:
+        Country = "Unknown";
+        City = "Unknown";
+        latitude = 0.0;
+        logitude = 0.0;
+    }
+
+//fast
+ string formattedTime = DateTime.Now.ToString(@"hh:mm:ss tt", CultureInfo.InvariantCulture);
+
+
+    var audit = new AuditTrial
+    {
+        IpAddress = ipAddress,
+        BrowserType = userAgent,
+        DeviceType = deviceCategory,
+        UserLocation = $"https://www.google.com/maps?q={latitude},{logitude}",
+        Country = Country,
+        City = City,
+        Maker = user.FirstName+" "+user.OtherName+" "+user.LastName,
+        TheDateStamp = DateTime.Today.Date.ToString("MMMM dd, yyyy"),
+       TheTimeStamp = formattedTime,
+        Email= user.Email,
+        ActionDescription = Action,
+        Role = user.Role,
+        Level = user.Level,
+        ProfilePic= user.ProfilePic
+
+    };
+
+    context.AuditTrials.Add(audit);
+    await context.SaveChangesAsync();
+
+   
+}
+
+[ApiExplorerSettings(IgnoreApi = true)] 
+public async Task AuthAuditor(string StaffId,string Action)
+{
+
+
+    var user = context.AuthenticationModels.FirstOrDefault(a => a.UserId==StaffId);
+    if (user ==null){
+         BadRequest("Student not found");
+    }
+
+    var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+    var deviceCategory = GetDeviceCategory(userAgent);
+     //var ipAddress = "41.155.45.174";
+    if (string.IsNullOrEmpty(ipAddress))
+    {
+        ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+    }
+
+        try
+    {
+        using (var client = new HttpClient())
+        {
+            var response = await client.GetFromJsonAsync<IpApiLocationResponse>($"http://ip-api.com/json/{ipAddress}");
+
+            Country = response.country;
+            City = response.city;
+            latitude = response.lat;
+            logitude = response.lon;
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        // Handle the exception or log it as needed
+        // You can set default values for Country, City, latitude, and longitude here
+        // For example:
+        Country = "Unknown";
+        City = "Unknown";
+        latitude = 0.0;
+        logitude = 0.0;
+    }
+
+//fast
+ string formattedTime = DateTime.Now.ToString(@"hh:mm:ss tt", CultureInfo.InvariantCulture);
+
+
+    var audit = new AuditTrial
+    {
+        IpAddress = ipAddress,
+        BrowserType = userAgent,
+        DeviceType = deviceCategory,
+        UserLocation = $"https://www.google.com/maps?q={latitude},{logitude}",
+        Country = Country,
+        City = City,
+        Maker = user.Name,
+        TheDateStamp = DateTime.Today.Date.ToString("MMMM dd, yyyy"),
+       TheTimeStamp = formattedTime,
+        ActionDescription = Action,
+        Role = user.SpecificUserRole,
+        
+
+    };
+
+    context.AuditTrials.Add(audit);
+     try
+    {
+        // Existing code for AuthAuditor
+        // ...
+        await context.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+        // Log any exceptions here
+        Console.WriteLine(ex.Message);
+    }
+
+   
+}
+
+
+
+private string GetDeviceCategory(string userAgent)
+{
+    userAgent = userAgent.ToLower();
+
+    if (userAgent.Contains("mobile") || userAgent.Contains("android") || userAgent.Contains("iphone") || userAgent.Contains("ipad") || userAgent.Contains("ipod"))
+    {
+        return "Mobile";
+    }
+    else if (userAgent.Contains("tablet"))
+    {
+        return "Tablet";
+    }
+    else
+    {
+        return "Desktop";
+    }
+}
+
+
+
+
+
+
   
   
     }
