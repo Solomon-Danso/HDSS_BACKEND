@@ -40,6 +40,11 @@ namespace HDSS_BACKEND.Models
         public string AddAClass = "Added A Class";
          public string UpdatAClass = "Updated A Class";
           public string DeletAClass = "Deleted A Class";
+            public string DeletASubT = "Deleted A Subject Teacher";
+           public string AddASubject = "Added A Subject";
+           public string ViewASubject = "Viewed Subject List";
+           public string DeletASubject = "Deleted A Subject";
+           public string AssignTeacher = "Assigned Teacher To A Subject";
 
 
 

@@ -26,32 +26,44 @@ namespace HDSS_BACKEND.Controllers
         }
 
         [HttpPost("AddSubject")]
-        public async Task<IActionResult> AddSubject([FromBody]Subject request,string Stage ){
-            var classy = context.Classess.FirstOrDefault(c => c.ClassName == Stage);
-            if (classy == null){
-                return BadRequest("Enter A Valid Class Name");
-            }
-            bool subjectAlreadyExists = await context.Subjects.AnyAsync(s=>s.SubjectName == request.SubjectName);
-            if (subjectAlreadyExists){
-                return BadRequest("Subject already exists");
-            }
-
+        public async Task<IActionResult> AddSubject([FromBody]Subject request, string ID){
+           
             var subject = new Subject{
             SubjectName = request.SubjectName,
-            ClassName = classy.ClassName,
             DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
             };
 
             context.Subjects.Add(subject);
+             bool subjectAlreadyExists = await context.Subjects.AnyAsync(s=>s.SubjectName == request.SubjectName);
+            if (subjectAlreadyExists){
+                return BadRequest("Subject already exists");
+            }
             await context.SaveChangesAsync();
+            await AdminAuditor(ID, constant.AddASubject);
             return Ok($"{subject.SubjectName} created successfully");
         }
 
+
+
+
         [HttpGet("viewAllSubject")]
-        public async Task<IActionResult> ViewAllSubjects(){
+        public async Task<IActionResult> ViewAllSubjects(string ID){
             var subject = context.Subjects.OrderByDescending(R=>R.Id).ToList();
+             await AdminAuditor(ID, constant.ViewASubject);
             return Ok(subject);
         }
+
+        [HttpDelete("DeleteSubject")]
+         public async Task<IActionResult> DeleteSubject(int Id, string SID){
+            var subject = context.Subjects.FirstOrDefault(r=>r.Id==Id);
+            if (subject == null){
+                return BadRequest("Subject not found");
+            }
+            context.Subjects.Remove(subject);
+            await context.SaveChangesAsync();
+            await AdminAuditor(SID, constant.DeletASubject);
+            return Ok("Subject Deleted");
+         }
 
 
 
@@ -126,68 +138,44 @@ namespace HDSS_BACKEND.Controllers
 
 
         [HttpPost("AddTeacherToSubject")]
-        public async Task<IActionResult> AddTeacherToSubject(string subjects, string StaffID,string Stage,[FromBody] TeacherForSubject request){
-         var subject = context.Subjects.FirstOrDefault(s => s.SubjectName == subjects);
-         var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == StaffID);
-         if (subject == null||teacher == null){
-            return BadRequest("Subject or Teacher not found");
-         }
-          var classy = context.Classess.FirstOrDefault(c => c.ClassName == Stage);
-            if (classy == null){
-                return BadRequest("Enter A Valid Class Name");
-            }
+        public async Task<IActionResult> AddTeacherToSubject(string ID,[FromBody] TeacherForSubject request){
+        
 
-         var code =  subject.SubjectName+teacher.StaffID+classy.ClassName;
-         bool teacherAlreadyExist =await context.TeacherForSubjects.AnyAsync(t => t.TeacherCode == code);
-         if(teacherAlreadyExist) {
-            return BadRequest("Teacher Already Exist");
-         }
+         var teacherforsub = new TeacherInSubject{
+            StaffName = request.StaffName,
+            SubjectName = request.SubjectName,
+            DateAssigned = DateTime.Today.Date.ToString("dd MMMM, yyyy")
 
-
-         var teacherforsub = new TeacherForSubject{
-            StaffID = teacher.StaffID,
-            StaffName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-            SubjectName = subject.SubjectName,
-            ClassName = classy.ClassName,
-            TeacherCode = code
 
          };
 
-         context.TeacherForSubjects.Add(teacherforsub);
+         context.TeacherInSubjects.Add(teacherforsub);
          await context.SaveChangesAsync();
+         await AdminAuditor(ID, constant.AssignTeacher);
 
          return Ok($"{teacherforsub.StaffName} has been assigned to {teacherforsub.SubjectName}");
 
         }
  
+        [HttpGet("AllSubjectTeachers")]
+        public async Task<IActionResult>AllSubjectTeachers(){
+            var t = context.TeacherInSubjects.OrderByDescending(r=>r.Id).ToList();
+            return Ok(t);
+        }
       
   
         
-        [HttpDelete("removeTeacherFromSubject")]
-        public async Task<IActionResult> RemoveTeacherFromSubject(string subjects, string StaffID,string Stage){
-            
-            var subject = context.Subjects.FirstOrDefault(s => s.SubjectName == subjects);
-            var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == StaffID);
-            if (subject == null||teacher == null){
-            return BadRequest("Subject or Teacher not found");
-         }  
-           var classy = context.Classess.FirstOrDefault(c => c.ClassName == Stage);
-            if (classy == null){
-                return BadRequest("Enter A Valid Class Name");
+         [HttpDelete("deleteTeacherFromClass")]
+        public async Task<IActionResult>DeleteTeacherFromClass(int Id, string SID){
+             var cla = context.TeacherInSubjects.FirstOrDefault(x=>x.Id==Id);
+            if (cla==null){
+                return BadRequest("Teacher does not exist");
             }
-
-         var code =  subject.SubjectName+teacher.StaffID+classy.ClassName;
-            var teachercode = context.TeacherForSubjects.FirstOrDefault(t => t.TeacherCode == code);
-            if (teachercode == null){
-                return BadRequest("Teacher not found");
-            }
-
-            context.TeacherForSubjects.Remove(teachercode);
+            context.TeacherInSubjects.Remove(cla);
             await context.SaveChangesAsync();
-            return Ok("Teacher has been removed");
-
+            await AdminAuditor(SID,constant.DeletASubT);
+            return Ok("Teacher Deleted Successfully");
         }
-        
 
       
 

@@ -9,7 +9,7 @@ namespace HDSS_BACKEND.Models
     {
         public int Id { get; set; }
         public string? SubjectName { get; set; }
-        public string? ClassName { get; set; }
+       
         public string? DateAdded { get; set; }
 
     }
@@ -32,6 +32,17 @@ namespace HDSS_BACKEND.Models
         public string? TeacherCode { get; set; }
         public string? SubjectName { get; set; }
           public string? ClassName { get; set; }
+          public string? DateAssigned {get;set;}
+    }
+
+    public class TeacherInSubject{
+        public int Id { get; set; }
+        public string? StaffID { get; set; }
+        public string? StaffName { get; set; }
+      
+        public string? SubjectName { get; set; }
+        
+          public string? DateAssigned {get;set;}
     }
 
     public class StudentForSubject{

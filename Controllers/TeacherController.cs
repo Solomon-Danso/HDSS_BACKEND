@@ -164,6 +164,7 @@ if (request.IdCardsFile == null || request.IdCardsFile.Length == 0)
         Role = tutor.Role,
         Name = tutor.FirstName+" " +tutor.OtherName+" " +tutor.LastName,
         UserPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword),
+        RawPassword = rawPassword
     };
 
     var Only = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{

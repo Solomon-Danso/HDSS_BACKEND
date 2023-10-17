@@ -32,6 +32,7 @@ public DbSet<LessonNote> LessonNotes { get; set; }
 public DbSet<LessonNoteUpload> LessonNotesUpload { get; set; }
 public DbSet<Subject> Subjects { get; set; }
 public DbSet<TeacherForSubject>TeacherForSubjects { get;set; }
+public DbSet<TeacherInSubject>TeacherInSubjects { get;set; }
 public DbSet<StudentForSubject>StudentForSubjects { get;set; }
 public DbSet<Classes> Classess { get; set; }
 public DbSet<Video> Videos { get; set; }

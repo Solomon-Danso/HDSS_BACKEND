@@ -1576,9 +1576,6 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClassName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
 
@@ -1781,6 +1778,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DateAssigned")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("StaffID")
                         .HasColumnType("nvarchar(max)");
 
@@ -1796,6 +1796,31 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TeacherForSubjects");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.TeacherInSubject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateAssigned")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StaffID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StaffName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TeacherInSubjects");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.TheEvent", b =>

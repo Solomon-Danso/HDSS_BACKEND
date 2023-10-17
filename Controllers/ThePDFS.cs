@@ -31,6 +31,7 @@ namespace HDSS_BACKEND.Controllers
             return BadRequest("Teacher Not Found");
         }
           
+          
       
     
        
@@ -169,6 +170,7 @@ string htmlelement = $@"<!DOCTYPE html>
     <p class='contentp'>2. Your esteemed role within our institution shall be that of {Teacher.Position}, accompanied by the responsibilities outlined in the attached document detailing your professional obligations. We firmly believe that your extensive experience and commendable skill set will significantly enrich the educational journey of our students and further enhance the overall achievements of our esteemed institution.</p>
     <p class='contentp'>3. Your official tenure commences on {Teacher.StartDate}. Kindly ensure your punctual presence at {Teacher.ReportingTime} at the school premises each day, in accordance with our established schedule.</p>
     <p class='contentp'>4. In recognition of your appointment, you will be entitled to an initial salary of {Teacher.Salary}. Comprehensive details pertaining to your remuneration package, inclusive of benefits and the specifics of your employment terms, will be thoughtfully presented to you on the inaugural day of your service at our institution.</p>
+   <p class='contentp'>3. Your staff identification number is {Teacher.StaffID}. This is the number you will use throughout your stay at our school. Your password is {auth.RawPassword}; please be sure not to misplace this information.</p>
     <p class='contentp'>5. Should you require any clarifications or seek additional information, please do not hesitate to reach out to our Human Resources department. We are genuinely excited to have you join our esteemed team, and we eagerly anticipate our collaborative efforts in the provision of outstanding education to our cherished students.</p>
 </div>
 
