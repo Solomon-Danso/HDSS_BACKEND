@@ -140,14 +140,26 @@ namespace HDSS_BACKEND.Controllers
         [HttpPost("AddTeacherToSubject")]
         public async Task<IActionResult> AddTeacherToSubject(string ID,[FromBody] TeacherForSubject request){
         
+       
 
          var teacherforsub = new TeacherInSubject{
             StaffName = request.StaffName,
             SubjectName = request.SubjectName,
+            
+            ClassName = request.ClassName,
             DateAssigned = DateTime.Today.Date.ToString("dd MMMM, yyyy")
 
 
          };
+
+          var q = context.Teachers.FirstOrDefault(r=>r.StaffID==teacherforsub.StaffName);
+        if (q == null){
+            return BadRequest("Teacher Not Found");
+        }
+
+        teacherforsub.StaffName = q.FirstName+" " + q.OtherName+" " + q.LastName;
+        teacherforsub.StaffID = q.StaffID;
+
 
          context.TeacherInSubjects.Add(teacherforsub);
          await context.SaveChangesAsync();

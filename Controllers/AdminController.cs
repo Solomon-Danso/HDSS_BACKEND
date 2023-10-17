@@ -534,7 +534,10 @@ public async Task<IActionResult>DeleteEvents(int Id){
             var searchResult = context.TeacherInSubjects.ToList().Where(
                 v=>v.StaffName != null && v.StaffName.Contains(searchTerm,StringComparison.OrdinalIgnoreCase)
                  || v.SubjectName != null && v.SubjectName.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) 
-                 || v.DateAssigned != null && v.DateAssigned.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) 
+                 || v.DateAssigned != null && v.DateAssigned.Contains(searchTerm,StringComparison.OrdinalIgnoreCase)
+                 || v.ClassName != null && v.ClassName.Contains(searchTerm,StringComparison.OrdinalIgnoreCase) 
+                 || v.StaffID != null && v.StaffID.Contains(searchTerm,StringComparison.OrdinalIgnoreCase)
+                
                  ).OrderByDescending(r=>r.Id).ToList();
             if(searchResult.Count()==0){
                 return NotFound("No Result Found");

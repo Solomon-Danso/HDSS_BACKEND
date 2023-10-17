@@ -1806,6 +1806,9 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ClassName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DateAssigned")
                         .HasColumnType("nvarchar(max)");
 
