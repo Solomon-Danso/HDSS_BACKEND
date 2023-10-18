@@ -546,6 +546,35 @@ public async Task<IActionResult>DeleteEvents(int Id){
         }
 
 
+[HttpPost("SearchSlides")]
+public async Task<IActionResult> SearchSlides(string searchTerm, string StaffID)
+{
+    var searchResult = context.Slides.ToList().Where(
+        v => v.Title != null && v.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.SubjectName != null && v.SubjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.DateAdded != null && v.DateAdded.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.ClassName != null && v.ClassName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicTerm != null && v.AcademicTerm.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicYear != null && v.AcademicYear.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.TeacherName != null && v.TeacherName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+    ).OrderByDescending(r => r.Id).ToList();
+
+    if (!string.IsNullOrEmpty(StaffID))
+    {
+        searchResult = searchResult
+            .Where(s => s.StaffID != null && s.StaffID.Equals(StaffID, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    if (searchResult.Count() == 0)
+    {
+        return NotFound("No Result Found");
+    }
+
+    return Ok(searchResult);
+}
+
+
 [HttpGet("AllStudents")]
 public async Task<IActionResult> GetAllStudent(){
     var students =  context.Students.OrderBy(r=>r.LastName).ToList();
@@ -739,9 +768,9 @@ public async Task TeacherAuditor(string StudentId,string Action)
 {
 
 
-    var user = context.Students.FirstOrDefault(a => a.StudentId==StudentId);
+    var user = context.Teachers.FirstOrDefault(a => a.StaffID==StudentId);
     if (user ==null){
-         BadRequest("Student not found");
+         BadRequest("Teacher not found");
     }
 
     var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
@@ -795,8 +824,8 @@ public async Task TeacherAuditor(string StudentId,string Action)
         Email= user.Email,
         ActionDescription = Action,
         Role = user.Role,
-        Level = user.Level,
-        ProfilePic= user.ProfilePic
+       
+        ProfilePic= user.FilePath
 
     };
 

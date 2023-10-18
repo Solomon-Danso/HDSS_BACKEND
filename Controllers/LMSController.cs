@@ -47,9 +47,9 @@ namespace HDSS_BACKEND.Controllers
 
 
         [HttpGet("viewAllSubject")]
-        public async Task<IActionResult> ViewAllSubjects(string ID){
+        public async Task<IActionResult> ViewAllSubjects(){
             var subject = context.Subjects.OrderByDescending(R=>R.Id).ToList();
-             await AdminAuditor(ID, constant.ViewASubject);
+             
             return Ok(subject);
         }
 
@@ -159,8 +159,10 @@ namespace HDSS_BACKEND.Controllers
 
         teacherforsub.StaffName = q.FirstName+" " + q.OtherName+" " + q.LastName;
         teacherforsub.StaffID = q.StaffID;
-
-
+        bool checker = await context.TeacherInSubjects.AnyAsync(a=>a.ClassName==teacherforsub.ClassName&&a.StaffID==teacherforsub.StaffID&&a.SubjectName==teacherforsub.SubjectName);
+        if (checker){
+            return BadRequest("Teacher Already Assigned");
+        }
          context.TeacherInSubjects.Add(teacherforsub);
          await context.SaveChangesAsync();
          await AdminAuditor(ID, constant.AssignTeacher);
@@ -241,15 +243,30 @@ namespace HDSS_BACKEND.Controllers
         return Ok(term);
     }
 
+
+        [HttpGet("ViewTeacherSubject")]
+    public async Task<IActionResult> ViewTeacherSubject(string ID){
+        var term = context.TeacherInSubjects
+        .Where(a=>a.StaffID==ID)
+        .GroupBy(a=>a.SubjectName)
+        .Select(a=>a.First())
+        .ToList();
+        return Ok(term);
+    }
+
+            [HttpGet("ViewTeacherClass")]
+    public async Task<IActionResult> ViewTeacherClass(string ID){
+        var term = context.TeacherInSubjects
+        .Where(a=>a.StaffID==ID)
+        .GroupBy(a=>a.ClassName)
+        .Select(a=>a.First())
+        .ToList();
+        return Ok(term);
+    }
+
         [HttpPost("UploadSlide")]
-        public async Task<IActionResult> UploadSlide(string TeacherId, string SubjectN, string ClassN,string Password, [FromForm]SlidesDto request){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-                return BadRequest("You dont have permission to upload slides");
-            
-            
-         }
+        public async Task<IActionResult> UploadSlide([FromForm]SlidesDto request, string ID){
+       
          
          if (request.Slide == null || request.Slide.Length == 0)
     {
@@ -276,28 +293,33 @@ namespace HDSS_BACKEND.Controllers
         await request.Slide.CopyToAsync(stream);
     }
    
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-
-    var slides = new Slide{
+   
+    var s = new Slide{
         //Select the subject name from an option in the frontend
-       SubjectName = SubjectN,
+       SubjectName = request.SubjectName,
        Title = request.Title,
-       ClassName = ClassN,
+       ClassName = request.ClassName,
        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
        SlidePath = Path.Combine("LMS/Slides", slideName),
-       TeacherId = teacher.StaffID,
-       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-       AcademicYear = request.AcademicYear,
+      
+        AcademicYear = request.AcademicYear,
        AcademicTerm = request.AcademicTerm
     };
 
-    context.Slides.Add(slides);
-    await context.SaveChangesAsync();
+    var teacher = context.TeacherInSubjects.FirstOrDefault(a=>a.SubjectName==s.SubjectName&&a.ClassName==s.ClassName&&a.StaffID==ID);
+    if (teacher==null){
+        return BadRequest("Teacher not found");
+    }
+    s.StaffID = teacher.StaffID;
+    s.TeacherName = teacher.StaffName;
 
-    return Ok($"{slides.Title} for {slides.SubjectName} has been Uploaded successfully");
+
+
+    context.Slides.Add(s);
+    await context.SaveChangesAsync();
+    await TeacherAuditor(ID, constant.UploadSlides);
+
+    return Ok($"{s.Title} for {s.SubjectName} has been Uploaded successfully");
     
     }
 
@@ -315,28 +337,30 @@ namespace HDSS_BACKEND.Controllers
                  }
             
             return Ok(slide);
-
                 
     }
 
-
-        [HttpGet("ViewSlidesTeachers")]
-    public async Task<IActionResult> ViewSlidesTeachers(string TeacherId, string SubjectN, string ClassN,string Term, string Year){
-     var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this slides");
-         }
-
-         var slide = context.Slides.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-           if (slide.Count == 0) {
-                return BadRequest("No slides found ");
-                 }
-           
-            return Ok(slide);
-                
+    [HttpGet("ViewAllSlidesTeachers")]
+    public async Task<IActionResult>ViewAllSlidesTeachers(string ID){
+        var slide = context.Slides.Where(a=>a.StaffID==ID).ToList();
+        await TeacherAuditor(ID,constant.ViewUploadedSlides);
+        return Ok(slide);
     }
 
+    [HttpDelete("deleteSlides")]
+    public async Task<IActionResult>DeleteSlides(int Id, string SID){
+        var slide = context.Slides.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        if(slide == null){
+            return BadRequest("Slides not found");
+        }
+        context.Slides.Remove(slide);
+        await context.SaveChangesAsync();
+        await TeacherAuditor(SID, constant.DeletUploadedSlides);
+        return Ok("Slides deleted successfully");
+    }
+
+
+       
 
             [HttpPost("UploadVideo")]
         public async Task<IActionResult> UploadVideo(string TeacherId, string SubjectN, string ClassN, [FromForm]VideoDto request){
@@ -1609,9 +1633,9 @@ public async Task TeacherAuditor(string StudentId,string Action)
 {
 
 
-    var user = context.Students.FirstOrDefault(a => a.StudentId==StudentId);
+    var user = context.Teachers.FirstOrDefault(a => a.StaffID==StudentId);
     if (user ==null){
-         BadRequest("Student not found");
+         BadRequest("Teacher not found");
     }
 
     var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
@@ -1665,8 +1689,8 @@ public async Task TeacherAuditor(string StudentId,string Action)
         Email= user.Email,
         ActionDescription = Action,
         Role = user.Role,
-        Level = user.Level,
-        ProfilePic= user.ProfilePic
+       
+        ProfilePic= user.FilePath
 
     };
 

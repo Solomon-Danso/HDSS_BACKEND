@@ -1393,10 +1393,10 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("SlidePath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SubjectName")
+                    b.Property<string>("StaffID")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TeacherId")
+                    b.Property<string>("SubjectName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TeacherName")

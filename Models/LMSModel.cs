@@ -73,14 +73,16 @@ namespace HDSS_BACKEND.Models
         public string? DateAdded{ get; set; }
         public string? AcademicYear{ get; set; }
         public string? AcademicTerm{ get; set; }
-        public string? TeacherId { get; set; }
+        public string? StaffID {get;set;}
         public string? TeacherName { get; set; }
 
     }
 
      public class SlidesDto{
   
+        public string? SubjectName { get; set; }
         public string? Title { get; set; }
+        public string? ClassName { get; set; }
         public string? AcademicYear{ get; set; }
         public string? AcademicTerm{ get; set; }
         public IFormFile? Slide { get; set; }

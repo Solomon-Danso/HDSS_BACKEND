@@ -245,9 +245,9 @@ public async Task TeacherAuditor(string StudentId,string Action)
 {
 
 
-    var user = context.Students.FirstOrDefault(a => a.StudentId==StudentId);
+    var user = context.Teachers.FirstOrDefault(a => a.StaffID==StudentId);
     if (user ==null){
-         BadRequest("Student not found");
+         BadRequest("Teacher not found");
     }
 
     var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
@@ -301,8 +301,8 @@ public async Task TeacherAuditor(string StudentId,string Action)
         Email= user.Email,
         ActionDescription = Action,
         Role = user.Role,
-        Level = user.Level,
-        ProfilePic= user.ProfilePic
+       
+        ProfilePic= user.FilePath
 
     };
 
