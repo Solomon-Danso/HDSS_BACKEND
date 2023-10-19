@@ -25,37 +25,37 @@ namespace HDSS_BACKEND.Controllers
         }
 
     [HttpGet("viewSlides")]
-    public async Task<IActionResult>ViewSlides(string ID,string Sub, string Level){
-        var slide = context.Slides.Where(a=>a.StaffID==ID&&a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-        await TeacherAuditor(ID, constant.ViewUploadedSlides);
+    public async Task<IActionResult>ViewSlides(string Sub, string Level){
+        var slide = context.Slides.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
+       
         return Ok(slide);
     }
 
       [HttpGet("viewVideos")]
-    public async Task<IActionResult>ViewVideos(string ID,string Sub, string Level){
-        var slide = context.Videos.Where(a=>a.StaffID==ID&&a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-        await TeacherAuditor(ID, constant.ViewUploadedVideos);
+    public async Task<IActionResult>ViewVideos(string Sub, string Level){
+        var slide = context.Videos.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
+      
         return Ok(slide);
     }
 
   [HttpGet("viewAudios")]
-    public async Task<IActionResult>ViewAudios(string ID,string Sub, string Level){
-        var slide = context.Audios.Where(a=>a.StaffID==ID&&a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-        await TeacherAuditor(ID, constant.ViewUploadedAudios);
+    public async Task<IActionResult>ViewAudios(string Sub, string Level){
+        var slide = context.Audios.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
+       
         return Ok(slide);
     }
 
      [HttpGet("viewPictures")]
-    public async Task<IActionResult>ViewPictures(string ID,string Sub, string Level){
-        var slide = context.Pictures.Where(a=>a.StaffID==ID&&a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-        await TeacherAuditor(ID, constant.ViewUploadedPictures);
+    public async Task<IActionResult>ViewPictures(string Sub, string Level){
+        var slide = context.Pictures.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
+       
         return Ok(slide);
     }
 
  [HttpGet("viewBooks")]
-    public async Task<IActionResult>ViewBooks(string ID,string Sub, string Level){
-        var slide = context.Books.Where(a=>a.StaffID==ID&&a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-        await TeacherAuditor(ID, constant.ViewUploadedBooks);
+    public async Task<IActionResult>ViewBooks(string Sub, string Level){
+        var slide = context.Books.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
+       
         return Ok(slide);
     }
 
