@@ -31,7 +31,7 @@ public DbSet<AmountPaid> AmountsPaid { get; set; }
 public DbSet<LessonNote> LessonNotes { get; set; }
 public DbSet<LessonNoteUpload> LessonNotesUpload { get; set; }
 public DbSet<Subject> Subjects { get; set; }
-public DbSet<TeacherForSubject>TeacherForSubjects { get;set; }
+
 public DbSet<TeacherInSubject>TeacherInSubjects { get;set; }
 public DbSet<StudentForSubject>StudentForSubjects { get;set; }
 public DbSet<Classes> Classess { get; set; }
@@ -47,8 +47,7 @@ public DbSet<AnnouncementForPTA>AnnouncementForPTA { get; set; }
 public DbSet<AnnoucementForHOD>AnnoucementForHOD { get; set; }
 public DbSet<AnnoucementForSubject>AnnoucementForSubjects { get; set;}
 public DbSet<Discussions>Discussions { get; set; }
-public DbSet<Assignment>Assignments { get; set; }
-public DbSet<AssignmentSubmission>AssignmentSubmissions { get; set; }
+public DbSet<Assignment> Assignments {get;set;}
 public DbSet<AcademicYear>AcademicYears { get; set; }
 public DbSet<AcademicTerm>AcademicTerms { get; set; }
 public DbSet<ClassScore>ClassScores { get; set; }

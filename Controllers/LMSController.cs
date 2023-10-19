@@ -138,7 +138,7 @@ namespace HDSS_BACKEND.Controllers
 
 
         [HttpPost("AddTeacherToSubject")]
-        public async Task<IActionResult> AddTeacherToSubject(string ID,[FromBody] TeacherForSubject request){
+        public async Task<IActionResult> AddTeacherToSubject(string ID,[FromBody] TeacherInSubject request){
         
        
 
@@ -194,17 +194,7 @@ namespace HDSS_BACKEND.Controllers
       
 
 
-        [HttpGet("ViewTeachersInSubject")]
-        public async Task<IActionResult> ViewTeachersInSubject(string SubjectName,string Stage){
-            var subject = context.TeacherForSubjects.Where(t=>t.SubjectName == SubjectName && t.ClassName==Stage).OrderByDescending(t => t.Id).ToList();
-            return Ok(subject);
-        }
-
-         [HttpGet("ViewTeachersRegisteredSubjects")]
-        public async Task<IActionResult> ViewTeacherAllSubject(string TeacherId){
-            var subject = context.TeacherForSubjects.Where(t=>t.StaffID == TeacherId).OrderByDescending(t => t.Id).ToList();
-            return Ok(subject);
-        }
+      
   
 
    
@@ -332,13 +322,19 @@ namespace HDSS_BACKEND.Controllers
 
     [HttpDelete("deleteSlides")]
     public async Task<IActionResult>DeleteSlides(int Id, string SID){
-        var slide = context.Slides.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        var slide = context.Slides.FirstOrDefault(a=>a.Id==Id);
         if(slide == null){
             return BadRequest("Slides not found");
         }
         context.Slides.Remove(slide);
         await context.SaveChangesAsync();
+        try{
         await TeacherAuditor(SID, constant.DeletUploadedSlides);
+        }
+        catch(Exception ex){
+            await AdminAuditor(SID, constant.DeletUploadedSlides);
+        }
+        
         return Ok("Slides deleted successfully");
     }
 
@@ -411,13 +407,19 @@ namespace HDSS_BACKEND.Controllers
 
     [HttpDelete("deleteVideos")]
     public async Task<IActionResult>DeleteVideos(int Id, string SID){
-        var slide = context.Videos.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        var slide = context.Videos.FirstOrDefault(a=>a.Id==Id);
         if(slide == null){
             return BadRequest("Video not found");
         }
         context.Videos.Remove(slide);
         await context.SaveChangesAsync();
-        await TeacherAuditor(SID, constant.DeletUploadedVideo);
+        try{
+            await TeacherAuditor(SID, constant.DeletUploadedVideo);
+        }
+        catch(Exception ex){
+            await AdminAuditor(SID, constant.DeletUploadedVideo);
+        }
+        
         return Ok("Slides deleted successfully");
     }
 
@@ -489,13 +491,19 @@ namespace HDSS_BACKEND.Controllers
 
     [HttpDelete("deleteAudios")]
     public async Task<IActionResult>DeleteAudios(int Id, string SID){
-        var slide = context.Audios.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        var slide = context.Audios.FirstOrDefault(a=>a.Id==Id);
         if(slide == null){
             return BadRequest("Audio not found");
         }
         context.Audios.Remove(slide);
         await context.SaveChangesAsync();
-        await TeacherAuditor(SID, constant.DeletUploadedAudio);
+        try{
+            await TeacherAuditor(SID, constant.DeletUploadedAudio);
+        }
+        catch(Exception ex){
+            await AdminAuditor(SID, constant.DeletUploadedAudio);
+        }
+        
         return Ok("Slides deleted successfully");
     }
     
@@ -569,13 +577,19 @@ namespace HDSS_BACKEND.Controllers
 
     [HttpDelete("deletePictures")]
     public async Task<IActionResult>DeletePictures(int Id, string SID){
-        var slide = context.Pictures.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        var slide = context.Pictures.FirstOrDefault(a=>a.Id==Id);
         if(slide == null){
             return BadRequest("Picture not found");
         }
         context.Pictures.Remove(slide);
         await context.SaveChangesAsync();
-        await TeacherAuditor(SID, constant.DeletUploadedPicture);
+        try{
+            await TeacherAuditor(SID, constant.DeletUploadedPicture);
+        }
+        catch(Exception ex){
+               await AdminAuditor(SID, constant.DeletUploadedPicture);
+        }
+     
         return Ok("Slides deleted successfully");
     }
 
@@ -648,112 +662,126 @@ namespace HDSS_BACKEND.Controllers
 
     [HttpDelete("deleteBooks")]
     public async Task<IActionResult>DeleteBooks(int Id, string SID){
-        var slide = context.Books.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        var slide = context.Books.FirstOrDefault(a=>a.Id==Id);
         if(slide == null){
             return BadRequest("Book not found");
         }
         context.Books.Remove(slide);
         await context.SaveChangesAsync();
-        await TeacherAuditor(SID, constant.DeletUploadedBook);
+        try{
+            await TeacherAuditor(SID, constant.DeletUploadedBook);
+        }
+        catch(Exception ex){
+            await AdminAuditor(SID, constant.DeletUploadedBook);
+        }
+        
         return Ok("Slides deleted successfully");
     }
 
 
 
-
-
-
-
-            [HttpPost("UploadCalendar")]
-        public async Task<IActionResult> UploadCalendar(string TeacherId,  string ClassN, [FromForm]CalendarDto request){
-      
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.StaffID==TeacherId && p.ClassName==ClassN);
-         if(!NoPower){
-            return BadRequest("You dont have permission to upload calendars");
-         }
+        [HttpPost("UploadAssignment")]
+        public async Task<IActionResult> UploadAssignment([FromForm]LMSDto request, string ID){
+       
          
-         if (request.Calendar == null || request.Calendar.Length == 0)
+         if (request.Slide == null || request.Slide.Length == 0)
     {
-        return BadRequest("Invalid calendars");
+        return BadRequest("Invalid slide");
     }
 
     // Create the uploads directory if it doesn't exist
-    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Calendars");
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Assignments");
     if (!Directory.Exists(uploadsDirectory))
     {
         Directory.CreateDirectory(uploadsDirectory);
     }
 
     // Get the original slide extension
-    var calendarExtension = Path.GetExtension(request.Calendar.FileName);
+    var slideExtension = Path.GetExtension(request.Slide.FileName);
 
     // Generate a unique slide name
-    var calendarName = Guid.NewGuid().ToString() + calendarExtension;
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
 
     // Save the uploaded slide to the uploads directory
-    var calendarPath = Path.Combine(uploadsDirectory, calendarName);
-    using (var stream = new FileStream(calendarPath, FileMode.Create))
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
     {
-        await request.Calendar.CopyToAsync(stream);
+        await request.Slide.CopyToAsync(stream);
     }
    
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-
-    var calendar = new Models.Calendar{
+   
+    var s = new Assignment{
         //Select the subject name from an option in the frontend
-       
+       SubjectName = request.SubjectName,
        Title = request.Title,
-       ClassName = ClassN,
+       ClassName = request.ClassName,
        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-       CalendarPath = Path.Combine("LMS/Calendars", calendarName),
-       TeacherId = teacher.StaffID,
-       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+       SlidePath = Path.Combine("LMS/Assignments", slideName),
+      
+       AcademicYear = request.AcademicYear,
        AcademicTerm = request.AcademicTerm,
-       AcademicYear = request.AcademicYear
+      
+       Deadline = request.ExpireDate,
+
     };
 
-    context.Calendars.Add(calendar);
-    await context.SaveChangesAsync();
+    var teacher = context.TeacherInSubjects.FirstOrDefault(a=>a.SubjectName==s.SubjectName&&a.ClassName==s.ClassName&&a.StaffID==ID);
+    if (teacher==null){
+        return BadRequest("Teacher not found");
+    }
+    s.StaffID = teacher.StaffID;
+    s.TeacherName = teacher.StaffName;
+    if(s.Deadline<DateTime.Now){
+        return BadRequest("The Deadline should be greater than or equal to Today's Date and Time");
+    }
 
-    return Ok($"{calendar.Title} for {calendar.ClassName} has been Uploaded successfully");
+
+
+    context.Assignments.Add(s);
+    await context.SaveChangesAsync();
+    await TeacherAuditor(ID, constant.UploadAssignment);
+
+    return Ok($"{s.Title} for {s.SubjectName} has been Uploaded successfully");
     
     }
 
+ 
 
-[HttpGet("ViewCalendarStudent")]
-    public async Task<IActionResult> ViewCalendarStudent(string StudentId,  string ClassN){
-         bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-       
-         var calendar = context.Calendars.Where(t=> t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
-             if (calendar.Count == 0) {
-                return BadRequest("No calendars found ");
-                 }
-            
-            return Ok(calendar);
-
-                
+ 
+ 
+    [HttpGet("ViewAllAssignmentTeachers")]
+    public async Task<IActionResult>ViewAllAssignmentTeachers(string ID){
+        var slide = context.Assignments
+        .Where(a=>a.StaffID==ID)
+        .OrderByDescending(r=>r.Id)
+        .ToList();
+        await TeacherAuditor(ID,constant.ViewUploadedAssignment);
+        return Ok(slide);
     }
 
 
-        [HttpGet("ViewCalendarsTeachers")]
-    public async Task<IActionResult> ViewCalendarsTeachers(string TeacherId, string ClassN){
-     
+
+    [HttpDelete("deleteAssignment")]
+    public async Task<IActionResult>DeleteAssignment(int Id, string SID){
+        var slide = context.Assignments.FirstOrDefault(a=>a.Id==Id);
+        if(slide == null){
+            return BadRequest("Slides not found");
+        }
+        context.Assignments.Remove(slide);
+        await context.SaveChangesAsync();
+        try{
+        await TeacherAuditor(SID, constant.DeletUploadedAssignment);
+        }
+        catch(Exception ex){
+            await AdminAuditor(SID, constant.DeletUploadedSlides);
+        }
         
-
-         var calendar = context.Calendars.Where(t=> t.ClassName==ClassN).OrderByDescending(t => t.Id).ToList();
-           if (calendar.Count == 0) {
-                return BadRequest("No calendars found ");
-                 }
-           
-            return Ok(calendar);
-                
+        return Ok("Slides deleted successfully");
     }
+
+
+
+
 
 [HttpPost("AddannoucementForStudent")]
 public async Task<IActionResult> AddAnnouncementForStudent([FromBody]AnnouncementForStudent request){
@@ -990,7 +1018,7 @@ public async Task<IActionResult> GetAnnoucementForHOD(){
             [HttpPost("anouncementForSubjects")]
         public async Task<IActionResult> AnouncementForSubjects(string TeacherId, string SubjectN, string ClassN, [FromBody]AnnoucementForSubject request){
         var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+        bool NoPower = await context.TeacherInSubjects.AnyAsync(p=>p.StaffID==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to post an announcement");
          }
@@ -1026,7 +1054,7 @@ TheId = AssignmentIdGenerator(),
     [HttpPost("subjectDiscussionTeacher")]
         public async Task<IActionResult> SubjectDiscussionTeacher(string TeacherId, string SubjectN, string ClassN, [FromBody]DiscussionsForTeacher request){
         var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
+        bool NoPower = await context.TeacherInSubjects.AnyAsync(p=>p.StaffID==checker);
          if(!NoPower){
             return BadRequest("You dont have permission to write a comment on this subject");
          }
@@ -1102,271 +1130,6 @@ public async Task<IActionResult> GetSubjectDiscussion(string Subject, string Cla
 
 
 
-    [HttpPost("UploadAssignment")]
-        public async Task<IActionResult> UploadAssignment(string TeacherId, string SubjectN, string ClassN, [FromForm]AssignmentDto request){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to upload slides");
-         }
-         
-         if (request.AssignmentFile == null || request.AssignmentFile.Length == 0)
-    {
-        return BadRequest("Invalid assignment file");
-    }
-
-    // Create the uploads directory if it doesn't exist
-    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "AssignmentFiles");
-    if (!Directory.Exists(uploadsDirectory))
-    {
-        Directory.CreateDirectory(uploadsDirectory);
-    }
-
-    // Get the original slide extension
-    var slideExtension = Path.GetExtension(request.AssignmentFile.FileName);
-
-    // Generate a unique slide name
-    var slideName = Guid.NewGuid().ToString() + slideExtension;
-
-    // Save the uploaded slide to the uploads directory
-    var slidePath = Path.Combine(uploadsDirectory, slideName);
-    using (var stream = new FileStream(slidePath, FileMode.Create))
-    {
-        await request.AssignmentFile.CopyToAsync(stream);
-    }
-   
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-
-    var assignment = new Assignment{
-        //Select the subject name from an option in the frontend
-       SubjectName = SubjectN,
-       StartDate = request.StartDate,
-       ExpireDate = request.ExpireDate,
-       ClassName = ClassN,
-       AssignmentPath = Path.Combine("LMS/AssignmentFiles", slideName),
-       TeacherId = teacher.StaffID,
-       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-       AssignmentNumber = request.AssignmentNumber,
-       AcademicYear = request.AcademicYear,
-       AcademicTerm = request.AcademicTerm,
-       AssignmentToken = SubjectN+ClassN+ request.AcademicYear + request.AcademicTerm + request.AssignmentNumber,
-    };
-    bool assignmentExist = await context.Assignments.AnyAsync(a=>a.AssignmentToken==assignment.AssignmentToken);
-    if(assignmentExist){
-        return BadRequest("Assignment already exists");
-    }
-
-    context.Assignments.Add(assignment);
-    await context.SaveChangesAsync();
-
-    return Ok($"{assignment .SubjectName} assignment has been uploaded succesfully ");
-    
-    }
-
-
-
-    [HttpPost("EditAssignment")]
-        public async Task<IActionResult> EditAssignment(string TeacherId, string SubjectN, string ClassN, [FromForm]AssignmentDto request){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission ");
-         }
-         
-         if (request.AssignmentFile == null || request.AssignmentFile.Length == 0)
-    {
-        return BadRequest("Invalid assignment file");
-    }
-
-    // Create the uploads directory if it doesn't exist
-    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "AssignmentFiles");
-    if (!Directory.Exists(uploadsDirectory))
-    {
-        Directory.CreateDirectory(uploadsDirectory);
-    }
-
-    // Get the original slide extension
-    var slideExtension = Path.GetExtension(request.AssignmentFile.FileName);
-
-    // Generate a unique slide name
-    var slideName = Guid.NewGuid().ToString() + slideExtension;
-
-    // Save the uploaded slide to the uploads directory
-    var slidePath = Path.Combine(uploadsDirectory, slideName);
-    using (var stream = new FileStream(slidePath, FileMode.Create))
-    {
-        await request.AssignmentFile.CopyToAsync(stream);
-    }
-   
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-    var Token = SubjectN+ClassN+ request.AcademicYear + request.AcademicTerm + request.AssignmentNumber;
-
-    var oldWork = context.Assignments.FirstOrDefault(a=> a.AssignmentToken == Token);
-    if (oldWork == null){
-        return BadRequest("Assignment not found");
-    }
-        //Select the subject name from an option in the frontend
-       oldWork.SubjectName = SubjectN;
-       oldWork.StartDate = request.StartDate;
-       oldWork.ExpireDate = request.ExpireDate;
-       oldWork.ClassName = ClassN;
-       oldWork.AssignmentPath = Path.Combine("LMS/AssignmentFiles", slideName);
-       oldWork.TeacherId = teacher.StaffID;
-       oldWork.TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName;
-       oldWork.AssignmentNumber = request.AssignmentNumber;
-       oldWork.AcademicYear = request.AcademicYear;
-       oldWork.AcademicTerm = request.AcademicTerm;
-       oldWork.AssignmentToken = SubjectN+ClassN+ request.AcademicYear + request.AcademicTerm + request.AssignmentNumber;
-    
-    
-    await context.SaveChangesAsync();
-
-    return Ok($"Assignment has been updated succesfully ");
-    
-    }
-
-
-    [HttpPost("UploadAssignmentSolutions")]
-        public async Task<IActionResult> UploadAssignmentSolutions(string StudentId, string SubjectN, string ClassN, string Year,string Term,string assignmentNumber, [FromForm]AssignmentSubmissionDto request){
-         bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-
-         var assignmentToken = SubjectN+ClassN+ Year + Term + assignmentNumber;
- 
-         var question = context.Assignments.FirstOrDefault(a=>a.AssignmentToken == assignmentToken);
-         if (question == null){
-            return BadRequest("No Assignment Found");
-         }
-         if (DateTime.Now>question.ExpireDate){
-            return BadRequest("Assignment has expired");
-         }
-         if (request.AssignmentFile == null || request.AssignmentFile.Length == 0)
-    {
-        return BadRequest("Invalid assignment file");
-    }
-
-    // Create the uploads directory if it doesn't exist
-    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "SubmissionFiles");
-    if (!Directory.Exists(uploadsDirectory))
-    {
-        Directory.CreateDirectory(uploadsDirectory);
-    }
-
-    // Get the original slide extension
-    var slideExtension = Path.GetExtension(request.AssignmentFile.FileName);
-
-    // Generate a unique slide name
-    var slideName = Guid.NewGuid().ToString() + slideExtension;
-
-    // Save the uploaded slide to the uploads directory
-    var slidePath = Path.Combine(uploadsDirectory, slideName);
-    using (var stream = new FileStream(slidePath, FileMode.Create))
-    {
-        await request.AssignmentFile.CopyToAsync(stream);
-    }
-   
-    var student = context.Students.FirstOrDefault(t=> t.StudentId == StudentId);
-    if (student == null){
-    return Unauthorized();
-    }
-
-    var submission = new AssignmentSubmission{
-        //Select the subject name from an option in the frontend
-       SubjectName = SubjectN,
-       AssignmentPath = question.AssignmentPath,
-       ClassName = ClassN,
-       SubmissionPath = Path.Combine("LMS/SubmissionFiles", slideName),
-        uploadDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-       StudentId = student.StudentId,
-       StudentName = student.FirstName+" "+student.OtherName+" " + student.LastName,
-       AssignmentToken = question.AssignmentToken,
-       AcademicYear = Year,
-       AcademicTerm = Term,
-    };
-     bool assignmentExist = await context.AssignmentSubmissions.AnyAsync(a=>a.AssignmentToken==submission.AssignmentToken);
-    if(assignmentExist){
-        return BadRequest("You have already submitted a solution for this assignment");
-    }
-    else{
-        context.AssignmentSubmissions.Add(submission);
-    } 
-    await context.SaveChangesAsync();
-
-    return Ok($"{submission.SubjectName} solution has been submitted succesfully ");
-    
-    }
-
-
-[HttpGet("ViewAllStudentAssignmentsTeacher")]
-        public async Task<IActionResult> ViewAllStudentAssignmentsTeacher(string TeacherId, string SubjectN, string ClassN){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this ");
-         }
-
-         var assignment = context.Assignments.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN).OrderByDescending(R=>R.Id).ToList();
-         if(assignment.Count==0){
-            return BadRequest("No Assignment Found");
-         }
-         return Ok(assignment);
-}
-
-[HttpGet("ViewAllStudentAssignmentsStudent")]
-        public async Task<IActionResult> ViewAllStudentAssignmentsStudent(string StudentId, string SubjectN, string ClassN){
-        bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-
-
-         var assignment = context.Assignments.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN).OrderByDescending(R=>R.Id).ToList();
-          if(assignment.Count==0){
-            return BadRequest("No Assignment Found");
-         }
-         return Ok(assignment);
-}
-
-
-
-[HttpGet("ViewAllStudentSolutionsTeacher")]
-        public async Task<IActionResult> ViewAllStudentSolutionsTeacher(string TeacherId, string SubjectN, string ClassN){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this ");
-         }
-
-         var Solutions = context.AssignmentSubmissions.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN).OrderByDescending(R=>R.Id).ToList();
-          if(Solutions.Count==0){
-            return BadRequest("No Solutions Found");
-         }
-         return Ok(Solutions);
-}
-
-
-[HttpGet("ViewAllStudentSolutionsStudent")]
-        public async Task<IActionResult> ViewAllStudentSolutionsStudent(string StudentId, string SubjectN, string ClassN){
-        bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-
-
-         var submissions = context.AssignmentSubmissions.Where(a=>a.SubjectName==SubjectN && a.ClassName==ClassN&&a.StudentId==StudentId).OrderByDescending(R=>R.Id).ToList();
-          if(submissions.Count==0){
-            return BadRequest("No Submission Found");
-         }
-         return Ok(submissions);
-}
 
 
 

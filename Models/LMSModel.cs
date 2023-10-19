@@ -25,15 +25,7 @@ namespace HDSS_BACKEND.Models
 
     }
 
-    public class TeacherForSubject{
-        public int Id { get; set; }
-        public string? StaffID { get; set; }
-        public string? StaffName { get; set; }
-        public string? TeacherCode { get; set; }
-        public string? SubjectName { get; set; }
-          public string? ClassName { get; set; }
-          public string? DateAssigned {get;set;}
-    }
+
 
     public class TeacherInSubject{
         public int Id { get; set; }
@@ -77,6 +69,26 @@ namespace HDSS_BACKEND.Models
         public string? TeacherName { get; set; }
 
     }
+
+
+
+    public class Assignment{
+        public int Id { get; set; }
+        public string? SubjectName { get; set; }
+        public string? Title { get; set; }
+        public string? ClassName { get; set; }
+        public string? SlidePath { get; set; }
+        public string? DateAdded{ get; set; }
+        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+        public string? StaffID {get;set;}
+        public string? TeacherName { get; set; }
+        
+        public DateTime? Deadline { get; set; }
+
+    }
+
+
 
 public class Video{
         public int Id { get; set; }
@@ -142,6 +154,8 @@ public class Video{
         public string? ClassName { get; set; }
         public string? AcademicYear{ get; set; }
         public string? AcademicTerm{ get; set; }
+       
+        public DateTime? ExpireDate { get; set; }
         public IFormFile? Slide { get; set; }
 
     }
@@ -273,62 +287,7 @@ public class DiscussionsForTeacher{
 
 
 
-     public class Assignment{
-        public int Id { get; set; }      
-        public string? AcademicTerm{ get; set; }
-         public string? AcademicYear{ get; set; }
-        public string? SubjectName { get; set; }
-        public string? ClassName { get; set; }
-        public string? AssignmentPath { get; set; }
-        public DateTime? StartDate{ get; set; }
-        public DateTime? ExpireDate { get; set; }
-        public string? TeacherId { get; set; }
-        public string? TeacherName { get; set; }
-        public string? AssignmentNumber { get; set; }
-        public string? AssignmentToken { get; set; }
-
-    }
-
-     public class AssignmentDto{
-  
-        public DateTime? StartDate{ get; set; }
-        public DateTime? ExpireDate { get; set; }
-        public string? AcademicTerm{ get; set; }
-        public string? AcademicYear{ get; set; }
-        public IFormFile? AssignmentFile { get; set; }
-         public string? AssignmentNumber { get; set; }
-
-    }
-
-
-public class AssignmentSubmission{
-        public int Id { get; set; }     
-           public string? AcademicYear{ get; set; }
-        public string? AcademicTerm{ get; set; }
-
-        public string? SubjectName { get; set; }
-        public string? ClassName { get; set; }
-        public string? AssignmentPath { get; set; }
-        public string? uploadDate{ get; set; }
-        public string? StudentId { get; set; }
-        public string? StudentName { get; set; }
-        public string? AssignmentCode { get; set; }
-        public string? SubmissionPath { get; set; }
-        public string? AssignmentToken { get; set; }
-    }
-
-     public class AssignmentSubmissionDto{
-  
-     
-        public IFormFile? AssignmentFile { get; set; }
-        public string? AcademicYear{ get; set; }
-        public string? AcademicTerm{ get; set; }
-
-
-    }
-
-
-
+    
 
 
 

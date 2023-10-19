@@ -402,82 +402,33 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("AcademicYear")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AssignmentNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssignmentPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssignmentToken")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ExpireDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubjectName")
+                    b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TeacherId")
+                    b.Property<DateTime?>("Deadline")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SlidePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StaffID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubjectName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TeacherName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Assignments");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.AssignmentSubmission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssignmentCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssignmentPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AssignmentToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClassName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudentName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubjectName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubmissionPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("uploadDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AssignmentSubmissions");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.Audio", b =>
@@ -1765,37 +1716,6 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Teachers");
-                });
-
-            modelBuilder.Entity("HDSS_BACKEND.Models.TeacherForSubject", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClassName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DateAssigned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StaffID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StaffName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubjectName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TeacherCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TeacherForSubjects");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.TeacherInSubject", b =>
