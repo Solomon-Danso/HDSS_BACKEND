@@ -265,7 +265,7 @@ namespace HDSS_BACKEND.Controllers
     }
 
         [HttpPost("UploadSlide")]
-        public async Task<IActionResult> UploadSlide([FromForm]SlidesDto request, string ID){
+        public async Task<IActionResult> UploadSlide([FromForm]LMSDto request, string ID){
        
          
          if (request.Slide == null || request.Slide.Length == 0)
@@ -323,23 +323,6 @@ namespace HDSS_BACKEND.Controllers
     
     }
 
-    [HttpGet("ViewSlidesStudent")]
-    public async Task<IActionResult> ViewSlidesStudent(string StudentId, string SubjectN, string ClassN, string Term, string Year){
-       bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-
-
-         var slide = context.Slides.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN && t.AcademicTerm==Term&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-             if (slide.Count == 0) {
-                return BadRequest("No slides found ");
-                 }
-            
-            return Ok(slide);
-                
-    }
-
     [HttpGet("ViewAllSlidesTeachers")]
     public async Task<IActionResult>ViewAllSlidesTeachers(string ID){
         var slide = context.Slides.Where(a=>a.StaffID==ID).ToList();
@@ -360,19 +343,13 @@ namespace HDSS_BACKEND.Controllers
     }
 
 
+        [HttpPost("UploadVideo")]
+        public async Task<IActionResult> UploadVideo([FromForm]LMSDto request, string ID){
        
-
-            [HttpPost("UploadVideo")]
-        public async Task<IActionResult> UploadVideo(string TeacherId, string SubjectN, string ClassN, [FromForm]VideoDto request){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to upload videos");
-         }
          
-         if (request.Video == null || request.Video.Length == 0)
+         if (request.Slide == null || request.Slide.Length == 0)
     {
-        return BadRequest("Invalid videos");
+        return BadRequest("Invalid Video");
     }
 
     // Create the uploads directory if it doesn't exist
@@ -383,94 +360,74 @@ namespace HDSS_BACKEND.Controllers
     }
 
     // Get the original slide extension
-    var videoExtension = Path.GetExtension(request.Video.FileName);
+    var slideExtension = Path.GetExtension(request.Slide.FileName);
 
     // Generate a unique slide name
-    var videoName = Guid.NewGuid().ToString() + videoExtension;
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
 
     // Save the uploaded slide to the uploads directory
-    var videoPath = Path.Combine(uploadsDirectory, videoName);
-    using (var stream = new FileStream(videoPath, FileMode.Create))
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
     {
-        await request.Video.CopyToAsync(stream);
+        await request.Slide.CopyToAsync(stream);
     }
    
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-
-    var video = new Video{
+   
+    var s = new Video{
         //Select the subject name from an option in the frontend
-       SubjectName = SubjectN,
+       SubjectName = request.SubjectName,
        Title = request.Title,
-       ClassName = ClassN,
+       ClassName = request.ClassName,
        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-       VideoPath = Path.Combine("LMS/Videos", videoName),
-       TeacherId = teacher.StaffID,
-       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+       SlidePath = Path.Combine("LMS/Videos", slideName),
+      
         AcademicYear = request.AcademicYear,
        AcademicTerm = request.AcademicTerm
-
     };
 
-    context.Videos.Add(video);
-    await context.SaveChangesAsync();
+    var teacher = context.TeacherInSubjects.FirstOrDefault(a=>a.SubjectName==s.SubjectName&&a.ClassName==s.ClassName&&a.StaffID==ID);
+    if (teacher==null){
+        return BadRequest("Teacher not found");
+    }
+    s.StaffID = teacher.StaffID;
+    s.TeacherName = teacher.StaffName;
 
-    return Ok($"{video.Title} for {video.SubjectName} has been Uploaded successfully");
+
+
+    context.Videos.Add(s);
+    await context.SaveChangesAsync();
+    await TeacherAuditor(ID, constant.UploadVideo);
+
+    return Ok($"{s.Title} for {s.SubjectName} has been Uploaded successfully");
     
     }
 
-
-[HttpGet("ViewVideoStudent")]
-    public async Task<IActionResult> ViewVideoStudent(string StudentId, string SubjectN, string ClassN,string Term, string Year){
-      bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-
-         var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term && t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-             if (video.Count == 0) {
-                return BadRequest("No videos found ");
-                 }
-            
-            return Ok(video);
-
-                
+    [HttpGet("ViewAllVideoTeachers")]
+    public async Task<IActionResult>ViewAllVideoTeachers(string ID){
+        var slide = context.Videos.Where(a=>a.StaffID==ID).ToList();
+        await TeacherAuditor(ID,constant.ViewUploadedVideos);
+        return Ok(slide);
     }
 
-
-        [HttpGet("ViewVideosTeachers")]
-    public async Task<IActionResult> ViewVideosTeachers(string TeacherId, string SubjectN, string ClassN, string Term, string Year){
-     var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this slides");
-         }
-
-         var video = context.Videos.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term && t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-           if (video.Count == 0) {
-                return BadRequest("No videos found ");
-                 }
-           
-            return Ok(video);
-                
+    [HttpDelete("deleteVideos")]
+    public async Task<IActionResult>DeleteVideos(int Id, string SID){
+        var slide = context.Videos.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        if(slide == null){
+            return BadRequest("Video not found");
+        }
+        context.Videos.Remove(slide);
+        await context.SaveChangesAsync();
+        await TeacherAuditor(SID, constant.DeletUploadedVideo);
+        return Ok("Slides deleted successfully");
     }
 
-
-
-
-            [HttpPost("UploadAudio")]
-        public async Task<IActionResult> UploadAudio(string TeacherId, string SubjectN, string ClassN, [FromForm]AudioDto request){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to upload audios");
-         }
+           [HttpPost("UploadAudio")]
+        public async Task<IActionResult> UploadAudio([FromForm]LMSDto request, string ID){
+       
          
-         if (request.Audio == null || request.Audio.Length == 0)
+         if (request.Slide == null || request.Slide.Length == 0)
     {
-        return BadRequest("Invalid audios");
+        return BadRequest("Invalid Audio");
     }
 
     // Create the uploads directory if it doesn't exist
@@ -481,91 +438,76 @@ namespace HDSS_BACKEND.Controllers
     }
 
     // Get the original slide extension
-    var audioExtension = Path.GetExtension(request.Audio.FileName);
+    var slideExtension = Path.GetExtension(request.Slide.FileName);
 
     // Generate a unique slide name
-    var audioName = Guid.NewGuid().ToString() + audioExtension;
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
 
     // Save the uploaded slide to the uploads directory
-    var audioPath = Path.Combine(uploadsDirectory, audioName);
-    using (var stream = new FileStream(audioPath, FileMode.Create))
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
     {
-        await request.Audio.CopyToAsync(stream);
+        await request.Slide.CopyToAsync(stream);
     }
    
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-
-    var audio = new Audio{
+   
+    var s = new Audio{
         //Select the subject name from an option in the frontend
-       SubjectName = SubjectN,
+       SubjectName = request.SubjectName,
        Title = request.Title,
-       ClassName = ClassN,
+       ClassName = request.ClassName,
        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-       AudioPath = Path.Combine("LMS/Audios", audioName),
-       TeacherId = teacher.StaffID,
-       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+       SlidePath = Path.Combine("LMS/Audios", slideName),
+      
         AcademicYear = request.AcademicYear,
-        AcademicTerm = request.AcademicTerm,
+       AcademicTerm = request.AcademicTerm
     };
 
-    context.Audios.Add(audio);
-    await context.SaveChangesAsync();
+    var teacher = context.TeacherInSubjects.FirstOrDefault(a=>a.SubjectName==s.SubjectName&&a.ClassName==s.ClassName&&a.StaffID==ID);
+    if (teacher==null){
+        return BadRequest("Teacher not found");
+    }
+    s.StaffID = teacher.StaffID;
+    s.TeacherName = teacher.StaffName;
 
-    return Ok($"{audio.Title} for {audio.SubjectName} has been Uploaded successfully");
+
+
+    context.Audios.Add(s);
+    await context.SaveChangesAsync();
+    await TeacherAuditor(ID, constant.UploadAudio);
+
+    return Ok($"{s.Title} for {s.SubjectName} has been Uploaded successfully");
     
     }
 
-
-[HttpGet("ViewAudioStudent")]
-    public async Task<IActionResult> ViewAudioStudent(string StudentId, string SubjectN, string ClassN, string Term, string Year){
-      bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-
-         var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-             if (audio.Count == 0) {
-                return BadRequest("No audios found ");
-                 }
-            
-            return Ok(audio);
-
-                
+    [HttpGet("ViewAllAudioTeachers")]
+    public async Task<IActionResult>ViewAllAudioTeachers(string ID){
+        var slide = context.Audios.Where(a=>a.StaffID==ID).ToList();
+        await TeacherAuditor(ID,constant.ViewUploadedAudios);
+        return Ok(slide);
     }
 
-
-        [HttpGet("ViewAudiosTeachers")]
-    public async Task<IActionResult> ViewAudiosTeachers(string TeacherId, string SubjectN, string ClassN,string Year, string Term){
-     var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this slides");
-         }
-
-         var audio = context.Audios.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term && t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-           if (audio.Count == 0) {
-                return BadRequest("No audios found ");
-                 }
-           
-            return Ok(audio);
-                
+    [HttpDelete("deleteAudios")]
+    public async Task<IActionResult>DeleteAudios(int Id, string SID){
+        var slide = context.Audios.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        if(slide == null){
+            return BadRequest("Audio not found");
+        }
+        context.Audios.Remove(slide);
+        await context.SaveChangesAsync();
+        await TeacherAuditor(SID, constant.DeletUploadedAudio);
+        return Ok("Slides deleted successfully");
     }
+    
 
 
-            [HttpPost("UploadPicture")]
-        public async Task<IActionResult> UploadPicture(string TeacherId, string SubjectN, string ClassN, [FromForm]PictureDto request){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to upload pictures");
-         }
+        [HttpPost("UploadPicture")]
+        public async Task<IActionResult> UploadPicture([FromForm]LMSDto request, string ID){
+       
          
-         if (request.Picture == null || request.Picture.Length == 0)
+         if (request.Slide == null || request.Slide.Length == 0)
     {
-        return BadRequest("Invalid pictures");
+        return BadRequest("Invalid Picture");
     }
 
     // Create the uploads directory if it doesn't exist
@@ -576,174 +518,147 @@ namespace HDSS_BACKEND.Controllers
     }
 
     // Get the original slide extension
-    var pictureExtension = Path.GetExtension(request.Picture.FileName);
+    var slideExtension = Path.GetExtension(request.Slide.FileName);
 
     // Generate a unique slide name
-    var pictureName = Guid.NewGuid().ToString() + pictureExtension;
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
 
     // Save the uploaded slide to the uploads directory
-    var picturePath = Path.Combine(uploadsDirectory, pictureName);
-    using (var stream = new FileStream(picturePath, FileMode.Create))
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
     {
-        await request.Picture.CopyToAsync(stream);
+        await request.Slide.CopyToAsync(stream);
     }
    
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-
-    var picture = new Picture{
+   
+    var s = new Picture{
         //Select the subject name from an option in the frontend
-       SubjectName = SubjectN,
+       SubjectName = request.SubjectName,
        Title = request.Title,
-       ClassName = ClassN,
+       ClassName = request.ClassName,
        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-       PicturePath = Path.Combine("LMS/Pictures", pictureName),
-       TeacherId = teacher.StaffID,
-       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
+       SlidePath = Path.Combine("LMS/Pictures", slideName),
+      
         AcademicYear = request.AcademicYear,
-        AcademicTerm = request.AcademicTerm,
+       AcademicTerm = request.AcademicTerm
     };
 
-    context.Pictures.Add(picture);
-    await context.SaveChangesAsync();
+    var teacher = context.TeacherInSubjects.FirstOrDefault(a=>a.SubjectName==s.SubjectName&&a.ClassName==s.ClassName&&a.StaffID==ID);
+    if (teacher==null){
+        return BadRequest("Teacher not found");
+    }
+    s.StaffID = teacher.StaffID;
+    s.TeacherName = teacher.StaffName;
 
-    return Ok($"{picture.Title} for {picture.SubjectName} has been Uploaded successfully");
+
+
+    context.Pictures.Add(s);
+    await context.SaveChangesAsync();
+    await TeacherAuditor(ID, constant.UploadPicture);
+
+    return Ok($"{s.Title} for {s.SubjectName} has been Uploaded successfully");
     
     }
 
+    [HttpGet("ViewAllPictureTeachers")]
+    public async Task<IActionResult>ViewAllPictureTeachers(string ID){
+        var slide = context.Pictures.Where(a=>a.StaffID==ID).ToList();
+        await TeacherAuditor(ID,constant.ViewUploadedPictures);
+        return Ok(slide);
+    }
 
-[HttpGet("ViewPictureStudent")]
-    public async Task<IActionResult> ViewPictureStudent(string StudentId, string SubjectN, string ClassN, string Year, string Term){
-      bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-
-         var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicYear==Year&&t.AcademicTerm==Term).OrderByDescending(t => t.Id).ToList();
-             if (picture.Count == 0) {
-                return BadRequest("No pictures found ");
-                 }
-            
-            return Ok(picture);
-
-                
+    [HttpDelete("deletePictures")]
+    public async Task<IActionResult>DeletePictures(int Id, string SID){
+        var slide = context.Pictures.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        if(slide == null){
+            return BadRequest("Picture not found");
+        }
+        context.Pictures.Remove(slide);
+        await context.SaveChangesAsync();
+        await TeacherAuditor(SID, constant.DeletUploadedPicture);
+        return Ok("Slides deleted successfully");
     }
 
 
-        [HttpGet("ViewPicturesTeachers")]
-    public async Task<IActionResult> ViewPicturesTeachers(string TeacherId, string SubjectN, string ClassN,string Year, string Term){
-     var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this slides");
-         }
-
-         var picture = context.Pictures.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN &&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-           if (picture.Count == 0) {
-                return BadRequest("No pictures found ");
-                 }
-           
-            return Ok(picture);
-                
-    }
-
-
-
-            [HttpPost("UploadSyllabus")]
-        public async Task<IActionResult> UploadSyllabus(string TeacherId, string SubjectN, string ClassN, [FromForm]SyllabusDto request){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to upload syllabuss");
-         }
+        [HttpPost("UploadBook")]
+        public async Task<IActionResult> UploadBook([FromForm]LMSDto request, string ID){
+       
          
-         if (request.Syllabus == null || request.Syllabus.Length == 0)
+         if (request.Slide == null || request.Slide.Length == 0)
     {
-        return BadRequest("Invalid syllabuss");
+        return BadRequest("Invalid Book");
     }
 
     // Create the uploads directory if it doesn't exist
-    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Syllabuss");
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Books");
     if (!Directory.Exists(uploadsDirectory))
     {
         Directory.CreateDirectory(uploadsDirectory);
     }
 
     // Get the original slide extension
-    var syllabusExtension = Path.GetExtension(request.Syllabus.FileName);
+    var slideExtension = Path.GetExtension(request.Slide.FileName);
 
     // Generate a unique slide name
-    var syllabusName = Guid.NewGuid().ToString() + syllabusExtension;
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
 
     // Save the uploaded slide to the uploads directory
-    var syllabusPath = Path.Combine(uploadsDirectory, syllabusName);
-    using (var stream = new FileStream(syllabusPath, FileMode.Create))
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
     {
-        await request.Syllabus.CopyToAsync(stream);
+        await request.Slide.CopyToAsync(stream);
     }
    
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-
-    var syllabus = new Syllabus{
+   
+    var s = new Book{
         //Select the subject name from an option in the frontend
-       SubjectName = SubjectN,
+       SubjectName = request.SubjectName,
        Title = request.Title,
-       ClassName = ClassN,
+       ClassName = request.ClassName,
        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-       SyllabusPath = Path.Combine("LMS/Syllabuss", syllabusName),
-       TeacherId = teacher.StaffID,
-       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-        AcademicTerm = request.AcademicTerm,
-        AcademicYear = request.AcademicYear
+       SlidePath = Path.Combine("LMS/Books", slideName),
+      
+        AcademicYear = request.AcademicYear,
+       AcademicTerm = request.AcademicTerm
     };
 
-    context.Syllabuss.Add(syllabus);
-    await context.SaveChangesAsync();
+    var teacher = context.TeacherInSubjects.FirstOrDefault(a=>a.SubjectName==s.SubjectName&&a.ClassName==s.ClassName&&a.StaffID==ID);
+    if (teacher==null){
+        return BadRequest("Teacher not found");
+    }
+    s.StaffID = teacher.StaffID;
+    s.TeacherName = teacher.StaffName;
 
-    return Ok($"{syllabus.Title} for {syllabus.SubjectName} has been Uploaded successfully");
+
+
+    context.Books.Add(s);
+    await context.SaveChangesAsync();
+    await TeacherAuditor(ID, constant.UploadBook);
+
+    return Ok($"{s.Title} for {s.SubjectName} has been Uploaded successfully");
     
     }
 
+    [HttpGet("ViewAllBookTeachers")]
+    public async Task<IActionResult>ViewAllBookTeachers(string ID){
+        var slide = context.Books.Where(a=>a.StaffID==ID).ToList();
+        await TeacherAuditor(ID,constant.ViewUploadedBooks);
+        return Ok(slide);
+    }
 
-[HttpGet("ViewSyllabusStudent")]
-    public async Task<IActionResult> ViewSyllabusStudent(string StudentId, string SubjectN, string ClassN,string Term, string Year){
-      bool IsValidStudent = await context.Students.AnyAsync(x => x.StudentId == StudentId&&x.Level==ClassN);
-       if (!IsValidStudent){
-        return BadRequest("You are not in the specified class");
-       }
-
-         var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-             if (syllabus.Count == 0) {
-                return BadRequest("No syllabuss found ");
-                 }
-            
-            return Ok(syllabus);
-
-                
+    [HttpDelete("deleteBooks")]
+    public async Task<IActionResult>DeleteBooks(int Id, string SID){
+        var slide = context.Books.FirstOrDefault(a=>a.Id==Id&&a.StaffID==SID);
+        if(slide == null){
+            return BadRequest("Book not found");
+        }
+        context.Books.Remove(slide);
+        await context.SaveChangesAsync();
+        await TeacherAuditor(SID, constant.DeletUploadedBook);
+        return Ok("Slides deleted successfully");
     }
 
 
-        [HttpGet("ViewSyllabussTeachers")]
-    public async Task<IActionResult> ViewSyllabussTeachers(string TeacherId, string SubjectN, string ClassN, string Year, string Term){
-     var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherForSubjects.AnyAsync(p=>p.TeacherCode==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to view this slides");
-         }
-
-         var syllabus = context.Syllabuss.Where(t=>t.SubjectName == SubjectN && t.ClassName==ClassN&&t.AcademicTerm==Term&&t.AcademicYear==Year).OrderByDescending(t => t.Id).ToList();
-           if (syllabus.Count == 0) {
-                return BadRequest("No syllabuss found ");
-                 }
-           
-            return Ok(syllabus);
-                
-    }
 
 
 

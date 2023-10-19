@@ -39,7 +39,7 @@ public DbSet<Video> Videos { get; set; }
 public DbSet<Slide>Slides { get; set; }
 public DbSet<Audio> Audios { get; set; }
 public DbSet<Picture> Pictures { get; set; }
-public DbSet<Syllabus> Syllabuss { get; set; }
+public DbSet<Book> Books { get; set; }
 public DbSet<Calendar> Calendars { get;set; }
 public DbSet<AnnouncementForStudent>AnnouncementForStudents { get; set; }
 public DbSet<AnnouncementForTeachers>AnnouncementForTeachers { get; set; }

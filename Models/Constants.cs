@@ -45,10 +45,24 @@ namespace HDSS_BACKEND.Models
            public string ViewASubject = "Viewed Subject List";
            public string DeletASubject = "Deleted A Subject";
            public string AssignTeacher = "Assigned Teacher To A Subject";
-           public string UploadSlides = "Upload Slides";
+           public string UploadSlides = "Uploaded A Slides";
            public string ViewUploadedSlides = "Viewed Uploaded Slides";
+              public string ViewUploadedVideos = "Viewed Uploaded Videos";
                 public string DeletUploadedSlides = "Deleted An Uploaded Slides";
+                 public string DeletUploadedVideo = "Deleted An Uploaded Video";
+                public string UploadVideo = "Uploaded A Video";
+                  public string UploadAudio = "Uploaded A Audio";
+                  public string ViewUploadedAudios = "Viewed Uploaded Audios";
+                   public string DeletUploadedAudio = "Deleted An Uploaded Audio";
 
+                   public string UploadPicture = "Uploaded A Picture";
+                  public string ViewUploadedPictures = "Viewed Uploaded Pictures";
+                   public string DeletUploadedPicture = "Deleted An Uploaded Picture";
+
+                   public string UploadBook = "Uploaded A Book";
+                  public string ViewUploadedBooks = "Viewed Uploaded Books";
+                   public string DeletUploadedBook = "Deleted An Uploaded Book";
+                   
 
 
 
