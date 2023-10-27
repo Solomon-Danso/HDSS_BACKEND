@@ -10,62 +10,215 @@ using Microsoft.AspNetCore.Mvc;
 namespace HDSS_BACKEND.Controllers
 {
     [ApiController]
-    [Route("api/AllGetters")]
-    public class AllGettersController : ControllerBase
+    [Route("api/[controller]")]
+    public class StudentApp : ControllerBase
     {
         private readonly DataContext context;
-         Constants constant = new Constants();
           string Country;
         string City;
         double latitude;
         double logitude;
-        public AllGettersController(DataContext ctx)
+         Constants constant = new Constants();
+        public StudentApp(DataContext ctx)
         {
             context = ctx;
         }
 
-    [HttpGet("viewSlides")]
-    public async Task<IActionResult>ViewSlides(string Sub, string Level){
-        var slide = context.Slides.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
+                [HttpPost("UploadTimeTable")]
+        public async Task<IActionResult> UploadTimeTable([FromForm]LMSDto request, string ID){
        
-        return Ok(slide);
+         
+         if (request.Slide == null || request.Slide.Length == 0)
+    {
+        return BadRequest("Invalid slide");
     }
 
-      [HttpGet("viewVideos")]
-    public async Task<IActionResult>ViewVideos(string Sub, string Level){
-        var slide = context.Videos.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "TimeTables");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.Slide.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.Slide.CopyToAsync(stream);
+    }
+   
+   
+    var s = new TimeTable{
+        //Select the subject name from an option in the frontend
       
+      
+       ClassName = request.ClassName,
+       DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+       SlidePath = Path.Combine("LMS/TimeTables", slideName),
+      
+       AcademicYear = request.AcademicYear,
+       AcademicTerm = request.AcademicTerm,
+      
+      
+    };
+
+    var teacher = context.Classess.FirstOrDefault(a=>a.ClassName==s.ClassName);
+    if (teacher==null){
+        return BadRequest("Teacher not found");
+    }
+    s.TeacherName = teacher.ClassTeacher;
+    s.StaffID = teacher.TeacherId;
+  var c = context.TimeTables.Where(a=>a.ClassName==s.ClassName).Count();
+  if (c>0){
+    var d = context.TimeTables.FirstOrDefault(a=>a.Id>0);
+    if (d==null){
+        return BadRequest("TimeTables not found");
+    }
+    context.TimeTables.Remove(d);
+    context.TimeTables.Add(s);
+
+  }else{
+context.TimeTables.Add(s);
+  }
+
+
+
+    
+    await context.SaveChangesAsync();
+    await TeacherAuditor(ID, constant.UploadATimeTable);
+
+    return Ok($"Timetable has been Uploaded successfully");
+    
+    }
+
+[HttpGet("GetTeacherClass")]
+public async Task<IActionResult>GetTeacherClass(string ID){
+    var c= context.Classess.Where(a=>a.TeacherId==ID).OrderBy(a=>a.ClassName).ToList();
+    return Ok(c);
+}
+
+
+    [HttpGet("ViewAllTimeTableTeachers")]
+    public async Task<IActionResult>ViewAllBookTeachers(string ID){
+        var slide = context.TimeTables.Where(a=>a.StaffID==ID).ToList();
+        await TeacherAuditor(ID,constant.ViewUploadedTimeTables);
         return Ok(slide);
     }
 
-  [HttpGet("viewAudios")]
-    public async Task<IActionResult>ViewAudios(string Sub, string Level){
-        var slide = context.Audios.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-       
-        return Ok(slide);
-    }
-
-     [HttpGet("viewPictures")]
-    public async Task<IActionResult>ViewPictures(string Sub, string Level){
-        var slide = context.Pictures.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-       
-        return Ok(slide);
-    }
-
- [HttpGet("viewBooks")]
-    public async Task<IActionResult>ViewBooks(string Sub, string Level){
-        var slide = context.Books.Where(a=>a.SubjectName==Sub&&a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-       
-        return Ok(slide);
+    [HttpDelete("deleteTimeTables")]
+    public async Task<IActionResult>DeleteBooks(int Id, string SID){
+        var slide = context.TimeTables.FirstOrDefault(a=>a.Id==Id);
+        if(slide == null){
+            return BadRequest("TimeTable not found");
+        }
+        context.TimeTables.Remove(slide);
+        await context.SaveChangesAsync();
+        try{
+            await TeacherAuditor(SID, constant.DeletUploadedTimeTable);
+        }
+        catch(Exception ex){
+            await AdminAuditor(SID, constant.DeletUploadedTimeTable);
+        }
+        
+        return Ok("Slides deleted successfully");
     }
 
 
- [HttpGet("viewTimeTables")]
-    public async Task<IActionResult>ViewTimeTables( string Level){
-        var slide = context.TimeTables.Where(a=>a.ClassName==Level).OrderByDescending(a=>a.AcademicTerm).ToList();
-       
-        return Ok(slide);
+    [HttpGet("TimeTable")]
+    public async Task<IActionResult>TimeTable(string SID, string ClassName){
+        var t = context.TimeTables.Where(a=>a.ClassName==ClassName).OrderByDescending(r=>r.Id).ToList();
+        await StudentAuditor(SID,constant.STimeTable);
+        return Ok(t);
+
     }
+
+     [HttpGet("Video")]
+    public async Task<IActionResult>Video(string SID, string ClassName, string Subject){
+        var t = context.Videos.Where(a=>a.ClassName==ClassName&&a.SubjectName==Subject).OrderByDescending(r=>r.Id).ToList();
+        await StudentAuditor(SID,constant.SVideos);
+        return Ok(t);
+
+    }
+
+     [HttpGet("Audio")]
+    public async Task<IActionResult>Audio(string SID, string ClassName,string Subject){
+        var t = context.Audios.Where(a=>a.ClassName==ClassName&&a.SubjectName==Subject).OrderByDescending(r=>r.Id).ToList();
+        await StudentAuditor(SID,constant.SAudios);
+        return Ok(t);
+
+    }
+
+     [HttpGet("Picture")]
+    public async Task<IActionResult>Picture(string SID, string ClassName, string Subject){
+        var t = context.Pictures.Where(a=>a.ClassName==ClassName&&a.SubjectName==Subject).OrderByDescending(r=>r.Id).ToList();
+        await StudentAuditor(SID,constant.SPictures);
+        return Ok(t);
+
+    }
+
+
+     [HttpGet("Slide")]
+    public async Task<IActionResult>Slide(string SID, string ClassName, string Subject){
+        var t = context.Slides.Where(a=>a.ClassName==ClassName && a.SubjectName==Subject).OrderByDescending(r=>r.Id).ToList();
+        await StudentAuditor(SID,constant.SSlides);
+        return Ok(t);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -400,6 +553,7 @@ private string GetDeviceCategory(string userAgent)
         return "Desktop";
     }
 }
+
 
 
 

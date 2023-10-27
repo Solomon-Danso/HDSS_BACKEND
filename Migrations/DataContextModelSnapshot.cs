@@ -813,6 +813,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TeacherId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Classess");
@@ -1766,6 +1769,40 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TheEvents");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.TimeTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicTerm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcademicYear")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SlidePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StaffID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TimeTables");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.Video", b =>

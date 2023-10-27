@@ -70,10 +70,6 @@ namespace HDSS_BACKEND.Controllers
 
         [HttpPost("AddClass")]
         public async Task<IActionResult>AddClass([FromBody]Classes request, string ID){
-            bool classAlreadyExist = await context.Classess.AnyAsync(c=>c.ClassName == request.ClassName);
-            if (classAlreadyExist){
-                return BadRequest("Class already exists");
-            }
             var classy = new Classes{
                 ClassName = request.ClassName,
                 ClassCode = request.ClassCode,
@@ -81,10 +77,33 @@ namespace HDSS_BACKEND.Controllers
                 ClassTeacher = request.ClassTeacher,
                 DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy"),
 
-
             };
+
+            var a = context.Teachers.FirstOrDefault(a=>a.StaffID==classy.ClassTeacher);
+            if (a==null){
+                return BadRequest("Teacher not found");
+            }
+            classy.ClassTeacher = a.Title+" "+a.FirstName+" "+a.OtherName+" "+a.LastName;
+            classy.TeacherId = a.StaffID;
+
+            bool checker = await context.Classess.AnyAsync(a=>a.ClassTeacher==classy.ClassTeacher&&a.TeacherId==classy.TeacherId&&a.ClassName==classy.ClassName);
+
+            if(checker){
+                return BadRequest("You cannot assign the same class to a teacher for multiple times");
+            }
+            else{
             context.Classess.Add(classy);
+
+              bool classAlreadyExist = await context.Classess.AnyAsync(c=>c.ClassName == request.ClassName);
+            if (classAlreadyExist){
+                return BadRequest("Class already exists");
+            }
+          
             await context.SaveChangesAsync();
+            }
+
+         
+            
             await AdminAuditor(ID,constant.AddAClass);
             return Ok($"{classy.ClassName} created successfully");
 
@@ -97,10 +116,17 @@ namespace HDSS_BACKEND.Controllers
             if (cla==null){
                 return BadRequest("Class does not exist");
             }
+            var a = context.Teachers.FirstOrDefault(a=>a.StaffID==request.ClassTeacher);
+            if (a==null){
+                return BadRequest("Teacher not found");
+            }
             cla.ClassName = request.ClassName;
             cla.ClassCode = request.ClassCode;
             cla.Campus = request.Campus;
-            cla.ClassTeacher = request.ClassTeacher;
+    
+            cla.ClassTeacher = a.Title+" "+a.FirstName+" "+a.OtherName+" "+a.LastName;
+            cla.TeacherId = a.StaffID;
+
             await context.SaveChangesAsync();
             await AdminAuditor(SID,constant.UpdatAClass);
             return Ok("Updated Successfully");

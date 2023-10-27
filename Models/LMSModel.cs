@@ -21,6 +21,7 @@ namespace HDSS_BACKEND.Models
         public string? ClassCode {get;set;}
         public string? Campus {get;set;}
         public string? ClassTeacher{get;set;}
+        public string? TeacherId{get;set;}
         public string? DateAdded { get; set; }
 
     }
@@ -88,6 +89,20 @@ namespace HDSS_BACKEND.Models
 
     }
 
+    public class TimeTable{
+        public int Id { get; set; }
+       
+        public string? ClassName { get; set; }
+        public string? SlidePath { get; set; }
+        public string? DateAdded{ get; set; }
+        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+        public string? StaffID {get;set;}
+        public string? TeacherName { get; set; }
+        
+      
+
+    }
 
 
 public class Video{

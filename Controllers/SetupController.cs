@@ -81,6 +81,15 @@ namespace HDSS_BACKEND.Controllers
     
     }
 
+[HttpGet("GetSchoolData")]
+public async Task<IActionResult>GetSchool(){
+    var inst = context.Instituitions.FirstOrDefault(a=>a.Id>0);
+    return Ok(inst);
+
+}
+
+
+
 [HttpPost("AssignRoles")]
 public async Task<IActionResult>AssignRoles([FromBody]Role request){
 

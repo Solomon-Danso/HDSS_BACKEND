@@ -67,6 +67,22 @@
               public string ViewUploadedAssignment = "Viewed Uploaded Assignment";
               public string DeletUploadedAssignment = "Deleted An Uploaded Assignment";
 
+              public string UploadATimeTable = "Uploaded A Time Table";
+                public string ViewUploadedTimeTables = "Viewed Uploaded TimeTables";
+              public string DeletUploadedTimeTable = "Deleted An Uploaded TimeTable";
+
+              public string STimeTable = "Viewed TimeTable";
+              public string SVideos = "Viewed Videos";
+              public string SAudios = "Viewed Audios";
+               public string SPictures = "Viewed Pictures";
+               public string SSlides = "Viewed Slides";
+
+
+
+
+
+
+
 
 
 

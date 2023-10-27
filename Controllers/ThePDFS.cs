@@ -285,6 +285,11 @@ string htmlelement = $@"<!DOCTYPE html>
         text-align: center;
     }}
 
+.locbold {{
+        font-size: 15px;
+        float: left;
+        text-align: center;
+    }}
    
 
 
@@ -365,7 +370,7 @@ string htmlelement = $@"<!DOCTYPE html>
 <br/>
 <div class='center'> 
       <div class='school'>{schoolname}</div>
-      <div class='bold'>{Location}</div>
+      <div class='locbold'>{Location}</div>
 
 </div>
 <hr/>
