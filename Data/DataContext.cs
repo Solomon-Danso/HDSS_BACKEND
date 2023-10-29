@@ -69,7 +69,7 @@ public DbSet<AuditTrial> AuditTrials {get;set;}
 public DbSet<Admin> Admins {get;set;}
 
 public DbSet<TimeTable> TimeTables {get; set;}
-
+public DbSet<StudentNote> StudentNotes {get; set;}
 
 
 

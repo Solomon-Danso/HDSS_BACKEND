@@ -104,6 +104,21 @@ namespace HDSS_BACKEND.Models
 
     }
 
+public class StudentNote{
+    public int Id { get; set; }
+    public string? StudentId { get; set; }
+    public string? FullName { get; set; }
+    public string? Level {get; set;}
+    public string? ResourceUrl {get;set;}
+    public string? ResourceType {get;set;}
+    public string? Notes {get; set;}
+    public string? Subject{get; set;}
+    public string? AcademicTerm {get;set;}
+    public string? AcademicYear {get;set;}
+    public string? DateAdded {get;set;}
+
+}
+
 
 public class Video{
         public int Id { get; set; }

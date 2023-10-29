@@ -72,10 +72,16 @@
               public string DeletUploadedTimeTable = "Deleted An Uploaded TimeTable";
 
               public string STimeTable = "Viewed TimeTable";
-              public string SVideos = "Viewed Videos";
+              public string SVideos = "Viewed Video List";
+              public string SVideosS = "Watched The Video";
               public string SAudios = "Viewed Audios";
                public string SPictures = "Viewed Pictures";
                public string SSlides = "Viewed Slides";
+               public string StudentNote = "Uploaded A Note";
+                public string StudentUpdatedNote = "Updated A Note";
+               public string StudentListedNote = "Student Listed Personal Notes";
+               public string StudentViewedNote = "Student Viewed Personal Notes";
+               public string TeacherViewedNote = "Teacher Viewed Personal Notes";
 
 
 
