@@ -68,6 +68,8 @@ namespace HDSS_BACKEND.Models
         public string? AcademicTerm{ get; set; }
         public string? StaffID {get;set;}
         public string? TeacherName { get; set; }
+        public int NumberOfViews {get;set;}
+
 
     }
 
@@ -131,6 +133,7 @@ public class Video{
         public string? AcademicTerm{ get; set; }
         public string? StaffID {get;set;}
         public string? TeacherName { get; set; }
+        public int NumberOfViews {get;set;}
 
     }
 
@@ -145,6 +148,8 @@ public class Video{
         public string? AcademicTerm{ get; set; }
         public string? StaffID {get;set;}
         public string? TeacherName { get; set; }
+        public int NumberOfViews {get;set;}
+
 
     }
 
@@ -159,6 +164,8 @@ public class Video{
         public string? AcademicTerm{ get; set; }
         public string? StaffID {get;set;}
         public string? TeacherName { get; set; }
+        public int NumberOfViews {get;set;}
+
 
     }
 
@@ -173,6 +180,8 @@ public class Video{
         public string? AcademicTerm{ get; set; }
         public string? StaffID {get;set;}
         public string? TeacherName { get; set; }
+        public int NumberOfViews {get;set;}
+
 
     }
 

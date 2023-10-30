@@ -884,7 +884,150 @@ public async Task<IActionResult> AdminSearchPictures(string searchTerm)
 
 
 
+[HttpPost("StudentSearchVideo")]
+public async Task<IActionResult> StudentSearchVideo(string searchTerm, string ClassName)
+{
+    var searchResult = context.Videos.ToList().Where(
+        v => v.Title != null && v.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.SubjectName != null && v.SubjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.DateAdded != null && v.DateAdded.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.ClassName != null && v.ClassName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicTerm != null && v.AcademicTerm.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicYear != null && v.AcademicYear.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.TeacherName != null && v.TeacherName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+    ).OrderByDescending(r => r.Id).ToList();
 
+    if (!string.IsNullOrEmpty(ClassName))
+    {
+        searchResult = searchResult
+            .Where(s => s.ClassName != null && s.ClassName.Equals(ClassName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    if (searchResult.Count() == 0)
+    {
+        return NotFound("No Result Found");
+    }
+
+    return Ok(searchResult);
+}
+
+[HttpPost("StudentSearchAudio")]
+public async Task<IActionResult> StudentSearchAudio(string searchTerm, string ClassName)
+{
+    var searchResult = context.Audios.ToList().Where(
+        v => v.Title != null && v.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.SubjectName != null && v.SubjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.DateAdded != null && v.DateAdded.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.ClassName != null && v.ClassName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicTerm != null && v.AcademicTerm.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicYear != null && v.AcademicYear.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.TeacherName != null && v.TeacherName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             
+    ).OrderByDescending(r => r.Id).ToList();
+
+    if (!string.IsNullOrEmpty(ClassName))
+    {
+        searchResult = searchResult
+            .Where(s => s.ClassName != null && s.ClassName.Equals(ClassName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    if (searchResult.Count() == 0)
+    {
+        return NotFound("No Result Found");
+    }
+
+    return Ok(searchResult);
+}
+
+[HttpPost("StudentSearchPicture")]
+public async Task<IActionResult> StudentSearchPicture(string searchTerm, string ClassName)
+{
+    var searchResult = context.Pictures.ToList().Where(
+        v => v.Title != null && v.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.SubjectName != null && v.SubjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.DateAdded != null && v.DateAdded.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.ClassName != null && v.ClassName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicTerm != null && v.AcademicTerm.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicYear != null && v.AcademicYear.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.TeacherName != null && v.TeacherName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             
+    ).OrderByDescending(r => r.Id).ToList();
+
+    if (!string.IsNullOrEmpty(ClassName))
+    {
+        searchResult = searchResult
+            .Where(s => s.ClassName != null && s.ClassName.Equals(ClassName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    if (searchResult.Count() == 0)
+    {
+        return NotFound("No Result Found");
+    }
+
+    return Ok(searchResult);
+}
+
+[HttpPost("StudentSearchSlide")]
+public async Task<IActionResult> StudentSearchSlide(string searchTerm, string ClassName)
+{
+    var searchResult = context.Slides.ToList().Where(
+        v => v.Title != null && v.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.SubjectName != null && v.SubjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.DateAdded != null && v.DateAdded.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.ClassName != null && v.ClassName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicTerm != null && v.AcademicTerm.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicYear != null && v.AcademicYear.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.TeacherName != null && v.TeacherName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             
+    ).OrderByDescending(r => r.Id).ToList();
+
+    if (!string.IsNullOrEmpty(ClassName))
+    {
+        searchResult = searchResult
+            .Where(s => s.ClassName != null && s.ClassName.Equals(ClassName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    if (searchResult.Count() == 0)
+    {
+        return NotFound("No Result Found");
+    }
+
+    return Ok(searchResult);
+}
+
+
+[HttpPost("StudentSearchBook")]
+public async Task<IActionResult> StudentSearchBook(string searchTerm, string ClassName)
+{
+    var searchResult = context.Books.ToList().Where(
+        v => v.Title != null && v.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.SubjectName != null && v.SubjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.DateAdded != null && v.DateAdded.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.ClassName != null && v.ClassName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicTerm != null && v.AcademicTerm.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicYear != null && v.AcademicYear.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.TeacherName != null && v.TeacherName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             
+    ).OrderByDescending(r => r.Id).ToList();
+
+    if (!string.IsNullOrEmpty(ClassName))
+    {
+        searchResult = searchResult
+            .Where(s => s.ClassName != null && s.ClassName.Equals(ClassName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    if (searchResult.Count() == 0)
+    {
+        return NotFound("No Result Found");
+    }
+
+    return Ok(searchResult);
+}
 
 
 

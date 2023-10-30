@@ -149,10 +149,77 @@ public async Task<IActionResult>GetTeacherClass(string ID){
     [HttpGet("SingleVideo")]
     public async Task<IActionResult>SingleVideo(string SID, int Id){
         var t = context.Videos.FirstOrDefault(a=>a.Id==Id);
+        if (t==null){
+            return BadRequest("Video Not Found");
+        }
+        t.NumberOfViews = t.NumberOfViews+1;
+        await context.SaveChangesAsync();
         await StudentAuditor(SID,constant.SVideosS);
         return Ok(t);
 
     }
+
+    [HttpGet("SingleAudio")]
+    public async Task<IActionResult>SingleAudio(string SID, int Id){
+        var t = context.Audios.FirstOrDefault(a=>a.Id==Id);
+        if (t==null){
+            return BadRequest("Audio Not Found");
+        }
+        t.NumberOfViews = t.NumberOfViews+1;
+        await context.SaveChangesAsync();
+        await StudentAuditor(SID,constant.SVideosS);
+        return Ok(t);
+
+    }
+
+
+    [HttpGet("SinglePicture")]
+    public async Task<IActionResult>SinglePicture(string SID, int Id){
+        var t = context.Pictures.FirstOrDefault(a=>a.Id==Id);
+        if (t==null){
+            return BadRequest("Picture Not Found");
+        }
+        t.NumberOfViews = t.NumberOfViews+1;
+        await context.SaveChangesAsync();
+        await StudentAuditor(SID,constant.SVideosS);
+        return Ok(t);
+
+    }
+
+    [HttpGet("SingleSlide")]
+    public async Task<IActionResult>SingleSlide(string SID, int Id){
+        var t = context.Slides.FirstOrDefault(a=>a.Id==Id);
+        if (t==null){
+            return BadRequest("Slide Not Found");
+        }
+        t.NumberOfViews = t.NumberOfViews+1;
+        await context.SaveChangesAsync();
+        await StudentAuditor(SID,constant.SVideosS);
+        return Ok(t);
+
+    }
+
+    [HttpGet("SingleBook")]
+    public async Task<IActionResult>SingleBook(string SID, int Id){
+        var t = context.Books.FirstOrDefault(a=>a.Id==Id);
+        if (t==null){
+            return BadRequest("Book Not Found");
+        }
+        t.NumberOfViews = t.NumberOfViews+1;
+        await context.SaveChangesAsync();
+        await StudentAuditor(SID,constant.SVideosS);
+        return Ok(t);
+
+    }
+
+
+
+
+
+
+
+
+
 
 
 [HttpPost("StudentNote")]
@@ -265,6 +332,13 @@ public async Task<IActionResult>MyClassNotes(string SID, string Level, string Su
 
     }
 
+     [HttpGet("Book")]
+    public async Task<IActionResult>Book(string SID, string ClassName, string Subject){
+        var t = context.Books.Where(a=>a.ClassName==ClassName && a.SubjectName==Subject).OrderByDescending(r=>r.Id).ToList();
+        await StudentAuditor(SID,constant.SBooks);
+        return Ok(t);
+
+    }
 
 
 

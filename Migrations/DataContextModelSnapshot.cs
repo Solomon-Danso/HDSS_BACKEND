@@ -451,6 +451,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberOfViews")
+                        .HasColumnType("int");
+
                     b.Property<string>("SlidePath")
                         .HasColumnType("nvarchar(max)");
 
@@ -646,6 +649,9 @@ namespace HDSS_BACKEND.Migrations
 
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfViews")
+                        .HasColumnType("int");
 
                     b.Property<string>("SlidePath")
                         .HasColumnType("nvarchar(max)");
@@ -1254,6 +1260,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberOfViews")
+                        .HasColumnType("int");
+
                     b.Property<string>("SlidePath")
                         .HasColumnType("nvarchar(max)");
 
@@ -1383,6 +1392,9 @@ namespace HDSS_BACKEND.Migrations
 
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfViews")
+                        .HasColumnType("int");
 
                     b.Property<string>("SlidePath")
                         .HasColumnType("nvarchar(max)");
@@ -1867,6 +1879,9 @@ namespace HDSS_BACKEND.Migrations
 
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfViews")
+                        .HasColumnType("int");
 
                     b.Property<string>("SlidePath")
                         .HasColumnType("nvarchar(max)");

@@ -77,6 +77,7 @@
               public string SAudios = "Viewed Audios";
                public string SPictures = "Viewed Pictures";
                public string SSlides = "Viewed Slides";
+                public string SBooks = "Viewed Books";
                public string StudentNote = "Uploaded A Note";
                 public string StudentUpdatedNote = "Updated A Note";
                public string StudentListedNote = "Student Listed Personal Notes";
