@@ -1136,31 +1136,6 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("Managers");
                 });
 
-            modelBuilder.Entity("HDSS_BACKEND.Models.OnlySuperiorsCanViewThisDueToSecurityReasonsNtia", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserPassword")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OnlySuperiorsCanViewThisDueToSecurityReasons");
-                });
-
             modelBuilder.Entity("HDSS_BACKEND.Models.ParentsModel", b =>
                 {
                     b.Property<int>("Id")

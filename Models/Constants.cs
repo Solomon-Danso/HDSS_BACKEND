@@ -84,6 +84,25 @@
                public string StudentViewedNote = "Student Viewed Personal Notes";
                public string TeacherViewedNote = "Teacher Viewed Personal Notes";
 
+public string AnnouceStudent = "Added An Annoucement For Student";
+public string AnnouceStudentU = "Updated An Annoucement For Student";
+public string AnnouceStudentD = "Deleted An Annoucement For Student";
+
+
+public string AnnouceTeacher = "Added An Annoucement For Teacher";
+public string AnnouceTeacherU = "Updated An Annoucement For Teacher";
+public string AnnouceTeacherD = "Deleted An Annoucement For Teacher";
+
+
+public string AnnoucePTA = "Added An Annoucement For PTA";
+public string AnnoucePTAU = "Updated An Annoucement For PTA";
+public string AnnoucePTAD = "Deleted An Annoucement For PTA";
+
+
+public string AnnouceHOD = "Added An Annoucement For HOD";
+public string AnnouceHODU = "Updated An Annoucement For HOD";
+public string AnnouceHODD = "Deleted An Annoucement For HOD";
+
 
 
 

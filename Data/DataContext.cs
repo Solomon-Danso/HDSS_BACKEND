@@ -56,7 +56,6 @@ public DbSet<SchoolDirector> SchoolDirectors { get; set; }
 public DbSet<AuthenticationModel>AuthenticationModels { get; set; }
 public DbSet<SuperiorAccount>SuperiorAccounts { get; set; }
 public DbSet<Managers>Managers { get; set; }
-public DbSet<OnlySuperiorsCanViewThisDueToSecurityReasonsNtia>OnlySuperiorsCanViewThisDueToSecurityReasons {get; set; }
 public DbSet<TheEvent>TheEvents { get; set; }
 public DbSet<ParentsModel> Parents {get; set;}
 public DbSet<Instituition> Instituitions{get; set;}

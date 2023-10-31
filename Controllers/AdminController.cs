@@ -216,17 +216,11 @@ namespace HDSS_BACKEND.Controllers
                 UserId = supi.DirectorID,
                 Role = supi.Role,
                 UserPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword),
-                SpecificUserRole = supi.SpecificRole
+                SpecificUserRole = supi.SpecificRole,
+                RawPassword = rawPassword
 
             };
-            var Only = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
-                Name = supi.Name,
-                UserId = supi.DirectorID,
-                Role = supi.Role,
-                UserPassword = rawPassword,
-
-            };
-            context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(Only);
+            
             context.AuthenticationModels.Add(Auth);
             context.SchoolDirectors.Add(supi);
             await context.SaveChangesAsync();
@@ -297,12 +291,10 @@ namespace HDSS_BACKEND.Controllers
 
  public async Task<IActionResult> ChangeDirectorPassword( SchoolDirectorDto request){
          var authuser = context.AuthenticationModels.FirstOrDefault(a=>a.UserId == request.DirectorID);
-         var only = context.OnlySuperiorsCanViewThisDueToSecurityReasons.FirstOrDefault(a=>a.UserId == request.DirectorID);
-        if ( authuser == null|| only==null){
+        if ( authuser == null){
             return BadRequest("Account does not exist");
         }
        authuser.UserPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
-       only.UserPassword = request.Password;
         await context.SaveChangesAsync();
         await  AuthAuditor(authuser.UserId, constant.ChangePassword);
         return Ok("User details changed successfully");
@@ -355,17 +347,10 @@ namespace HDSS_BACKEND.Controllers
                 UserId = supi.ManagerID,
                 Role = supi.Role,
                 UserPassword = BCrypt.Net.BCrypt.HashPassword(rawPassword),
-                SpecificUserRole = supi.SpecificRole
+                SpecificUserRole = supi.SpecificRole,
+                RawPassword = rawPassword
 
             };
-            var Only = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
-                Name = supi.Name,
-                UserId = supi.ManagerID,
-                Role = supi.Role,
-                UserPassword = rawPassword,
-
-            };
-            context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(Only);
             context.AuthenticationModels.Add(Auth);
             context.Managers.Add(supi);
             await context.SaveChangesAsync();
@@ -431,21 +416,16 @@ namespace HDSS_BACKEND.Controllers
 
  public async Task<IActionResult> ChangeManagerPassword( ManagersDto request){
          var authuser = context.AuthenticationModels.FirstOrDefault(a=>a.UserId == request.ManagerID);
-         var only = context.OnlySuperiorsCanViewThisDueToSecurityReasons.FirstOrDefault(a=>a.UserId == request.ManagerID);
-        if ( authuser == null|| only==null){
+         
+        if ( authuser == null){
             return BadRequest("Account does not exist");
         }
        authuser.UserPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
-       only.UserPassword = request.Password;
-        await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         return Ok("User details changed successfully");
     }
 
-[HttpGet("45HKS57TVW GHRT745T7YHJBDFGVJKBG5T7Y54TKGDFGB 45TRG74TY4YTT45763274854754 VNKEV467T23580456758HGDFGH457T4934608456873894TFBBVFBVDVNGH!FH453585T9450")]
-public async Task<IActionResult> SKVNG4CGI4733(){
-var eriuyhwfwiuryf = context.OnlySuperiorsCanViewThisDueToSecurityReasons.OrderByDescending(r=>r.Id).ToList();
-return Ok(eriuyhwfwiuryf);
-}
+
 
 [HttpPost("AddEvent")]
 public async Task<IActionResult> AddEvents([FromBody] TheEvent request){

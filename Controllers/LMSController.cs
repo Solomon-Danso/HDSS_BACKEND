@@ -810,7 +810,7 @@ namespace HDSS_BACKEND.Controllers
 
 
 [HttpPost("AddannoucementForStudent")]
-public async Task<IActionResult> AddAnnouncementForStudent([FromBody]AnnouncementForStudent request){
+public async Task<IActionResult> AddAnnouncementForStudent([FromBody]AnnouncementForStudent request,string SID){
 
 var annoucement = new AnnouncementForStudent{
 
@@ -825,26 +825,43 @@ AcademicYear = request.AcademicYear
 };
 context.AnnouncementForStudents.Add(annoucement);
 await context.SaveChangesAsync();
+try{
+await AdminAuditor(SID, constant.AnnouceStudent);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceStudent);
+}
+
+
 
 return Ok("Student Annoucement Sent Successfully");
 }
 
-[HttpPut("UpdateannoucementForStudent")]
-public async Task<IActionResult> UpdateAnnouncementForStudent([FromBody]AnnouncementForStudent request, string TheId){
+
+
+[HttpPost("UpdateannoucementForStudent")]
+public async Task<IActionResult> UpdateAnnouncementForStudent([FromBody]AnnouncementForStudent request, string TheId, string SID){
     var annoucement = context.AnnouncementForStudents.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     }
     annoucement.Subject = request.Subject;
     annoucement.Content = request.Content;
+    annoucement.AcademicTerm = request.AcademicTerm;
+    annoucement.AcademicYear = request.AcademicYear;
 
     await context.SaveChangesAsync();
+
+    try{
+await AdminAuditor(SID, constant.AnnouceStudentU);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceStudentU);
+}
     return Ok("Student Annoucement Updated Successfully");
 }
 
 
 [HttpDelete("DeleteannoucementForStudent")]
-public async Task<IActionResult> DeleteAnnouncementForStudent(string TheId){
+public async Task<IActionResult> DeleteAnnouncementForStudent(string TheId, string SID){
     var annoucement = context.AnnouncementForStudents.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
@@ -853,6 +870,11 @@ public async Task<IActionResult> DeleteAnnouncementForStudent(string TheId){
     context.AnnouncementForStudents.Remove(annoucement);
 
         await context.SaveChangesAsync();
+         try{
+await AdminAuditor(SID, constant.AnnouceStudentD);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceStudentD);
+}
     return Ok("Student Annoucement Deleted Successfully");
 
 }
@@ -867,14 +889,17 @@ public async Task<IActionResult> GetAnnouncementForStudent(){
 
 
 
-[HttpPost("AddannoucementForTeachers")]
-public async Task<IActionResult> AddAnnouncementForTeachers([FromBody]AnnouncementForTeachers request){
+
+
+[HttpPost("AddannoucementForTeacher")]
+public async Task<IActionResult> AddAnnouncementForTeachers([FromBody]AnnouncementForTeachers request,string SID){
 
 var annoucement = new AnnouncementForTeachers{
 
 Subject = request.Subject,
 Content = request.Content,
 TheId = AssignmentIdGenerator(),
+
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
 AcademicTerm = request.AcademicTerm,
 AcademicYear = request.AcademicYear
@@ -882,26 +907,41 @@ AcademicYear = request.AcademicYear
 };
 context.AnnouncementForTeachers.Add(annoucement);
 await context.SaveChangesAsync();
-
-return Ok("Student Annoucement Sent Successfully");
+try{
+await AdminAuditor(SID, constant.AnnouceTeacher);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceTeacher);
 }
 
-[HttpPut("UpdateannoucementForTeachers")]
-public async Task<IActionResult> UpdateAnnouncementForTeachers([FromBody]AnnouncementForTeachers request, string TheId){
+
+return Ok("Teacher Annoucement Sent Successfully");
+}
+
+
+[HttpPost("UpdateannoucementForTeacher")]
+public async Task<IActionResult> UpdateAnnouncementForTeacher([FromBody]AnnouncementForTeachers request, string TheId, string SID){
     var annoucement = context.AnnouncementForTeachers.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     }
     annoucement.Subject = request.Subject;
     annoucement.Content = request.Content;
+    annoucement.AcademicTerm = request.AcademicTerm;
+    annoucement.AcademicYear = request.AcademicYear;
 
     await context.SaveChangesAsync();
-    return Ok("Student Annoucement Updated Successfully");
+
+    try{
+await AdminAuditor(SID, constant.AnnouceTeacherU);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceTeacherU);
+}
+    return Ok("Teacher Annoucement Updated Successfully");
 }
 
 
-[HttpDelete("DeleteannoucementForTeachers")]
-public async Task<IActionResult> DeleteAnnouncementForTeachers(string TheId){
+[HttpDelete("DeleteannoucementForTeacher")]
+public async Task<IActionResult> DeleteAnnouncementForTeacher(string TheId, string SID){
     var annoucement = context.AnnouncementForTeachers.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
@@ -910,27 +950,35 @@ public async Task<IActionResult> DeleteAnnouncementForTeachers(string TheId){
     context.AnnouncementForTeachers.Remove(annoucement);
 
         await context.SaveChangesAsync();
-    return Ok("Student Annoucement Deleted Successfully");
+         try{
+await AdminAuditor(SID, constant.AnnouceTeacherD);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceTeacherD);
+}
+    return Ok("Teacher Annoucement Deleted Successfully");
 
 }
 
-[HttpGet("GetannoucementForTeachers")]
+[HttpGet("GetannoucementForTeacher")]
 
-public async Task<IActionResult> GetAnnouncementForTeachers(){
+public async Task<IActionResult> GetAnnouncementForTeacher(){
   var annoucement = context.AnnouncementForTeachers.OrderByDescending(R=>R.Id).ToList();
   return Ok(annoucement);
 
 }
 
 
+
+
 [HttpPost("AddannoucementForPTA")]
-public async Task<IActionResult> AddAnnouncementForPTA([FromBody]AnnouncementForPTA request){
+public async Task<IActionResult> AddAnnouncementForPTA([FromBody]AnnouncementForPTA request,string SID){
 
 var annoucement = new AnnouncementForPTA{
 
 Subject = request.Subject,
 Content = request.Content,
 TheId = AssignmentIdGenerator(),
+
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
 AcademicTerm = request.AcademicTerm,
 AcademicYear = request.AcademicYear
@@ -938,26 +986,43 @@ AcademicYear = request.AcademicYear
 };
 context.AnnouncementForPTA.Add(annoucement);
 await context.SaveChangesAsync();
-
-return Ok("Student Annoucement Sent Successfully");
+try{
+await AdminAuditor(SID, constant.AnnoucePTA);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnoucePTA);
 }
 
-[HttpPut("UpdateannoucementForPTA")]
-public async Task<IActionResult> UpdateAnnouncementForPTA([FromBody]AnnouncementForPTA request, string TheId){
+
+
+return Ok("PTA Annoucement Sent Successfully");
+}
+
+
+
+[HttpPost("UpdateannoucementForPTA")]
+public async Task<IActionResult> UpdateAnnouncementForPTA([FromBody]AnnouncementForPTA request, string TheId, string SID){
     var annoucement = context.AnnouncementForPTA.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     }
     annoucement.Subject = request.Subject;
     annoucement.Content = request.Content;
+    annoucement.AcademicTerm = request.AcademicTerm;
+    annoucement.AcademicYear = request.AcademicYear;
 
     await context.SaveChangesAsync();
-    return Ok("Student Annoucement Updated Successfully");
+
+    try{
+await AdminAuditor(SID, constant.AnnoucePTAU);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnoucePTAU);
+}
+    return Ok("PTA Annoucement Updated Successfully");
 }
 
 
 [HttpDelete("DeleteannoucementForPTA")]
-public async Task<IActionResult> DeleteAnnouncementForPTA(string TheId){
+public async Task<IActionResult> DeleteAnnouncementForPTA(string TheId, string SID){
     var annoucement = context.AnnouncementForPTA.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
@@ -966,7 +1031,12 @@ public async Task<IActionResult> DeleteAnnouncementForPTA(string TheId){
     context.AnnouncementForPTA.Remove(annoucement);
 
         await context.SaveChangesAsync();
-    return Ok("Student Annoucement Deleted Successfully");
+         try{
+await AdminAuditor(SID, constant.AnnoucePTAD);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnoucePTAD);
+}
+    return Ok("PTA Annoucement Deleted Successfully");
 
 }
 
@@ -979,18 +1049,15 @@ public async Task<IActionResult> GetAnnouncementForPTA(){
 }
 
 
-
-
-
-
 [HttpPost("AddannoucementForHOD")]
-public async Task<IActionResult> AddAnnoucementForHOD([FromBody]AnnoucementForHOD request){
+public async Task<IActionResult> AddAnnouncementForHOD([FromBody]AnnoucementForHOD request,string SID){
 
 var annoucement = new AnnoucementForHOD{
 
 Subject = request.Subject,
 Content = request.Content,
 TheId = AssignmentIdGenerator(),
+
 DateAdded = DateTime.Today.Date.ToString("dd MMMM yyyy"),
 AcademicTerm = request.AcademicTerm,
 AcademicYear = request.AcademicYear
@@ -998,26 +1065,43 @@ AcademicYear = request.AcademicYear
 };
 context.AnnoucementForHOD.Add(annoucement);
 await context.SaveChangesAsync();
-
-return Ok("Student Annoucement Sent Successfully");
+try{
+await AdminAuditor(SID, constant.AnnouceHOD);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceHOD);
 }
 
-[HttpPut("UpdateannoucementForHOD")]
-public async Task<IActionResult> UpdateAnnoucementForHOD([FromBody]AnnoucementForHOD request, string TheId){
+
+
+return Ok("HOD Annoucement Sent Successfully");
+}
+
+
+
+[HttpPost("UpdateannoucementForHOD")]
+public async Task<IActionResult> UpdateAnnouncementForHOD([FromBody]AnnoucementForHOD request, string TheId, string SID){
     var annoucement = context.AnnoucementForHOD.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
     }
     annoucement.Subject = request.Subject;
     annoucement.Content = request.Content;
+    annoucement.AcademicTerm = request.AcademicTerm;
+    annoucement.AcademicYear = request.AcademicYear;
 
     await context.SaveChangesAsync();
-    return Ok("Student Annoucement Updated Successfully");
+
+    try{
+await AdminAuditor(SID, constant.AnnouceHODU);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceHODU);
+}
+    return Ok("HOD Annoucement Updated Successfully");
 }
 
 
 [HttpDelete("DeleteannoucementForHOD")]
-public async Task<IActionResult> DeleteAnnoucementForHOD(string TheId){
+public async Task<IActionResult> DeleteAnnouncementForHOD(string TheId, string SID){
     var annoucement = context.AnnoucementForHOD.FirstOrDefault(x=>x.TheId == TheId);
     if (annoucement == null){
         return BadRequest("No Announcement Found");
@@ -1026,13 +1110,18 @@ public async Task<IActionResult> DeleteAnnoucementForHOD(string TheId){
     context.AnnoucementForHOD.Remove(annoucement);
 
         await context.SaveChangesAsync();
-    return Ok("Student Annoucement Deleted Successfully");
+         try{
+await AdminAuditor(SID, constant.AnnouceHODD);
+}catch(Exception ex){
+await TeacherAuditor(SID, constant.AnnouceHODD);
+}
+    return Ok("HOD Annoucement Deleted Successfully");
 
 }
 
 [HttpGet("GetannoucementForHOD")]
 
-public async Task<IActionResult> GetAnnoucementForHOD(){
+public async Task<IActionResult> GetAnnouncementForHOD(){
   var annoucement = context.AnnoucementForHOD.OrderByDescending(R=>R.Id).ToList();
   return Ok(annoucement);
 
@@ -1041,39 +1130,6 @@ public async Task<IActionResult> GetAnnoucementForHOD(){
 
 
 
-            [HttpPost("anouncementForSubjects")]
-        public async Task<IActionResult> AnouncementForSubjects(string TeacherId, string SubjectN, string ClassN, [FromBody]AnnoucementForSubject request){
-        var checker = SubjectN+TeacherId+ClassN;
-        bool NoPower = await context.TeacherInSubjects.AnyAsync(p=>p.StaffID==checker);
-         if(!NoPower){
-            return BadRequest("You dont have permission to post an announcement");
-         }
-         
-    
-    var teacher = context.Teachers.FirstOrDefault(t=> t.StaffID == TeacherId);
-    if (teacher == null){
-    return Unauthorized();
-    }
-
-    var announce = new AnnoucementForSubject{
-        //Select the subject name from an option in the frontend
-       SubjectName = SubjectN,
-       Content = request.Content,
-TheId = AssignmentIdGenerator(),
-       Title = request.Title,
-       ClassName = ClassN,
-       DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
-       TeacherId = teacher.StaffID,
-       TeacherName = teacher.Title+". "+teacher.FirstName+" "+teacher.OtherName+" " + teacher.LastName,
-
-    };
-
-    context.AnnoucementForSubjects.Add(announce);
-    await context.SaveChangesAsync();
-
-    return Ok($"{announce.Title} for {announce.SubjectName} has been added successfully");
-    
-    }
 
 
 

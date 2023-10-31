@@ -114,14 +114,7 @@ namespace HDSS_BACKEND.Controllers
         RawPassword = rawPassword,
 
      };
-     var Only = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
-         Name = student.FirstName+" " + student.OtherName+" " + student.LastName,
-        UserId = student.StudentId,
-        Role = student.Role,
-        UserPassword = rawPassword,
-
-     };
-    context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(Only);
+     
     context.AuthenticationModels.Add(Auth);
 
     var parent = new ParentsModel{
@@ -160,22 +153,15 @@ namespace HDSS_BACKEND.Controllers
     else{
    
 
-     var ParentrawPassword = StudentIdGenerator();
+     
      var ParentAuth = new AuthenticationModel{
         Name =constant.Parent +" Of "+student.FirstName+" " + student.OtherName+" " + student.LastName,
-        UserId = parent.ParentId,
+        UserId = parent.EmergencyPhoneNumber,
         Role = parent.Role,
-        UserPassword = BCrypt.Net.BCrypt.HashPassword(ParentrawPassword),
+        UserPassword = BCrypt.Net.BCrypt.HashPassword(parent.EmergencyPhoneNumber),
 
      };
-     var ParentOnly = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
-         Name = constant.Parent +" Of "+student.FirstName+" " + student.OtherName+" " + student.LastName,
-        UserId = parent.ParentId,
-        Role = parent.Role,
-        UserPassword = ParentrawPassword
-
-     };
-    context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(ParentOnly);
+     
     context.AuthenticationModels.Add(ParentAuth);
     context.Parents.Add(parent);
 

@@ -167,16 +167,7 @@ if (request.IdCardsFile == null || request.IdCardsFile.Length == 0)
         RawPassword = rawPassword
     };
 
-    var Only = new OnlySuperiorsCanViewThisDueToSecurityReasonsNtia{
-         UserId = tutor.StaffID,
-        Role = tutor.Role,
-        Name = tutor.FirstName+" " +tutor.OtherName+" " +tutor.LastName,
-        UserPassword = rawPassword,
-    };
-
-    context.OnlySuperiorsCanViewThisDueToSecurityReasons.Add(Only);
-    
-    context.AuthenticationModels.Add(Auth);
+       context.AuthenticationModels.Add(Auth);
     context.Teachers.Add(tutor);
     await context.SaveChangesAsync();
     
