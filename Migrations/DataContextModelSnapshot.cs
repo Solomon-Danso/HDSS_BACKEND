@@ -45,9 +45,67 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("GroupName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LastMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSenderDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSenderId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSenderName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSenderPicture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TotalUnreadMessage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.HyChat.Models.GroupMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GroupId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GroupName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GroupMessages");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.HyChat.Models.GroupParticipant", b =>
@@ -67,8 +125,29 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("GroupName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LastMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSenderDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSenderId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSenderName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastSenderPicture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalUnreadMessage")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");

@@ -11,7 +11,9 @@ namespace HDSS_BACKEND.Services
 public static void ConfigureCors(this IServiceCollection services) => services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder
-        .WithOrigins("http://10.42.0.1:3000", "http://192.168.43.18:3000", "http://192.168.43.18:5000", "http://localhost:3000") // Add the origins you want to allow
+        .WithOrigins("http://10.42.0.1:3000", "http://192.168.43.18:3000", "http://192.168.43.18:5000", "http://localhost:3000", "http://192.168.115.18:3000"
+        , "http://192.168.115.18:5000"
+        ) // Add the origins you want to allow
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials()

@@ -23,14 +23,47 @@ namespace HDSS_BACKEND.HyChat.Controllers
             context = ctx;
         }
 
-        [HttpPost("CreateGroup")]
-        public async Task<IActionResult> CreateGroup([FromBody]GroupChat request){
+                [HttpPost("CreateGroup")]
+        public async Task<IActionResult> CreateGroup([FromForm]GroupChatDto request, string ID){
+       
+         
+         if (request.Picture == null || request.Picture.Length == 0)
+    {
+        return BadRequest("Invalid slide");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Groups");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.Picture.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.Picture.CopyToAsync(stream);
+    }
+   
+ var student = context.Students.FirstOrDefault(a=>a.StudentId==ID);
+           if (student == null){
+            return BadRequest("Student Not Found");
+           }
+           
             var c = new GroupChat{
                 GroupId = ChatIdGenerator(),
                 GroupName = request.GroupName,
-                CreatorId = request.CreatorId,
-                CreatorName = request.CreatorName,
-                DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy")
+                CreatorId = student.StudentId,
+                CreatorName = student.FirstName+" "+student.OtherName+" "+student.LastName,
+                DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+                Picture = Path.Combine("LMS/Groups", slideName),
 
             };
             
@@ -41,6 +74,7 @@ namespace HDSS_BACKEND.HyChat.Controllers
             UserName = c.CreatorName,
             DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
             Role = constant.GrpAdmin,
+            Picture = c.Picture
            };
 
 
@@ -49,7 +83,11 @@ namespace HDSS_BACKEND.HyChat.Controllers
             await context.SaveChangesAsync();
             return Ok("Group created successfully");
 
-        }
+
+   
+    
+    }
+
 
         [HttpPost("AddGroupMember")]
         public async Task<IActionResult> AddMember([FromBody]GroupParticipant request, string GID){
@@ -66,6 +104,7 @@ namespace HDSS_BACKEND.HyChat.Controllers
             UserName = request.UserName,
             DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
             Role = constant.GrpMember,
+            Picture = g.Picture
            };
 
            bool checker = await context.GroupParticipants.AnyAsync(a=>a.GroupId==s.GroupId&&a.UserId==s.UserId);
@@ -82,13 +121,33 @@ namespace HDSS_BACKEND.HyChat.Controllers
 
         [HttpGet("MyGroups")]
         public async Task<IActionResult> GetMyGroup(string ID){
-            var grp = context.GroupParticipants.Where(a=>a.UserId==ID).OrderByDescending(r=>r.Id).ToList();
-            return Ok(grp);
+
+            var grp = context.GroupParticipants.Where(a=>a.UserId==ID).ToList();
+            
+            foreach(var a in grp){
+                var b = context.GroupMessages.OrderBy(t=>t.Id).LastOrDefault(r=>r.GroupId==a.GroupId);
+                
+                a.LastMessage = b?.Message;
+                a.LastSenderPicture = b?.Picture;
+                a.LastSenderName = b?.UserName;
+                a.LastSenderDate = b?.DateAdded;
+                a.LastSenderId = b?.UserId;
+                var c = context.GroupMessages.Where(q=>q.GroupId==a.GroupId&&q.UserId==ID&&q.Status==constant.UnRead).Count();
+                a.TotalUnreadMessage = c;
+                await context.SaveChangesAsync();
+
+            }
+            var final = context.GroupParticipants.Where(a=>a.UserId==ID).OrderByDescending(r=>r.Id).ToList();
+            
+
+            return Ok(final);
         }
 
          [HttpGet("GroupMembers")]
         public async Task<IActionResult> GroupMembers(string ID){
             var grp = context.GroupParticipants.Where(a=>a.GroupId==ID).OrderBy(r=>r.UserName).ToList();
+            
+            
             return Ok(grp);
         }
 
@@ -101,6 +160,53 @@ namespace HDSS_BACKEND.HyChat.Controllers
             return Ok(grp);
         }
 
+        [HttpPost("Message")]
+        public async Task<IActionResult>Message([FromBody]GroupMessage request,string ID, string GID){
+        
+        var c = context.Students.FirstOrDefault(a=>a.StudentId==ID);
+        if (c == null){
+            return BadRequest("Student not found");
+        }
+        var g = context.Groups.FirstOrDefault(a=>a.GroupId==GID);
+        if (g == null){
+            return BadRequest("Group not found");
+        }
+DateTime now = DateTime.Now;
+        var s = new GroupMessage{
+        GroupId = g.GroupId,
+        GroupName = g.GroupName,
+        UserId = c.StudentId,
+        UserName = c.FirstName+" "+c.OtherName+" "+c.LastName,
+        DateAdded = now.ToString("hh:mm tt"),
+        Message = request.Message,
+        Status = constant.UnRead,
+        Picture = c.ProfilePic
+
+        };
+
+        context.GroupMessages.Add(s);
+        await context.SaveChangesAsync();
+        return Ok("Message sent successfully");
+
+
+        }
+
+
+[HttpGet("UnReadCounter")]
+public async Task<IActionResult>UnReadCounter(string ID, string GID){
+var c = context.GroupMessages.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).Count();
+return Ok(c);
+}
+
+[HttpGet("ReadMessage")]
+public async Task<IActionResult>ReadMessage(string ID, string GID){
+var c = context.GroupMessages.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).ToList();
+foreach(var a in c){
+a.Status = constant.Read;
+}
+await context.SaveChangesAsync();
+return Ok(c);
+}
 
 
 
