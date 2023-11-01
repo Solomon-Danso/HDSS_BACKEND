@@ -103,8 +103,8 @@ public string AnnouceHOD = "Added An Annoucement For HOD";
 public string AnnouceHODU = "Updated An Annoucement For HOD";
 public string AnnouceHODD = "Deleted An Annoucement For HOD";
 
-
-
+public string GrpMember = "Member";
+public string GrpAdmin = "Admin";
 
 
 

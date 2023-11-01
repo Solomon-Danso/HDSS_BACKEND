@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HDSS_BACKEND.HyChat.Models;
 using HDSS_BACKEND.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,9 +72,9 @@ public DbSet<Admin> Admins {get;set;}
 public DbSet<TimeTable> TimeTables {get; set;}
 public DbSet<StudentNote> StudentNotes {get; set;}
 
-
-
-
+public DbSet<GroupChat> Groups {get; set;}
+public DbSet<SingleChat> Singles {get; set;}
+public DbSet<GroupParticipant> GroupParticipants {get; set;}
 
 
 
