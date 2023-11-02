@@ -77,7 +77,22 @@ namespace HDSS_BACKEND.HyChat.Controllers
             Picture = c.Picture
            };
 
+      
+DateTime now = DateTime.Now;
+        var first = new GroupMessage{
+        GroupId = c.GroupId,
+        GroupName = c.GroupName,
+        UserId = c.CreatorId,
+        UserName = c.CreatorName,
+        DateAdded = now.ToString("hh:mm tt"),
+        Message = constant.FirstMessage,
+        Status = constant.UnRead,
+        Picture = student.ProfilePic
 
+        };
+
+
+            context.GroupMessages.Add(first);
             context.GroupParticipants.Add(s);
             context.Groups.Add(c);
             await context.SaveChangesAsync();

@@ -108,7 +108,7 @@ public string GrpAdmin = "Admin";
 public string UnRead = "Unread";
 public string Read = "read";
 
-
+public string FirstMessage = "You created this group";
 
 
 
