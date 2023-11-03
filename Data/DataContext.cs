@@ -76,7 +76,7 @@ public DbSet<GroupChat> Groups {get; set;}
 public DbSet<SingleChat> Singles {get; set;}
 public DbSet<GroupParticipant> GroupParticipants {get; set;}
 public DbSet<GroupMessage> GroupMessages {get; set;}
-
+public DbSet<UserPersonalMessageFromGroup> UserPersonalMessageFromGroups {get; set;}
 
 
 

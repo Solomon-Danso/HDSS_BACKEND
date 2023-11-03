@@ -110,7 +110,8 @@ public string Read = "read";
 
 public string FirstMessage = "You created this group";
 
-
+public string InGroup = "Online";
+public string NotInGroup = "Offline";
 
 
 

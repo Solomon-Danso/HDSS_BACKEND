@@ -86,7 +86,6 @@ DateTime now = DateTime.Now;
         UserName = c.CreatorName,
         DateAdded = now.ToString("hh:mm tt"),
         Message = constant.FirstMessage,
-        Status = constant.UnRead,
         Picture = student.ProfilePic
 
         };
@@ -134,29 +133,36 @@ DateTime now = DateTime.Now;
 
         }
 
-        [HttpGet("MyGroups")]
-        public async Task<IActionResult> GetMyGroup(string ID){
+[HttpGet("MyGroups")]
+public async Task<IActionResult> GetMyGroup(string ID) {
+    var grp = context.GroupParticipants.Where(a => a.UserId == ID).ToList();
 
-            var grp = context.GroupParticipants.Where(a=>a.UserId==ID).ToList();
-            
-            foreach(var a in grp){
-                var b = context.GroupMessages.OrderBy(t=>t.Id).LastOrDefault(r=>r.GroupId==a.GroupId);
-                
-                a.LastMessage = b?.Message;
-                a.LastSenderPicture = b?.Picture;
-                a.LastSenderName = b?.UserName;
-                a.LastSenderDate = b?.DateAdded;
-                a.LastSenderId = b?.UserId;
-                var c = context.GroupMessages.Where(q=>q.GroupId==a.GroupId&&q.UserId==ID&&q.Status==constant.UnRead).Count();
-                a.TotalUnreadMessage = c;
-                await context.SaveChangesAsync();
+    foreach (var groupParticipant in grp) {
+        var lastMessage = context.GroupMessages.OrderBy(t => t.Id).LastOrDefault(r => r.GroupId == groupParticipant.GroupId);
 
-            }
-            var final = context.GroupParticipants.Where(a=>a.UserId==ID).OrderByDescending(r=>r.Id).ToList();
-            
+        groupParticipant.LastMessage = lastMessage?.Message;
+        groupParticipant.LastSenderPicture = lastMessage?.Picture;
+        groupParticipant.LastSenderName = lastMessage?.UserName;
+        groupParticipant.LastSenderDate = lastMessage?.DateAdded;
+        groupParticipant.LastSenderId = lastMessage?.UserId;
 
-            return Ok(final);
-        }
+        // Count the total unread messages for this specific user group
+        var totalUnreadMessages = context.UserPersonalMessageFromGroups
+            .Where(upm => upm.GroupId == groupParticipant.GroupId && upm.UserId == ID)
+            .Count();
+
+        groupParticipant.TotalUnreadMessage = totalUnreadMessages;
+
+        await context.SaveChangesAsync();
+    }
+
+    var final = context.GroupParticipants
+        .Where(a => a.UserId == ID)
+        .OrderByDescending(r => r.Id)
+        .ToList();
+
+    return Ok(final);
+}
 
          [HttpGet("GroupMembers")]
         public async Task<IActionResult> GroupMembers(string ID){
@@ -194,10 +200,25 @@ DateTime now = DateTime.Now;
         UserName = c.FirstName+" "+c.OtherName+" "+c.LastName,
         DateAdded = now.ToString("hh:mm tt"),
         Message = request.Message,
-        Status = constant.UnRead,
+        
         Picture = c.ProfilePic
 
         };
+
+        var p = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId&&a.UserId!=s.UserId&&a.InGroup!=constant.InGroup).ToList();
+        foreach(var m in p){
+            var psm = new UserPersonalMessageFromGroup{
+                GroupId = s.GroupId,
+                GroupName = s.GroupName,
+                UserId = m.UserId,
+                UserName = m.UserName,
+                DateAdded = s.DateAdded,
+                Message = s.Message,
+                Picture = c.ProfilePic
+            };
+            context.UserPersonalMessageFromGroups.Add(psm);
+            
+        }
 
         context.GroupMessages.Add(s);
         await context.SaveChangesAsync();
@@ -206,21 +227,46 @@ DateTime now = DateTime.Now;
 
         }
 
+[HttpGet("Online")]
+public async Task<IActionResult>Online(string ID, string GID){
+    var user = context.GroupParticipants.FirstOrDefault(a=>a.GroupId==GID&&a.UserId==ID);
+    if (user == null){
+        return BadRequest("Not A Member");
+    }
+
+    user.InGroup = constant.InGroup;
+    await context.SaveChangesAsync();
+    return Ok();
+
+}
+
+[HttpGet("Offline")]
+public async Task<IActionResult>Offline(string ID, string GID){
+    var user = context.GroupParticipants.FirstOrDefault(a=>a.GroupId==GID&&a.UserId==ID);
+    if (user == null){
+        return BadRequest("Not A Member");
+    }
+
+    user.InGroup = constant.NotInGroup;
+    await context.SaveChangesAsync();
+    return Ok();
+
+}
 
 [HttpGet("UnReadCounter")]
 public async Task<IActionResult>UnReadCounter(string ID, string GID){
-var c = context.GroupMessages.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).Count();
+var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID).Count();
 return Ok(c);
 }
 
 [HttpGet("ReadMessage")]
 public async Task<IActionResult>ReadMessage(string ID, string GID){
-var c = context.GroupMessages.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).ToList();
+var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID).ToList();
 foreach(var a in c){
-a.Status = constant.Read;
+context.UserPersonalMessageFromGroups.Remove(a);
 }
 await context.SaveChangesAsync();
-return Ok(c);
+return Ok("Read");
 }
 
 

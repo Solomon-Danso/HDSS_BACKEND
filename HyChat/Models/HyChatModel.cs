@@ -14,13 +14,7 @@ namespace HDSS_BACKEND.HyChat.Models
         public string? CreatorName { get; set; }
           public string? DateAdded {get;set;}
           public string? Picture {get; set; }
-          public string? LastMessage {get; set; }
-          public string? LastSenderPicture {get; set; }
-          public string? LastSenderName {get; set; }
-          public string? LastSenderDate {get; set; }
-          public string? LastSenderId {get;set;}
-          public string? TotalUnreadMessage {get; set;}
-
+       
        
 
     }
@@ -62,10 +56,23 @@ namespace HDSS_BACKEND.HyChat.Models
           public string? LastSenderId {get;set;}
           public int TotalUnreadMessage {get; set;}
 
+          public string? InGroup {get; set;}
+
 
     }
 
     public class GroupMessage{
+         public int Id {get;set;}
+        public string? GroupId {get;set;}
+        public string? GroupName {get;set;}
+        public string? UserId {get;set;}
+        public string? UserName {get;set;}
+        public string? DateAdded {get;set;}
+        public string? Message {get; set;}
+        public string? Picture {get; set;}
+    }
+
+    public class UserPersonalMessageFromGroup{
          public int Id {get;set;}
         public string? GroupId {get;set;}
         public string? GroupName {get;set;}
