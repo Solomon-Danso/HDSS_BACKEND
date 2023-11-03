@@ -61,6 +61,9 @@ namespace HDSS_BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("DandT")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
 
@@ -94,6 +97,9 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DandT")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");

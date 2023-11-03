@@ -55,7 +55,7 @@ namespace HDSS_BACKEND.HyChat.Models
           public string? LastSenderDate {get; set; }
           public string? LastSenderId {get;set;}
           public int TotalUnreadMessage {get; set;}
-
+        public DateTime DandT {get; set;}
           public string? InGroup {get; set;}
 
 
@@ -70,6 +70,7 @@ namespace HDSS_BACKEND.HyChat.Models
         public string? DateAdded {get;set;}
         public string? Message {get; set;}
         public string? Picture {get; set;}
+        public DateTime? DandT {get; set;}
     }
 
     public class UserPersonalMessageFromGroup{
@@ -83,6 +84,22 @@ namespace HDSS_BACKEND.HyChat.Models
         public string? Status {get; set;}
         public string? Picture {get; set;}
     }
+
+public class ImagePreviewer {
+    public int Id {get; set;}
+    public string? PreviewId{get;set;}
+    public string? Picture {get; set;}
+}
+
+
+public class ImagePreviewerDto {
+    public int Id {get; set;}
+    public string? PreviewId{get;set;}
+    public IFormFile? Picture {get; set;}
+}
+
+
+
 
 
 

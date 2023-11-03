@@ -86,7 +86,8 @@ DateTime now = DateTime.Now;
         UserName = c.CreatorName,
         DateAdded = now.ToString("hh:mm tt"),
         Message = constant.FirstMessage,
-        Picture = student.ProfilePic
+        Picture = student.ProfilePic,
+        DandT = DateTime.Now,
 
         };
 
@@ -153,12 +154,17 @@ public async Task<IActionResult> GetMyGroup(string ID) {
 
         groupParticipant.TotalUnreadMessage = totalUnreadMessages;
 
+        if(lastMessage?.DandT!=null){
+            groupParticipant.DandT = (DateTime)lastMessage.DandT;
+        }
+        
+
         await context.SaveChangesAsync();
     }
 
     var final = context.GroupParticipants
         .Where(a => a.UserId == ID)
-        .OrderByDescending(r => r.Id)
+        .OrderByDescending(r => r.DandT)
         .ToList();
 
     return Ok(final);
@@ -192,6 +198,8 @@ public async Task<IActionResult> GetMyGroup(string ID) {
         if (g == null){
             return BadRequest("Group not found");
         }
+
+
 DateTime now = DateTime.Now;
         var s = new GroupMessage{
         GroupId = g.GroupId,
@@ -200,7 +208,7 @@ DateTime now = DateTime.Now;
         UserName = c.FirstName+" "+c.OtherName+" "+c.LastName,
         DateAdded = now.ToString("hh:mm tt"),
         Message = request.Message,
-        
+        DandT = DateTime.Now,
         Picture = c.ProfilePic
 
         };
@@ -268,6 +276,57 @@ context.UserPersonalMessageFromGroups.Remove(a);
 await context.SaveChangesAsync();
 return Ok("Read");
 }
+
+[HttpPost("Previewer")]
+        public async Task<IActionResult> Previewer([FromForm]ImagePreviewerDto request){
+       
+         
+         if (request.Picture == null || request.Picture.Length == 0)
+    {
+        return BadRequest("Invalid slide");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Groups");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.Picture.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.Picture.CopyToAsync(stream);
+    }
+   
+
+           
+            var c = new ImagePreviewer{
+                PreviewId = ChatIdGenerator(),
+                Picture= Path.Combine("LMS/Groups", slideName),
+
+            };
+            
+
+            return Ok(c);
+
+
+   
+    
+    }
+
+
+
+
+
+
 
 
 
