@@ -57,6 +57,7 @@ namespace HDSS_BACKEND.HyChat.Models
           public int TotalUnreadMessage {get; set;}
         public DateTime DandT {get; set;}
           public string? InGroup {get; set;}
+         
 
 
     }
@@ -71,6 +72,7 @@ namespace HDSS_BACKEND.HyChat.Models
         public string? Message {get; set;}
         public string? Picture {get; set;}
         public DateTime? DandT {get; set;}
+          public string? Status {get; set;}
     }
 
     public class UserPersonalMessageFromGroup{
@@ -83,6 +85,7 @@ namespace HDSS_BACKEND.HyChat.Models
         public string? Message {get; set;}
         public string? Status {get; set;}
         public string? Picture {get; set;}
+        public DateTime? MTime {get; set;}
     }
 
 public class ImagePreviewer {

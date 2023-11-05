@@ -209,7 +209,8 @@ DateTime now = DateTime.Now;
         DateAdded = now.ToString("hh:mm tt"),
         Message = request.Message,
         DandT = DateTime.Now,
-        Picture = c.ProfilePic
+        Picture = c.ProfilePic,
+        Status = constant.UnRead,
 
         };
 
@@ -222,7 +223,9 @@ DateTime now = DateTime.Now;
                 UserName = m.UserName,
                 DateAdded = s.DateAdded,
                 Message = s.Message,
-                Picture = c.ProfilePic
+                Picture = c.ProfilePic,
+                Status = s.Status,
+                MTime = s.DandT,
             };
             context.UserPersonalMessageFromGroups.Add(psm);
             
@@ -263,17 +266,38 @@ public async Task<IActionResult>Offline(string ID, string GID){
 
 [HttpGet("UnReadCounter")]
 public async Task<IActionResult>UnReadCounter(string ID, string GID){
-var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID).Count();
+var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).Count();
+return Ok(c);
+}
+[HttpGet("UnReadMessage")]
+public async Task<IActionResult>UnReadMessage(string ID, string GID){
+var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).ToList();
 return Ok(c);
 }
 
-[HttpGet("ReadMessage")]
-public async Task<IActionResult>ReadMessage(string ID, string GID){
-var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID).ToList();
-foreach(var a in c){
-context.UserPersonalMessageFromGroups.Remove(a);
+[HttpGet("FirstUnReadMeessageDate")]
+public async Task<IActionResult>FirstUnReadMeessageDate(string ID, string GID){
+    var c = context.UserPersonalMessageFromGroups.FirstOrDefault(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead);
+    return Ok(c);
 }
+
+
+[HttpGet("ReadMessageList")]
+public async Task<IActionResult>ReadMessageList(string ID, string GID){
+var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.Read).ToList();
+return Ok(c);
+}
+
+
+
+[HttpGet("ReadMessageIndicator")]
+public async Task<IActionResult>ReadMessage(string ID, string GID){
+var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).ToList();
+foreach(var a in c){
+a.Status = constant.Read;
 await context.SaveChangesAsync();
+}
+
 return Ok("Read");
 }
 
@@ -287,7 +311,7 @@ return Ok("Read");
     }
 
     // Create the uploads directory if it doesn't exist
-    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Groups");
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Previews");
     if (!Directory.Exists(uploadsDirectory))
     {
         Directory.CreateDirectory(uploadsDirectory);
@@ -310,7 +334,7 @@ return Ok("Read");
            
             var c = new ImagePreviewer{
                 PreviewId = ChatIdGenerator(),
-                Picture= Path.Combine("LMS/Groups", slideName),
+                Picture= Path.Combine("LMS/Previews", slideName),
 
             };
             

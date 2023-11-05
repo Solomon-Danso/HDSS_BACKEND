@@ -79,6 +79,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
@@ -183,6 +186,9 @@ namespace HDSS_BACKEND.Migrations
 
                     b.Property<string>("GroupName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("MTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
