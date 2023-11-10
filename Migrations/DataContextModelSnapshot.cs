@@ -76,6 +76,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MessageType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
@@ -170,7 +173,7 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("Singles");
                 });
 
-            modelBuilder.Entity("HDSS_BACKEND.HyChat.Models.UserPersonalMessageFromGroup", b =>
+            modelBuilder.Entity("HDSS_BACKEND.HyChat.Models.UserPersonalMessageOffline", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -193,6 +196,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MessageType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
@@ -207,7 +213,50 @@ namespace HDSS_BACKEND.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserPersonalMessageFromGroups");
+                    b.ToTable("UserPersonalMessageOfflines");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.HyChat.Models.UserPersonalMessageOnline", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GroupId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GroupName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("MTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserPersonalMessageOnlines");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.AcademicTerm", b =>

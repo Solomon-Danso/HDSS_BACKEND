@@ -73,9 +73,10 @@ namespace HDSS_BACKEND.HyChat.Models
         public string? Picture {get; set;}
         public DateTime? DandT {get; set;}
           public string? Status {get; set;}
+          public string? MessageType {get; set;}
     }
 
-    public class UserPersonalMessageFromGroup{
+    public class UserPersonalMessageOffline{
          public int Id {get;set;}
         public string? GroupId {get;set;}
         public string? GroupName {get;set;}
@@ -86,7 +87,23 @@ namespace HDSS_BACKEND.HyChat.Models
         public string? Status {get; set;}
         public string? Picture {get; set;}
         public DateTime? MTime {get; set;}
+          public string? MessageType {get; set;}
     }
+
+ public class UserPersonalMessageOnline{
+         public int Id {get;set;}
+        public string? GroupId {get;set;}
+        public string? GroupName {get;set;}
+        public string? UserId {get;set;}
+        public string? UserName {get;set;}
+        public string? DateAdded {get;set;}
+        public string? Message {get; set;}
+        public string? Status {get; set;}
+        public string? Picture {get; set;}
+        public DateTime? MTime {get; set;}
+          public string? MessageType {get; set;}
+    }
+
 
 public class ImagePreviewer {
     public int Id {get; set;}

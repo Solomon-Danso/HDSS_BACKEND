@@ -138,8 +138,43 @@ DateTime now = DateTime.Now;
 public async Task<IActionResult> GetMyGroup(string ID) {
     var grp = context.GroupParticipants.Where(a => a.UserId == ID).ToList();
 
+   
+   
+   
+   
     foreach (var groupParticipant in grp) {
-        var lastMessage = context.GroupMessages.OrderBy(t => t.Id).LastOrDefault(r => r.GroupId == groupParticipant.GroupId);
+
+
+    var offlines = context.UserPersonalMessageOfflines.FirstOrDefault(a=>a.GroupId==groupParticipant.GroupId&&a.UserId==ID);
+    if(offlines ==null){
+
+        var lastMessage = context.UserPersonalMessageOnlines.OrderBy(t => t.Id).LastOrDefault(r => r.GroupId == groupParticipant.GroupId);
+
+        groupParticipant.LastMessage = lastMessage?.Message;
+        groupParticipant.LastSenderPicture = lastMessage?.Picture;
+        groupParticipant.LastSenderName = lastMessage?.UserName;
+        groupParticipant.LastSenderDate = lastMessage?.DateAdded;
+        groupParticipant.LastSenderId = lastMessage?.UserId;
+
+
+        groupParticipant.TotalUnreadMessage = 0;
+
+
+        if(lastMessage?.MTime!=null){
+            groupParticipant.DandT = (DateTime)lastMessage.MTime;
+        }
+        
+
+        await context.SaveChangesAsync();
+
+
+
+    }
+
+    else {
+
+
+        var lastMessage = context.UserPersonalMessageOfflines.OrderBy(t => t.Id).LastOrDefault(r => r.GroupId == groupParticipant.GroupId);
 
         groupParticipant.LastMessage = lastMessage?.Message;
         groupParticipant.LastSenderPicture = lastMessage?.Picture;
@@ -148,20 +183,43 @@ public async Task<IActionResult> GetMyGroup(string ID) {
         groupParticipant.LastSenderId = lastMessage?.UserId;
 
         // Count the total unread messages for this specific user group
-        var totalUnreadMessages = context.UserPersonalMessageFromGroups
+        var totalUnreadMessages = context.UserPersonalMessageOfflines
             .Where(upm => upm.GroupId == groupParticipant.GroupId && upm.UserId == ID)
             .Count();
 
         groupParticipant.TotalUnreadMessage = totalUnreadMessages;
 
-        if(lastMessage?.DandT!=null){
-            groupParticipant.DandT = (DateTime)lastMessage.DandT;
+        if(lastMessage?.MTime!=null){
+            groupParticipant.DandT = (DateTime)lastMessage.MTime;
         }
         
 
         await context.SaveChangesAsync();
+
+
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    
+    
+    
     var final = context.GroupParticipants
         .Where(a => a.UserId == ID)
         .OrderByDescending(r => r.DandT)
@@ -210,29 +268,55 @@ DateTime now = DateTime.Now;
         Message = request.Message,
         DandT = DateTime.Now,
         Picture = c.ProfilePic,
-        Status = constant.UnRead,
+        Status = c.StudentId,
+        MessageType = "Text"
 
         };
 
-        var p = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId&&a.UserId!=s.UserId&&a.InGroup!=constant.InGroup).ToList();
+        var p = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId&&a.InGroup==constant.NotInGroup).ToList();
         foreach(var m in p){
-            var psm = new UserPersonalMessageFromGroup{
+            var psm = new UserPersonalMessageOffline{
                 GroupId = s.GroupId,
                 GroupName = s.GroupName,
                 UserId = m.UserId,
-                UserName = m.UserName,
+                UserName = s.UserName,
                 DateAdded = s.DateAdded,
                 Message = s.Message,
                 Picture = c.ProfilePic,
                 Status = s.Status,
                 MTime = s.DandT,
+                MessageType = s.MessageType,
+
             };
-            context.UserPersonalMessageFromGroups.Add(psm);
+            context.UserPersonalMessageOfflines.Add(psm);
+            await context.SaveChangesAsync();
+            
             
         }
 
-        context.GroupMessages.Add(s);
-        await context.SaveChangesAsync();
+
+        var online = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId&&a.InGroup==constant.InGroup).ToList();
+        foreach(var m in online){
+            var psm = new UserPersonalMessageOnline{
+                GroupId = s.GroupId,
+                GroupName = s.GroupName,
+                UserId = m.UserId,
+                UserName = s.UserName,
+                DateAdded = s.DateAdded,
+                Message = s.Message,
+                Picture = c.ProfilePic,
+                Status = s.Status,
+                MTime = s.DandT,
+                MessageType = s.MessageType,
+
+            };
+            context.UserPersonalMessageOnlines.Add(psm);
+            await context.SaveChangesAsync();
+            
+            
+        }
+
+
         return Ok("Message sent successfully");
 
 
@@ -266,40 +350,51 @@ public async Task<IActionResult>Offline(string ID, string GID){
 
 [HttpGet("UnReadCounter")]
 public async Task<IActionResult>UnReadCounter(string ID, string GID){
-var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).Count();
+var c = context.UserPersonalMessageOfflines.Where(a=>a.GroupId==GID&&a.UserId==ID).Count();
 return Ok(c);
 }
 [HttpGet("UnReadMessage")]
 public async Task<IActionResult>UnReadMessage(string ID, string GID){
-var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).ToList();
+var c = context.UserPersonalMessageOfflines.Where(a=>a.GroupId==GID&&a.UserId==ID).ToList();
 return Ok(c);
 }
 
-[HttpGet("FirstUnReadMeessageDate")]
-public async Task<IActionResult>FirstUnReadMeessageDate(string ID, string GID){
-    var c = context.UserPersonalMessageFromGroups.FirstOrDefault(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead);
-    return Ok(c);
-}
-
-
-[HttpGet("ReadMessageList")]
-public async Task<IActionResult>ReadMessageList(string ID, string GID){
-var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.Read).ToList();
+[HttpGet("GroupMessage")]
+public async Task<IActionResult>GroupMessage(string ID,string GID){
+var c = context.UserPersonalMessageOnlines.Where(a=>a.GroupId==GID&&a.UserId==ID).OrderBy(a=>a.MTime).ToList();
 return Ok(c);
 }
 
+[HttpGet("ReadMessages")]
+public async Task<IActionResult>ReadMessages(string ID,string GID){
+    var offlines = context.UserPersonalMessageOfflines.Where(a=>a.GroupId==GID&&a.UserId==ID).ToList();
+     foreach(var m in offlines){
+            var psm = new UserPersonalMessageOnline{
+                GroupId = m.GroupId,
+                GroupName = m.GroupName,
+                UserId = m.UserId,
+                UserName = m.UserName,
+                DateAdded = m.DateAdded,
+                Message = m.Message,
+                Picture = m.Picture,
+                Status = m.Status,
+                MTime = m.MTime,
+                MessageType = m.MessageType,
+
+            };
+            context.UserPersonalMessageOnlines.Add(psm);
+             context.UserPersonalMessageOfflines.Remove(m);
+
+            await context.SaveChangesAsync();
+            
+            
+        }
+
+        return Ok("Messages Read Successfully");
 
 
-[HttpGet("ReadMessageIndicator")]
-public async Task<IActionResult>ReadMessage(string ID, string GID){
-var c = context.UserPersonalMessageFromGroups.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Status==constant.UnRead).ToList();
-foreach(var a in c){
-a.Status = constant.Read;
-await context.SaveChangesAsync();
 }
 
-return Ok("Read");
-}
 
 [HttpPost("Previewer")]
         public async Task<IActionResult> Previewer([FromForm]ImagePreviewerDto request){

@@ -105,8 +105,8 @@ public string AnnouceHODD = "Deleted An Annoucement For HOD";
 
 public string GrpMember = "Member";
 public string GrpAdmin = "Admin";
-public string UnRead = "Unread";
-public string Read = "read";
+public string Sender = "I Sent The Message";
+public string ReadReciever = "I have recieved and read";
 
 public string FirstMessage = "You created this group";
 
