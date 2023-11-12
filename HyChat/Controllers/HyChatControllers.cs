@@ -373,7 +373,471 @@ public async Task<IActionResult>ReadMessages(string ID,string GID){
     
     }
 
+[HttpPost("Document")]
+        public async Task<IActionResult> Document([FromForm]GroupMessageFile request, string ID, string GID){
+       
+         
+         if (request.File== null || request.File.Length == 0)
+    {
+        return BadRequest("Invalid slide");
+    }
 
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "HyChat", "Document");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.File.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.File.CopyToAsync(stream);
+    }
+   
+          
+            var c = context.Students.FirstOrDefault(a=>a.StudentId==ID);
+        if (c == null){
+            return BadRequest("Student not found");
+        }
+        var g = context.Groups.FirstOrDefault(a=>a.GroupId==GID);
+        if (g == null){
+            return BadRequest("Group not found");
+        }
+
+
+DateTime now = DateTime.Now;
+        var s = new GroupMessage{
+        GroupId = g.GroupId,
+        GroupName = g.GroupName,
+        UserId = c.StudentId,
+        UserName = c.FirstName+" "+c.OtherName+" "+c.LastName,
+        DateAdded = now.ToString("hh:mm tt"),
+        Message = Path.Combine("HyChat/Document", slideName),
+        DandT = DateTime.Now,
+        Picture = c.ProfilePic,
+        Status = c.StudentId,
+        MessageType = "Document"
+
+        };
+
+        var p = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId).ToList();
+        foreach(var m in p){
+            var psm = new UserPersonalMessage{
+                GroupId = s.GroupId,
+                GroupName = s.GroupName,
+                UserId = m.UserId,
+                UserName = s.UserName,
+                DateAdded = s.DateAdded,
+                Message = s.Message,
+                Picture = c.ProfilePic,
+                Status = s.Status,
+                MTime = s.DandT,
+                MessageType = s.MessageType,
+
+            };
+            if(m.InGroup==constant.InGroup){
+               psm.Mode = constant.InGroup;
+
+            }
+            else{
+                psm.Mode = constant.NotInGroup;
+            }
+
+
+            context.UserPersonalMessages.Add(psm);
+            await context.SaveChangesAsync();
+            
+            
+        }
+
+
+
+        return Ok("Message sent successfully");
+
+   
+    
+    }
+
+[HttpPost("Video")]
+        public async Task<IActionResult> Video([FromForm]GroupMessageFile request, string ID, string GID){
+       
+         
+         if (request.File== null || request.File.Length == 0)
+    {
+        return BadRequest("Invalid slide");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "HyChat", "Video");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.File.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.File.CopyToAsync(stream);
+    }
+   
+          
+            var c = context.Students.FirstOrDefault(a=>a.StudentId==ID);
+        if (c == null){
+            return BadRequest("Student not found");
+        }
+        var g = context.Groups.FirstOrDefault(a=>a.GroupId==GID);
+        if (g == null){
+            return BadRequest("Group not found");
+        }
+
+
+DateTime now = DateTime.Now;
+        var s = new GroupMessage{
+        GroupId = g.GroupId,
+        GroupName = g.GroupName,
+        UserId = c.StudentId,
+        UserName = c.FirstName+" "+c.OtherName+" "+c.LastName,
+        DateAdded = now.ToString("hh:mm tt"),
+        Message = Path.Combine("HyChat/Video", slideName),
+        DandT = DateTime.Now,
+        Picture = c.ProfilePic,
+        Status = c.StudentId,
+        MessageType = "Video"
+
+        };
+
+        var p = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId).ToList();
+        foreach(var m in p){
+            var psm = new UserPersonalMessage{
+                GroupId = s.GroupId,
+                GroupName = s.GroupName,
+                UserId = m.UserId,
+                UserName = s.UserName,
+                DateAdded = s.DateAdded,
+                Message = s.Message,
+                Picture = c.ProfilePic,
+                Status = s.Status,
+                MTime = s.DandT,
+                MessageType = s.MessageType,
+
+            };
+            if(m.InGroup==constant.InGroup){
+               psm.Mode = constant.InGroup;
+
+            }
+            else{
+                psm.Mode = constant.NotInGroup;
+            }
+
+
+            context.UserPersonalMessages.Add(psm);
+            await context.SaveChangesAsync();
+            
+            
+        }
+
+
+
+        return Ok("Message sent successfully");
+
+   
+    
+    }
+
+[HttpPost("Audio")]
+        public async Task<IActionResult> Audio([FromForm]GroupMessageFile request, string ID, string GID){
+       
+         
+         if (request.File== null || request.File.Length == 0)
+    {
+        return BadRequest("Invalid slide");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "HyChat", "Audio");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.File.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.File.CopyToAsync(stream);
+    }
+   
+          
+            var c = context.Students.FirstOrDefault(a=>a.StudentId==ID);
+        if (c == null){
+            return BadRequest("Student not found");
+        }
+        var g = context.Groups.FirstOrDefault(a=>a.GroupId==GID);
+        if (g == null){
+            return BadRequest("Group not found");
+        }
+
+
+DateTime now = DateTime.Now;
+        var s = new GroupMessage{
+        GroupId = g.GroupId,
+        GroupName = g.GroupName,
+        UserId = c.StudentId,
+        UserName = c.FirstName+" "+c.OtherName+" "+c.LastName,
+        DateAdded = now.ToString("hh:mm tt"),
+        Message = Path.Combine("HyChat/Audio", slideName),
+        DandT = DateTime.Now,
+        Picture = c.ProfilePic,
+        Status = c.StudentId,
+        MessageType = "Audio"
+
+        };
+
+        var p = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId).ToList();
+        foreach(var m in p){
+            var psm = new UserPersonalMessage{
+                GroupId = s.GroupId,
+                GroupName = s.GroupName,
+                UserId = m.UserId,
+                UserName = s.UserName,
+                DateAdded = s.DateAdded,
+                Message = s.Message,
+                Picture = c.ProfilePic,
+                Status = s.Status,
+                MTime = s.DandT,
+                MessageType = s.MessageType,
+
+            };
+            if(m.InGroup==constant.InGroup){
+               psm.Mode = constant.InGroup;
+
+            }
+            else{
+                psm.Mode = constant.NotInGroup;
+            }
+
+
+            context.UserPersonalMessages.Add(psm);
+            await context.SaveChangesAsync();
+            
+            
+        }
+
+
+
+        return Ok("Message sent successfully");
+
+   
+    
+    }
+
+[HttpPost("Picture")]
+        public async Task<IActionResult> Picture([FromForm]GroupMessageFile request, string ID, string GID){
+       
+         
+         if (request.File== null || request.File.Length == 0)
+    {
+        return BadRequest("Invalid slide");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "HyChat", "Picture");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.File.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.File.CopyToAsync(stream);
+    }
+   
+          
+            var c = context.Students.FirstOrDefault(a=>a.StudentId==ID);
+        if (c == null){
+            return BadRequest("Student not found");
+        }
+        var g = context.Groups.FirstOrDefault(a=>a.GroupId==GID);
+        if (g == null){
+            return BadRequest("Group not found");
+        }
+
+
+DateTime now = DateTime.Now;
+        var s = new GroupMessage{
+        GroupId = g.GroupId,
+        GroupName = g.GroupName,
+        UserId = c.StudentId,
+        UserName = c.FirstName+" "+c.OtherName+" "+c.LastName,
+        DateAdded = now.ToString("hh:mm tt"),
+        Message = Path.Combine("HyChat/Picture", slideName),
+        DandT = DateTime.Now,
+        Picture = c.ProfilePic,
+        Status = c.StudentId,
+        MessageType = "Picture"
+
+        };
+
+        var p = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId).ToList();
+        foreach(var m in p){
+            var psm = new UserPersonalMessage{
+                GroupId = s.GroupId,
+                GroupName = s.GroupName,
+                UserId = m.UserId,
+                UserName = s.UserName,
+                DateAdded = s.DateAdded,
+                Message = s.Message,
+                Picture = c.ProfilePic,
+                Status = s.Status,
+                MTime = s.DandT,
+                MessageType = s.MessageType,
+
+            };
+            if(m.InGroup==constant.InGroup){
+               psm.Mode = constant.InGroup;
+
+            }
+            else{
+                psm.Mode = constant.NotInGroup;
+            }
+
+
+            context.UserPersonalMessages.Add(psm);
+            await context.SaveChangesAsync();
+            
+            
+        }
+
+
+
+        return Ok("Message sent successfully");
+
+   
+    
+    }
+    
+
+[HttpPost("Book")]
+        public async Task<IActionResult> Book([FromForm]GroupMessageFile request, string ID, string GID){
+       
+         
+         if (request.File== null || request.File.Length == 0)
+    {
+        return BadRequest("Invalid slide");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "HyChat", "Book");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.File.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.File.CopyToAsync(stream);
+    }
+   
+          
+            var c = context.Students.FirstOrDefault(a=>a.StudentId==ID);
+        if (c == null){
+            return BadRequest("Student not found");
+        }
+        var g = context.Groups.FirstOrDefault(a=>a.GroupId==GID);
+        if (g == null){
+            return BadRequest("Group not found");
+        }
+
+
+DateTime now = DateTime.Now;
+        var s = new GroupMessage{
+        GroupId = g.GroupId,
+        GroupName = g.GroupName,
+        UserId = c.StudentId,
+        UserName = c.FirstName+" "+c.OtherName+" "+c.LastName,
+        DateAdded = now.ToString("hh:mm tt"),
+        Message = Path.Combine("HyChat/Book", slideName),
+        DandT = DateTime.Now,
+        Picture = c.ProfilePic,
+        Status = c.StudentId,
+        MessageType = "Book"
+
+        };
+
+        var p = context.GroupParticipants.Where(a=>a.GroupId==s.GroupId).ToList();
+        foreach(var m in p){
+            var psm = new UserPersonalMessage{
+                GroupId = s.GroupId,
+                GroupName = s.GroupName,
+                UserId = m.UserId,
+                UserName = s.UserName,
+                DateAdded = s.DateAdded,
+                Message = s.Message,
+                Picture = c.ProfilePic,
+                Status = s.Status,
+                MTime = s.DandT,
+                MessageType = s.MessageType,
+
+            };
+            if(m.InGroup==constant.InGroup){
+               psm.Mode = constant.InGroup;
+
+            }
+            else{
+                psm.Mode = constant.NotInGroup;
+            }
+
+
+            context.UserPersonalMessages.Add(psm);
+            await context.SaveChangesAsync();
+            
+            
+        }
+
+
+
+        return Ok("Message sent successfully");
+
+   
+    
+    }
 
 
 

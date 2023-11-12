@@ -76,6 +76,23 @@ namespace HDSS_BACKEND.HyChat.Models
           public string? MessageType {get; set;}
     }
 
+  public class GroupMessageFile{
+         public int Id {get;set;}
+        public string? GroupId {get;set;}
+        public string? GroupName {get;set;}
+        public string? UserId {get;set;}
+        public string? UserName {get;set;}
+        public string? DateAdded {get;set;}
+        public string? Message {get; set;}
+        public string? Picture {get; set;}
+        public DateTime? DandT {get; set;}
+          public string? Status {get; set;}
+          public string? MessageType {get; set;}
+          public IFormFile? File { get; set; }
+    }
+
+
+
     public class UserPersonalMessage{
          public int Id {get;set;}
         public string? GroupId {get;set;}
