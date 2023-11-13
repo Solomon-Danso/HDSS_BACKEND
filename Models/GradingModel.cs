@@ -5,34 +5,26 @@ using System.Threading.Tasks;
 
 namespace HDSS_BACKEND.Models
 {
-    public class ClassScore
-    {
-        public int Id { get; set; }
-        public string? StudentId { get; set; }
-        public string? StudentName { get; set; }
-        public string? SubjectName { get; set; }
-        public string? ClassName { get; set; }
-        public string? Assignmentnumber { get; set; }
-        public double? Score { get; set; }
-        public string? TeacherId { get; set; }
-        public string? TeacherName { get; set; }
-        public string? AcademicTerm { get; set; }
-        public string? AcademicYear { get; set; }
-        public string? Token { get; set; }
-        public string? DateScored { get; set; }
-    }
-    public class ClassScoreSummary{
-        public int Id { get; set;}
-        public string? StudentId { get; set;}
-        public string? StudentName { get; set;}
-        public string? ClassName { get; set; }
-        public string? SubjectName { get; set;}
-         public double? TotalScore { get; set; }
-        public string? AcademicTerm { get; set; }
-        public string? AcademicYear { get; set; }
-        public string? Token { get; set; }
+public class TermResult{
+public int Id { get; set; }
+public string? StudentId {get;set;}
+public string? StudentName {get; set;}
+public int ClassScore {get; set;}
+public int ExamScore {get; set;}
+public string? Position {get; set;}
+public string? Grade {get; set;}
+public string? Comment {get; set;}
 
-     
+public string? Level {get; set;}
+public string? Subject { get; set; }
+public string? AcademicYear {get; set;}
+public string? AcademicTerm{get; set;}
+public string? TeacherId {get; set;}
+public string? TeacherName{get; set;}
+public string? DateUploaded {get; set;}
+public DateTime? SpecificDateAndTime {get;set;}
 
-    }
+}
+
+
 }

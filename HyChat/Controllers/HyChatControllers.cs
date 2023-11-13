@@ -292,6 +292,7 @@ public async Task<IActionResult>Offline(string ID){
 
 }
 
+
 [HttpGet("UnReadCounter")]
 public async Task<IActionResult>UnReadCounter(string ID, string GID){
 var c = context.UserPersonalMessages.Where(a=>a.GroupId==GID&&a.UserId==ID&&a.Mode==constant.NotInGroup).Count();

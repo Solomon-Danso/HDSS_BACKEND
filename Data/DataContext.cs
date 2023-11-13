@@ -52,8 +52,6 @@ public DbSet<Discussions>Discussions { get; set; }
 public DbSet<Assignment> Assignments {get;set;}
 public DbSet<AcademicYear>AcademicYears { get; set; }
 public DbSet<AcademicTerm>AcademicTerms { get; set; }
-public DbSet<ClassScore>ClassScores { get; set; }
-public DbSet<ClassScoreSummary>ClassScoresSummarys { get; set; }
 public DbSet<SchoolDirector> SchoolDirectors { get; set; }
 public DbSet<AuthenticationModel>AuthenticationModels { get; set; }
 public DbSet<SuperiorAccount>SuperiorAccounts { get; set; }
@@ -77,7 +75,7 @@ public DbSet<SingleChat> Singles {get; set;}
 public DbSet<GroupParticipant> GroupParticipants {get; set;}
 public DbSet<GroupMessage> GroupMessages {get; set;}
 public DbSet<UserPersonalMessage> UserPersonalMessages {get; set;}
-
+public DbSet<TermResult> TermResults {get; set;}
 
 
 
