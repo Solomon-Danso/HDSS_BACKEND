@@ -80,6 +80,7 @@ namespace HDSS_BACKEND.Controllers
                 r.Grade="F";
                 r.Comment="Fail";
             }
+
            
         bool checker =await context.TermResults.AnyAsync(a=>a.StudentId==r.StudentId&&a.Subject==r.Subject&&a.Level==r.Level&&a.AcademicYear==r.AcademicYear&&a.AcademicTerm==r.AcademicTerm);
         if(checker){
@@ -91,7 +92,34 @@ namespace HDSS_BACKEND.Controllers
         await context.SaveChangesAsync();
         }
 
+// Retrieve TermResults from the database
+// Retrieve TermResults from the database
+// Retrieve TermResults from the database
+var termResults = context.TermResults
+    .Where(a => a.Level == r.Level && a.Subject == r.Subject && a.AcademicYear == r.AcademicYear && a.AcademicTerm == r.AcademicTerm)
+    .ToList();
 
+// Group TermResults by Average and order the groups by Average in descending order
+var groupedGrades = termResults
+    .GroupBy(a => a.Average)
+    .OrderByDescending(g => g.Key);
+
+int position = 1;
+
+foreach (var group in groupedGrades)
+{
+    var sortedGroup = group.OrderBy(a => Guid.NewGuid()).ToList(); // Shuffle the group to randomize order
+    int samePosition = position;
+
+    foreach (var result in sortedGroup)
+    {
+        result.Position = GetOrdinal(samePosition);
+    }
+
+    position += sortedGroup.Count;
+}
+
+await context.SaveChangesAsync();
 
            
 
@@ -103,6 +131,44 @@ namespace HDSS_BACKEND.Controllers
 
 
 
+[HttpGet("ViewGrades")]
+public async Task<IActionResult> ViewGrades(string l, string s, string y, string t)
+{
+    var classGrade = context.TermResults
+        .Where(a => a.Level == l && a.Subject == s && a.AcademicYear == y && a.AcademicTerm == t)
+        .OrderByDescending(a => a.Average) // Sort by average score in descending order
+        .ToList();
+
+    
+
+    return Ok(classGrade);
+}
+
+// Method to convert an integer to its ordinal representation
+private string GetOrdinal(int number)
+{
+    if (number <= 0) return number.ToString();
+
+    switch (number % 100)
+    {
+        case 11:
+        case 12:
+        case 13:
+            return number + "th";
+    }
+
+    switch (number % 10)
+    {
+        case 1:
+            return number + "st";
+        case 2:
+            return number + "nd";
+        case 3:
+            return number + "rd";
+        default:
+            return number + "th";
+    }
+}
 
 
 
