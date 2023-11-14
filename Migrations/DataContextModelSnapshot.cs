@@ -1904,8 +1904,11 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("AcademicYear")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ClassScore")
-                        .HasColumnType("int");
+                    b.Property<float>("Average")
+                        .HasColumnType("real");
+
+                    b.Property<float>("ClassScore")
+                        .HasColumnType("real");
 
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
@@ -1913,8 +1916,8 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("DateUploaded")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ExamScore")
-                        .HasColumnType("int");
+                    b.Property<float>("ExamScore")
+                        .HasColumnType("real");
 
                     b.Property<string>("Grade")
                         .HasColumnType("nvarchar(max)");

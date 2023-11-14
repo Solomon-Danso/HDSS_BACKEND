@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HDSS_BACKEND.Controllers
 {
@@ -43,12 +44,15 @@ namespace HDSS_BACKEND.Controllers
                 DateUploaded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
                 SpecificDateAndTime = DateTime.Now,
 
-            };
-            var a = r.ClassScore/200;
-            var b = r.ExamScore/200;
-            var c = a+b;
-            var d = c*100;
 
+            };
+            var a = r.ClassScore+r.ExamScore;
+            
+            var b = a/200;
+             
+            var d = b*100;
+            r.Average = d;
+            
 
 
             if(d>79.4){
@@ -63,6 +67,7 @@ namespace HDSS_BACKEND.Controllers
                 r.Grade="C";
                 r.Comment="Good";
             }
+
             else if(d>49.4 && d<=59.4){
                 r.Grade="D";
                 r.Comment="Pass";
@@ -75,6 +80,20 @@ namespace HDSS_BACKEND.Controllers
                 r.Grade="F";
                 r.Comment="Fail";
             }
+           
+        bool checker =await context.TermResults.AnyAsync(a=>a.StudentId==r.StudentId&&a.Subject==r.Subject&&a.Level==r.Level&&a.AcademicYear==r.AcademicYear&&a.AcademicTerm==r.AcademicTerm);
+        if(checker){
+            context.TermResults.Add(r);
+        }
+        else{
+             context.TermResults.Add(r);
+
+        await context.SaveChangesAsync();
+        }
+
+
+
+           
 
             return Ok("Result Uploaded");
 

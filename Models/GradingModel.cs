@@ -9,11 +9,12 @@ public class TermResult{
 public int Id { get; set; }
 public string? StudentId {get;set;}
 public string? StudentName {get; set;}
-public int ClassScore {get; set;}
-public int ExamScore {get; set;}
+public float ClassScore {get; set;}
+public float ExamScore {get; set;}
 public string? Position {get; set;}
 public string? Grade {get; set;}
 public string? Comment {get; set;}
+public float Average{get;set;}
 
 public string? Level {get; set;}
 public string? Subject { get; set; }
