@@ -64,7 +64,9 @@
               public string DeletUploadedBook = "Deleted An Uploaded Book";
 
               public string UploadAssignment = "Uploaded An Assignment";
+               public string UploadSolution = "Uploaded A Solution";
               public string ViewUploadedAssignment = "Viewed Uploaded Assignment";
+              public string ViewUploadedAssignmentSolution = "Viewed Uploaded Assignment Solution";
               public string DeletUploadedAssignment = "Deleted An Uploaded Assignment";
 
               public string UploadATimeTable = "Uploaded A Time Table";
@@ -112,7 +114,7 @@ public string FirstMessage = "You created this group";
 
 public string InGroup = "Online";
 public string NotInGroup = "Offline";
-
+public string StudViewAssignment = "Student Viewed The Assignment Given";
 
 
 

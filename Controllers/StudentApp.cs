@@ -329,7 +329,6 @@ public async Task<IActionResult>MyClassNotes(string SID, string Level, string Su
         var t = context.Slides.Where(a=>a.ClassName==ClassName && a.SubjectName==Subject).OrderByDescending(r=>r.Id).ToList();
         await StudentAuditor(SID,constant.SSlides);
         return Ok(t);
-
     }
 
      [HttpGet("Book")]
@@ -340,6 +339,23 @@ public async Task<IActionResult>MyClassNotes(string SID, string Level, string Su
 
     }
 
+    [HttpGet("Assignment")]
+    public async Task<IActionResult>StudentAssignment( string SID, string ClassName){
+        var assign = context.Assignments.Where(a=>a.ClassName == ClassName&&DateTime.Now<=a.Deadline).OrderByDescending(r=>r.Id).ToList();
+        await StudentAuditor(SID,constant.StudViewAssignment);
+        return Ok(assign);
+    }
+
+    [HttpGet("AssignmentDetails")]
+    public async Task<IActionResult>StudentAssignment( string SID, int ID){
+        var assign = context.Assignments.FirstOrDefault(a=>a.Id == ID);
+        if(assign==null){
+            return BadRequest("Assignment Not Found");
+        }
+
+        await StudentAuditor(SID,constant.StudViewAssignment);
+        return Ok(assign);
+    }
 
 
 

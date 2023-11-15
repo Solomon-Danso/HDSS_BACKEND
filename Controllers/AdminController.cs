@@ -1011,6 +1011,39 @@ public async Task<IActionResult> StudentSearchBook(string searchTerm, string Cla
 
 
 
+[HttpPost("StudentSearchAssignment")]
+public async Task<IActionResult> StudentSearchAssignment(string searchTerm, string ClassName)
+{
+    var searchResult = context.Assignments.ToList().Where(
+        v => v.Title != null && v.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.SubjectName != null && v.SubjectName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.DateAdded != null && v.DateAdded.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.ClassName != null && v.ClassName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicTerm != null && v.AcademicTerm.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.AcademicYear != null && v.AcademicYear.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             || v.TeacherName != null && v.TeacherName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+             
+    ).OrderByDescending(r => r.Id).ToList();
+
+    if (!string.IsNullOrEmpty(ClassName))
+    {
+        searchResult = searchResult
+            .Where(s => s.ClassName != null && s.ClassName.Equals(ClassName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    if (searchResult.Count() == 0)
+    {
+        return NotFound("No Result Found");
+    }
+
+    return Ok(searchResult);
+}
+
+
+
+
+
 [HttpGet("AllStudents")]
 public async Task<IActionResult> GetAllStudent(){
     var students =  context.Students.OrderBy(r=>r.LastName).ToList();

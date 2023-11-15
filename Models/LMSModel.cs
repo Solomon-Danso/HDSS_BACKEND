@@ -91,6 +91,27 @@ namespace HDSS_BACKEND.Models
 
     }
 
+    public class AssignmentSolution{
+        public int Id { get; set; }
+        public string? SubjectName { get; set; }
+        public string? Title { get; set; }
+        public string? ClassName { get; set; }
+        public string? SlidePath { get; set; }
+        public string? DateAdded{ get; set; }
+        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+        public string? StaffID {get;set;}
+        public string? TeacherName { get; set; }
+        public string? ProfilePic {get; set;}
+       public string? StudentId {get; set;}
+       public string? StudentName {get; set;}
+       public DateTime? SolutionDate {get; set;}
+       public string? SolutionType {get; set;}
+       public int AssignmentID {get; set;}
+       
+
+    }
+
     public class TimeTable{
         public int Id { get; set; }
        

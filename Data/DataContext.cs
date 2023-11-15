@@ -76,7 +76,7 @@ public DbSet<GroupParticipant> GroupParticipants {get; set;}
 public DbSet<GroupMessage> GroupMessages {get; set;}
 public DbSet<UserPersonalMessage> UserPersonalMessages {get; set;}
 public DbSet<TermResult> TermResults {get; set;}
-
+public DbSet<AssignmentSolution> AssignmentSolutions {get; set;}
 
 
 

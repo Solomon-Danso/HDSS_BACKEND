@@ -771,7 +771,94 @@ namespace HDSS_BACKEND.Controllers
     
     }
 
- 
+[HttpPost("AssignmentSolution")]
+public async Task<IActionResult> AssignmentSolution([FromForm]LMSDto request, string SID, int AssignmentID){
+       
+         
+         if (request.Slide == null || request.Slide.Length == 0)
+    {
+        return BadRequest("Invalid slide");
+    }
+
+    // Create the uploads directory if it doesn't exist
+    var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "LMS", "Solutions");
+    if (!Directory.Exists(uploadsDirectory))
+    {
+        Directory.CreateDirectory(uploadsDirectory);
+    }
+
+    // Get the original slide extension
+    var slideExtension = Path.GetExtension(request.Slide.FileName);
+
+    // Generate a unique slide name
+    var slideName = Guid.NewGuid().ToString() + slideExtension;
+
+    // Save the uploaded slide to the uploads directory
+    var slidePath = Path.Combine(uploadsDirectory, slideName);
+    using (var stream = new FileStream(slidePath, FileMode.Create))
+    {
+        await request.Slide.CopyToAsync(stream);
+    }
+   var a = context.Assignments.FirstOrDefault(a=>a.Id==AssignmentID);
+   if(a==null){
+    return BadRequest("Assignment Not Found");
+   }
+   var student = context.Students.FirstOrDefault(a=>a.StudentId==SID);
+    if(student==null){
+        return BadRequest("Student Not Found");
+    }
+
+
+
+    var s = new AssignmentSolution{
+        //Select the subject name from an option in the frontend
+       SubjectName = a.SubjectName,
+       Title = a.Title,
+       ClassName = a.ClassName,
+       DateAdded = a.DateAdded,
+       SlidePath = Path.Combine("LMS/Solutions", slideName),      
+       AcademicYear = a.AcademicYear,
+       AcademicTerm = a.AcademicTerm,
+      StaffID = a.StaffID,
+      TeacherName = a.TeacherName,
+      ProfilePic = student.ProfilePic,
+      StudentId = student.StudentId,
+      StudentName = student.FirstName+" "+student.OtherName+" "+student.LastName,
+      SolutionDate= DateTime.Today.Date,
+      SolutionType = "Document",
+      AssignmentID = a.Id,
+
+    };
+
+    bool checker = await context.AssignmentSolutions.AnyAsync(a=>a.AssignmentID==s.AssignmentID&&a.StudentId==s.StudentId&&a.AcademicTerm==s.AcademicTerm&&a.AcademicYear==s.AcademicYear&&a.SubjectName==s.StudentName&&a.ClassName==s.ClassName);
+    if (checker){
+        return BadRequest("You have already submitted a solution for this assignment");
+    }
+
+
+
+   
+
+
+    context.AssignmentSolutions.Add(s);
+    await context.SaveChangesAsync();
+    await StudentAuditor(SID, constant.UploadSolution);
+
+    return Ok($"{s.Title} for {s.SubjectName} has been Submitted successfully");
+    
+    }
+
+
+
+[HttpGet("ViewAllAssignmentSolutionTeachers")]
+    public async Task<IActionResult>ViewAllAssignmentSolutionTeachers(string ID, string SubjectName){
+        var slide = context.AssignmentSolutions
+        .Where(a=>a.StaffID==ID&&a.SubjectName==SubjectName)
+        .OrderBy(r=>r.SolutionDate)
+        .ToList();
+        await TeacherAuditor(ID,constant.ViewUploadedAssignmentSolution);
+        return Ok(slide);
+    }
 
  
  
@@ -784,6 +871,7 @@ namespace HDSS_BACKEND.Controllers
         await TeacherAuditor(ID,constant.ViewUploadedAssignment);
         return Ok(slide);
     }
+
 
 
 
