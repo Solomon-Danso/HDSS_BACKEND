@@ -116,8 +116,8 @@ public string InGroup = "Online";
 public string NotInGroup = "Offline";
 public string StudViewAssignment = "Student Viewed The Assignment Given";
 
-
-
+public string? StudentQuiz = "Viewed Uploaded Quiz";
+public string? TeacherQuiz = "Uploaded A Quiz";
 
 
 

@@ -77,9 +77,10 @@ public DbSet<GroupMessage> GroupMessages {get; set;}
 public DbSet<UserPersonalMessage> UserPersonalMessages {get; set;}
 public DbSet<TermResult> TermResults {get; set;}
 public DbSet<AssignmentSolution> AssignmentSolutions {get; set;}
-
-
-
+public DbSet<TestnQuizTeacher> TestnQuizTeachers {get; set;}
+public DbSet<TestnQuizStudent> TestnQuizStudents {get; set;}
+public DbSet<TestnQuizStudentMark> TestnQuizStudentMarks {get; set;}
+public DbSet<TestnQuizStudentTotalScore> TestnQuizStudentTotalScores {get; set;}
 
 
 

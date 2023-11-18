@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HDSS_BACKEND.Controllers
 {
@@ -357,6 +359,153 @@ public async Task<IActionResult>MyClassNotes(string SID, string Level, string Su
         return Ok(assign);
     }
 
+[HttpPost("UploadTestnQuiz")]
+public async Task<IActionResult>UploadTestnQuiz([FromBody]TestnQuizTeacher request, string Level, string Subject, string Status, string StaffID){
+
+var t = context.Teachers.FirstOrDefault(a=>a.StaffID==StaffID);
+if(t==null){
+    return BadRequest("Teacher not found");
+}
+
+
+var tnq = new TestnQuizTeacher{
+Subject = Subject,
+Level = Level,
+Question = request.Question,
+OptionA = request.OptionA,
+OptionB = request.OptionB,
+OptionC = request.OptionC,
+OptionD = request.OptionD,
+OptionE = request.OptionE,
+Answer = request.Answer,
+IsAnswered = false,
+Duration = request.Duration,
+TeacherId = t.StaffID,
+TeacherName = t.FirstName+" " + t.OtherName+" "+t.LastName,
+ProfilePic = t.FilePath,
+DesignatedMarks = request.DesignatedMarks,
+UploadDate = DateTime.Today.Date
+};
+if(Status=="New"){
+    tnq.QuizId = AssignmentIdGenerator();
+    tnq.Deadline = request.Deadline;
+}
+else if(Status=="Existing"){
+var q = context.TestnQuizTeachers.OrderBy(a=>a.Id).LastOrDefault(a=>a.TeacherId==tnq.TeacherId&&a.Subject==tnq.Subject&&a.Level==tnq.Level);
+if(q==null){
+    tnq.QuizId = AssignmentIdGenerator();
+}
+else{
+    tnq.QuizId = q.QuizId;
+    tnq.Deadline = q.Deadline;
+    tnq.Duration = q.Duration;
+}
+
+}
+ context.TestnQuizTeachers.Add(tnq);
+ await context.SaveChangesAsync();
+
+var studentList = context.Students.Where(a=>a.Level==tnq.Level).ToList();
+foreach(var student in studentList){
+    var stud = new TestnQuizStudent{
+        QuizId = tnq.QuizId,
+        Subject = tnq.Subject,
+        Level = tnq.Level,
+        Question = tnq.Question,
+        OptionA = tnq.OptionA,
+        OptionB = tnq.OptionB,
+        OptionC = tnq.OptionC,
+        OptionD = tnq.OptionD,
+        OptionE = tnq.OptionE,
+        IsAnswered = tnq.IsAnswered,
+        Deadline = tnq.Deadline,
+        Duration = tnq.Duration,
+        StudentId = student.StudentId,
+        StudentName = student.FirstName+" " + student.OtherName+" " + student.LastName,
+        ProfilePic = student.ProfilePic,
+        QuestionId = tnq.Id,
+        Answer = tnq.Answer,
+        DesignatedMarks=tnq.DesignatedMarks,
+        UploadDate = tnq.UploadDate
+
+    };
+    context.TestnQuizStudents.Add(stud);
+    await context.SaveChangesAsync();
+    await TeacherAuditor(t.StaffID, constant.TeacherQuiz);
+
+
+}
+
+
+
+return Ok("Quiz Uploaded Successfully");
+
+
+}
+
+
+[HttpPost("TestnQuizMarking")]
+public async Task<IActionResult> TestnQuizMarking([FromBody]TestnQuizStudentMark request){
+
+var ques = context.TestnQuizStudents.FirstOrDefault(a=>a.QuestionId==request.QuestionId&&a.QuizId==request.QuizId);
+if (ques == null){
+    return BadRequest("Quiz not found");
+}
+
+var mark = new TestnQuizStudentMark{
+    QuestionId = ques.QuestionId,
+    QuizId = ques.QuizId,
+    StudentAnswer = request.StudentAnswer,
+    StudentId = ques.StudentId,
+    SolutionDate = DateTime.Today.Date
+};
+if(mark.StudentAnswer==ques.Answer){
+    mark.Mark = ques.DesignatedMarks;
+    ques.IsAnswered = true;
+}
+context.TestnQuizStudentMarks.Add(mark);
+await context.SaveChangesAsync();
+
+var mk = context.TestnQuizStudentMarks.Where(a=>a.QuizId==mark.QuizId&&a.StudentId==mark.StudentId).Sum(r=>r.Mark);
+var total = context.TestnQuizStudents.Where(a=>a.QuizId==mark.QuizId&&a.StudentId==mark.StudentId).Sum(r=>r.DesignatedMarks);
+var w = context.TestnQuizStudents.FirstOrDefault(a=>a.QuizId==mark.QuizId&&a.StudentId==mark.StudentId);
+
+var q = new TestnQuizStudentTotalScore{
+    StudentId = w?.StudentId,
+    MarksObtained = mk,
+    TotalScore= total,
+    QuizId = w?.QuizId,
+    SubjectName = w?.StudentName,
+    Level=w?.Level,
+    StudentName = ques.StudentName,
+    ProfilePic = ques.ProfilePic,
+
+};
+bool checker = await context.TestnQuizStudentTotalScores.AnyAsync(a=>a.StudentId==q.StudentId&&a.QuizId==q.QuizId);
+if(checker){
+    var a = context.TestnQuizStudentTotalScores.FirstOrDefault(a=>a.StudentId==q.StudentId&&a.QuizId==q.QuizId);
+    if(a==null){
+        return BadRequest("Total Score Not Found");
+    }
+    a.TotalScore=total;
+    a.MarksObtained=mk;
+    await context.SaveChangesAsync();
+}
+else{
+context.TestnQuizStudentTotalScores.Add(q);
+await context.SaveChangesAsync();
+}
+
+await StudentAuditor(ques.StudentId, constant.StudentQuiz);
+return Ok("Marks Recorded Successfully");
+
+}
+
+[HttpGet("QuizTotalScore")]
+public async Task<IActionResult>QuizTotalScore(string QuizId, string Level){
+    var stud = context.TestnQuizStudentTotalScores.Where(a=>a.QuizId==QuizId&&a.Level==Level).OrderByDescending(r=>r.MarksObtained).ToList();
+    return Ok(stud);
+}
 
 
 
@@ -401,15 +550,20 @@ public async Task<IActionResult>MyClassNotes(string SID, string Level, string Su
 
 
 
+private string AssignmentIdGenerator()
+{
+    byte[] randomBytes = new byte[2]; // Increase the array length to 2 for a 4-digit random number
+    using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+    {
+        rng.GetBytes(randomBytes);
+    }
 
+    ushort randomNumber = BitConverter.ToUInt16(randomBytes, 0);
+    int fullNumber = randomNumber; // 109000 is added to ensure the number is 5 digits long
 
-
-
-
-
-
-
-
+    return fullNumber.ToString("D5");
+}
+  
 
 [ApiExplorerSettings(IgnoreApi = true)] 
 public async Task StudentAuditor(string StudentId,string Action)
