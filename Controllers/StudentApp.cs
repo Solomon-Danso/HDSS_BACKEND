@@ -517,7 +517,7 @@ StudentId = G.StudentId
 
 
 var termResults = context.GradeBooks
-    .Where(a=>a.QuizId==q.QuizId)
+    .Where(a=>a.QuizId==grade.QuizId)
     .ToList();
 
 // Group TermResults by Average and order the groups by Average in descending order
@@ -535,6 +535,7 @@ foreach (var group in groupedGrades)
     foreach (var result in sortedGroup)
     {
         result.Position = GetOrdinal(samePosition);
+        await context.SaveChangesAsync();
     }
 
     position += sortedGroup.Count;

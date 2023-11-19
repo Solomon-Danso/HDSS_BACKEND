@@ -901,6 +901,7 @@ foreach (var group in groupedGrades)
     foreach (var result in sortedGroup)
     {
         result.Position = GetOrdinal(samePosition);
+          await context.SaveChangesAsync();
     }
 
     position += sortedGroup.Count;
