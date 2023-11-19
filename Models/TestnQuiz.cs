@@ -19,6 +19,7 @@ namespace HDSS_BACKEND.Models
         public string? OptionE {get; set;}
         public string? Answer {get; set;}
         public bool? IsAnswered {get; set;} 
+   
         public DateTime? Deadline {get; set;}
         public int? Duration {get; set;}
         public string? TeacherId {get; set;}
@@ -45,6 +46,7 @@ namespace HDSS_BACKEND.Models
         public string? Answer {get; set;}
         public float DesignatedMarks {get; set;}
         public bool? IsAnswered {get; set;} 
+        public bool? IsStarted {get; set;} 
         public DateTime? Deadline {get; set;}
         public int? Duration {get; set;}
         public string? StudentId {get; set;}
@@ -77,5 +79,15 @@ namespace HDSS_BACKEND.Models
         public string? SubjectName{get;set;}
         public string? Level{get;set;}
     }
+
+public class QuizTimer{
+    public int Id {get; set;}
+    public string? QuizId {get; set;}
+    public string? StudentId {get; set;}
+    public int? TimeLeft{get; set;}
+}
+
+
+
 
 }

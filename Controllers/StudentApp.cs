@@ -445,9 +445,9 @@ return Ok("Quiz Uploaded Successfully");
 
 
 [HttpPost("TestnQuizMarking")]
-public async Task<IActionResult> TestnQuizMarking([FromBody]TestnQuizStudentMark request){
+public async Task<IActionResult> TestnQuizMarking(int questionId, string quizid, string studentId, string answer){
 
-var ques = context.TestnQuizStudents.FirstOrDefault(a=>a.QuestionId==request.QuestionId&&a.QuizId==request.QuizId);
+var ques = context.TestnQuizStudents.FirstOrDefault(a=>a.QuestionId==questionId&&a.QuizId==quizid&&a.StudentId==studentId);
 if (ques == null){
     return BadRequest("Quiz not found");
 }
@@ -455,14 +455,15 @@ if (ques == null){
 var mark = new TestnQuizStudentMark{
     QuestionId = ques.QuestionId,
     QuizId = ques.QuizId,
-    StudentAnswer = request.StudentAnswer,
+    StudentAnswer = answer,
     StudentId = ques.StudentId,
     SolutionDate = DateTime.Today.Date
 };
 if(mark.StudentAnswer==ques.Answer){
     mark.Mark = ques.DesignatedMarks;
-    ques.IsAnswered = true;
 }
+
+ques.IsAnswered = true;
 context.TestnQuizStudentMarks.Add(mark);
 await context.SaveChangesAsync();
 
@@ -507,13 +508,95 @@ public async Task<IActionResult>QuizTotalScore(string QuizId, string Level){
     return Ok(stud);
 }
 
+[HttpGet("ViewTestnQuiz")]
+public async Task<IActionResult> ViewTestnQuiz(string level, string studentId){
+    var quiz = context.TestnQuizStudents
+        .Where(a => a.Level == level && DateTime.Now <= a.Deadline&&a.StudentId==studentId&&a.IsAnswered==false)
+        .OrderByDescending(r=>r.Id)
+        .GroupBy(a => a.QuizId)
+        .Select(group => group.FirstOrDefault()) // Selecting the first record from each group
+        .ToList();
+
+    return Ok(quiz);
+}
+
+[HttpGet("ViewTestnQuizAllQuestion")]
+public async Task<IActionResult> ViewTestnQuizAllQuestion(string level,string quizid, string studentId){
+    var quiz = context.TestnQuizStudents
+        .Where(a => a.Level == level && DateTime.Now <= a.Deadline&&a.QuizId==quizid&&a.StudentId==studentId&&a.IsAnswered==false)
+        .ToList();
+        foreach(var q in quiz){
+            q.IsStarted = true;
+            await context.SaveChangesAsync();
+        }
+         var quizTimer = new System.Timers.Timer(TimeSpan.FromMinutes(1).TotalMilliseconds);
+        quizTimer.Elapsed += async (sender, e) => await ReduceDurationAndCheckCompletion(quizid,studentId);
+        quizTimer.Start();
+
+    return Ok(quiz);
+}
+
+[HttpGet("GetTimer")]
+public async Task<IActionResult>GetTimer(string QuizId, string StudentId){
+
+var t = context.TestnQuizStudents.FirstOrDefault(a => a.QuizId == QuizId && a.StudentId==StudentId);
+if(t==null){
+    return BadRequest("No Last Quiz");
+}
 
 
 
+var theTimer = new QuizTimer{
+    QuizId = t.QuizId,
+    StudentId = t.StudentId,
+    TimeLeft = t.Duration,
+};
+bool checker = await context.QuizTimers.AnyAsync(a => a.QuizId == QuizId &&a.StudentId==StudentId);
+if(checker){
+    var a = context.QuizTimers.FirstOrDefault(a => a.QuizId == QuizId &&a.StudentId==StudentId);
+    if(a==null){
+    return BadRequest("No Quiz Timer");
+}
+    
+    a.TimeLeft = theTimer.TimeLeft;
+    await context.SaveChangesAsync();
+}
+else{
+    context.QuizTimers.Add(theTimer);
+    await context.SaveChangesAsync();
+}
 
 
+    var timer = context.QuizTimers.FirstOrDefault(a=>a.QuizId==QuizId&&a.StudentId==StudentId);
+    return Ok(timer);
+}
 
 
+ 
+
+private async Task ReduceDurationAndCheckCompletion(string quizId, string studentId)
+{
+    using (var newContext = new DataContext()) // Create a new context instance
+    {
+        var quiz = await newContext.TestnQuizStudents
+            .Where(a => a.QuizId == quizId && a.IsAnswered == false&&a.StudentId==studentId)
+            .ToListAsync();
+
+  
+        foreach (var q in quiz)
+        {
+            q.Duration--;
+            
+            if (q.Duration <= 0)
+            {
+                q.IsAnswered = true; // Mark as answered when duration is zero
+            }
+
+        }
+
+        await newContext.SaveChangesAsync();
+    }
+}
 
 
 

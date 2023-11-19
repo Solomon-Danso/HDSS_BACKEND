@@ -1427,6 +1427,28 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("Pictures");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.QuizTimer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("QuizId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TimeLeft")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuizTimers");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -2030,6 +2052,9 @@ namespace HDSS_BACKEND.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool?>("IsAnswered")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsStarted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Level")
