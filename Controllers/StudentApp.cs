@@ -497,10 +497,114 @@ context.TestnQuizStudentTotalScores.Add(q);
 await context.SaveChangesAsync();
 }
 
+
+ var G = context.TestnQuizStudentTotalScores.FirstOrDefault(a=>a.StudentId==q.StudentId&&a.QuizId==q.QuizId);
+if(G==null){
+        return BadRequest("Total Score Not Found");
+}
+
+var grade = new GradeBook{
+QuizId = G.QuizId,
+StudentName = G.StudentName,
+Level = G.Level,
+ProfilePic = G.ProfilePic,
+SubjectName = G.SubjectName,
+MarksObtained = G.MarksObtained,
+TotalObtained = G.TotalScore,
+DateUploaded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+StudentId = G.StudentId
+};
+
+
+var termResults = context.GradeBooks
+    .Where(a=>a.QuizId==q.QuizId)
+    .ToList();
+
+// Group TermResults by Average and order the groups by Average in descending order
+var groupedGrades = termResults
+    .GroupBy(a => a.MarksObtained)
+    .OrderByDescending(g => g.Key);
+
+int position = 1;
+
+foreach (var group in groupedGrades)
+{
+    var sortedGroup = group.OrderBy(a => Guid.NewGuid()).ToList(); // Shuffle the group to randomize order
+    int samePosition = position;
+
+    foreach (var result in sortedGroup)
+    {
+        result.Position = GetOrdinal(samePosition);
+    }
+
+    position += sortedGroup.Count;
+}
+
+bool checks = await context.GradeBooks.AnyAsync(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.StudentName);
+if (checks){
+    var ch = context.GradeBooks.FirstOrDefault(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.StudentName);
+    if(ch==null){
+        return BadRequest("No Grade Book found");
+    }
+    
+    ch.MarksObtained = grade.MarksObtained;
+    ch.TotalObtained = grade.TotalObtained;
+    await context.SaveChangesAsync();
+
+}
+else{
+context.GradeBooks.Add(grade);
+ await context.SaveChangesAsync();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 await StudentAuditor(ques.StudentId, constant.StudentQuiz);
 return Ok("Marks Recorded Successfully");
 
 }
+
+
+private string GetOrdinal(int number)
+{
+    if (number <= 0) return number.ToString();
+
+    switch (number % 100)
+    {
+        case 11:
+        case 12:
+        case 13:
+            return number + "th";
+    }
+
+    switch (number % 10)
+    {
+        case 1:
+            return number + "st";
+        case 2:
+            return number + "nd";
+        case 3:
+            return number + "rd";
+        default:
+            return number + "th";
+    }
+}
+
+
+
+
 
 [HttpGet("QuizTotalScore")]
 public async Task<IActionResult>QuizTotalScore(string QuizId, string Level){
@@ -569,6 +673,13 @@ else{
 
     var timer = context.QuizTimers.FirstOrDefault(a=>a.QuizId==QuizId&&a.StudentId==StudentId);
     return Ok(timer);
+}
+
+
+[HttpGet("GetGradeBook")]
+public async Task<IActionResult>GetGradeBook(string studentId){
+    var grade = context.GradeBooks.Where(a=>a.StudentId==studentId).ToList();
+    return Ok(grade);
 }
 
 

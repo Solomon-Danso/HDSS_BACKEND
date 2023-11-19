@@ -1064,6 +1064,49 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("Fees");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.GradeBook", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DateUploaded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Level")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("MarksObtained")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Position")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuizId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("TotalObtained")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GradeBooks");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.Instituition", b =>
                 {
                     b.Property<int>("Id")

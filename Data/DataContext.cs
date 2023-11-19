@@ -82,7 +82,7 @@ public DbSet<TestnQuizStudent> TestnQuizStudents {get; set;}
 public DbSet<TestnQuizStudentMark> TestnQuizStudentMarks {get; set;}
 public DbSet<TestnQuizStudentTotalScore> TestnQuizStudentTotalScores {get; set;}
 public DbSet<QuizTimer> QuizTimers {get; set;}
-
+public DbSet<GradeBook> GradeBooks {get; set;}
 
 
 

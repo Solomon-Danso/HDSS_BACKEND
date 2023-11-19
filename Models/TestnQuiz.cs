@@ -87,6 +87,23 @@ public class QuizTimer{
     public int? TimeLeft{get; set;}
 }
 
+public class GradeBook{
+    public int Id {get;set;}
+    public string? QuizId{get;set;}
+    public string? StudentId{get; set;}
+    public string? StudentName {get;set;}
+    public string? Level {get; set;}
+    public string? ProfilePic {get; set;}
+    public string? SubjectName {get; set;}
+    public float MarksObtained {get;set;}
+    public float TotalObtained {get;set;}
+    public string? Position {get;set;}
+    public string? DateUploaded {get; set;}
+
+}
+
+
+
 
 
 

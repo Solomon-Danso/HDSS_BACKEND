@@ -858,9 +858,112 @@ public async Task<IActionResult> AssignmentSolution([FromForm]LMSDto request, st
         .ToList();
         await TeacherAuditor(ID,constant.ViewUploadedAssignmentSolution);
         return Ok(slide);
+}
+
+[HttpPost("GradeAssignmentSolution")]
+public async Task<IActionResult>GradeAssignment(int AId, string SId, string SJt, string L, string Y, string T, float marks, float total){
+var assgn = context.AssignmentSolutions.FirstOrDefault(a=>a.AssignmentID==AId&&a.StudentId==SId&&a.SubjectName==SJt&&a.ClassName==L&&a.AcademicYear==Y&&a.AcademicTerm==T);
+if (assgn==null){
+    return BadRequest("Assignment not found");
+}
+var grade = new GradeBook{
+QuizId = assgn.AssignmentID.ToString(),
+StudentId = assgn.StudentId,
+StudentName = assgn.StudentName,
+Level = assgn.ClassName,
+ProfilePic = assgn.ProfilePic,
+SubjectName = assgn.SubjectName,
+MarksObtained = marks,
+TotalObtained = total,
+DateUploaded = DateTime.Today.Date.ToString("dd MMMM, yyyy")
+
+
+};
+
+
+
+var termResults = context.GradeBooks
+    .Where(a=>a.QuizId==assgn.AssignmentID.ToString())
+    .ToList();
+
+// Group TermResults by Average and order the groups by Average in descending order
+var groupedGrades = termResults
+    .GroupBy(a => a.MarksObtained)
+    .OrderByDescending(g => g.Key);
+
+int position = 1;
+
+foreach (var group in groupedGrades)
+{
+    var sortedGroup = group.OrderBy(a => Guid.NewGuid()).ToList(); // Shuffle the group to randomize order
+    int samePosition = position;
+
+    foreach (var result in sortedGroup)
+    {
+        result.Position = GetOrdinal(samePosition);
     }
 
+    position += sortedGroup.Count;
+}
+
+bool checks = await context.GradeBooks.AnyAsync(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.StudentName);
+if (checks){
+    var ch = context.GradeBooks.FirstOrDefault(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.StudentName);
+    if(ch==null){
+        return BadRequest("No Grade Book found");
+    }
+    
+    ch.MarksObtained = grade.MarksObtained;
+    ch.TotalObtained = grade.TotalObtained;
+    await context.SaveChangesAsync();
+
+}
+else{
+context.GradeBooks.Add(grade);
+ await context.SaveChangesAsync();
+}
+
+return Ok("Grade Uploaded Successfully");
+
+
+}
  
+
+
+
+
+
+
+private string GetOrdinal(int number)
+{
+    if (number <= 0) return number.ToString();
+
+    switch (number % 100)
+    {
+        case 11:
+        case 12:
+        case 13:
+            return number + "th";
+    }
+
+    switch (number % 10)
+    {
+        case 1:
+            return number + "st";
+        case 2:
+            return number + "nd";
+        case 3:
+            return number + "rd";
+        default:
+            return number + "th";
+    }
+}
+
+
+
+
+
+
  
     [HttpGet("ViewAllAssignmentTeachers")]
     public async Task<IActionResult>ViewAllAssignmentTeachers(string ID){

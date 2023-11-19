@@ -92,9 +92,7 @@ namespace HDSS_BACKEND.Controllers
         await context.SaveChangesAsync();
         }
 
-// Retrieve TermResults from the database
-// Retrieve TermResults from the database
-// Retrieve TermResults from the database
+
 var termResults = context.TermResults
     .Where(a => a.Level == r.Level && a.Subject == r.Subject && a.AcademicYear == r.AcademicYear && a.AcademicTerm == r.AcademicTerm)
     .ToList();
@@ -121,6 +119,17 @@ foreach (var group in groupedGrades)
 
 await context.SaveChangesAsync();
 
+
+
+
+
+
+
+
+
+
+
+  
            
 
             return Ok("Result Uploaded");
