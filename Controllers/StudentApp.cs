@@ -343,14 +343,14 @@ public async Task<IActionResult>MyClassNotes(string SID, string Level, string Su
 
     [HttpGet("Assignment")]
     public async Task<IActionResult>StudentAssignment( string SID, string ClassName){
-        var assign = context.Assignments.Where(a=>a.ClassName == ClassName&&DateTime.Now<=a.Deadline).OrderByDescending(r=>r.Id).ToList();
+        var assign = context.AssignmentForStudents.Where(a=>a.ClassName == ClassName&&DateTime.Now<=a.Deadline).OrderByDescending(r=>r.Id).ToList();
         await StudentAuditor(SID,constant.StudViewAssignment);
         return Ok(assign);
     }
 
     [HttpGet("AssignmentDetails")]
-    public async Task<IActionResult>StudentAssignment( string SID, int ID){
-        var assign = context.Assignments.FirstOrDefault(a=>a.Id == ID);
+    public async Task<IActionResult>StudentAssignmentView( string SID, string ID){
+        var assign = context.AssignmentForStudents.FirstOrDefault(a=>a.QuestionId==ID&&a.StudentId==SID );
         if(assign==null){
             return BadRequest("Assignment Not Found");
         }
@@ -476,7 +476,7 @@ var q = new TestnQuizStudentTotalScore{
     MarksObtained = mk,
     TotalScore= total,
     QuizId = w?.QuizId,
-    SubjectName = w?.StudentName,
+    SubjectName = w?.Subject,
     Level=w?.Level,
     StudentName = ques.StudentName,
     ProfilePic = ques.ProfilePic,
@@ -516,6 +516,25 @@ StudentId = G.StudentId
 };
 
 
+
+bool checks = await context.GradeBooks.AnyAsync(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.SubjectName);
+if (checks){
+    var ch = context.GradeBooks.FirstOrDefault(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.SubjectName);
+    if(ch==null){
+        return BadRequest("No Grade Book found");
+    }
+    
+    ch.MarksObtained = grade.MarksObtained;
+    ch.TotalObtained = grade.TotalObtained;
+    await context.SaveChangesAsync();
+
+}
+else{
+context.GradeBooks.Add(grade);
+ await context.SaveChangesAsync();
+}
+
+
 var termResults = context.GradeBooks
     .Where(a=>a.QuizId==grade.QuizId)
     .ToList();
@@ -535,31 +554,12 @@ foreach (var group in groupedGrades)
     foreach (var result in sortedGroup)
     {
         result.Position = GetOrdinal(samePosition);
-        await context.SaveChangesAsync();
+       
     }
 
     position += sortedGroup.Count;
 }
-
-bool checks = await context.GradeBooks.AnyAsync(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.StudentName);
-if (checks){
-    var ch = context.GradeBooks.FirstOrDefault(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.StudentName);
-    if(ch==null){
-        return BadRequest("No Grade Book found");
-    }
-    
-    ch.MarksObtained = grade.MarksObtained;
-    ch.TotalObtained = grade.TotalObtained;
-    await context.SaveChangesAsync();
-
-}
-else{
-context.GradeBooks.Add(grade);
- await context.SaveChangesAsync();
-}
-
-
-
+await context.SaveChangesAsync();
 
 
 

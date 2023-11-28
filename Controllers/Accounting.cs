@@ -143,7 +143,7 @@ namespace HDSS_BACKEND.Controllers
         [HttpPost("PayFees")]
         public async Task<IActionResult>FeesPayment(string StudentId, [FromBody]Payment request, string StaffId){
             var stu = context.Students.FirstOrDefault(r=>r.StudentId==StudentId);
-            var Staff = context.Roles.FirstOrDefault(r=>r.StaffId==StaffId&&r.Position==constant.Accountant);
+            var Staff = context.Admins.FirstOrDefault(r=>r.AdminID==StaffId&&r.SpecificRole==constant.Accountant||r.SpecificRole==constant.SuperiorUser);
              if(Staff==null){
                 return BadRequest("You dont have the permission to perform this activity");
             }
@@ -162,8 +162,8 @@ namespace HDSS_BACKEND.Controllers
                 TransactionDate = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
                 Action = request.Action,
                 TransactionId = TransactionIdGenerator(),
-                StaffId = Staff.StaffId,
-                StaffName = Staff.FullName,
+                StaffId = Staff.AdminID,
+                StaffName = Staff.Name,
                 PaymentMethod = request.PaymentMethod
 
             };

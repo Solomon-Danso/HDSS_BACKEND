@@ -46,7 +46,7 @@ namespace HDSS_BACKEND.Controllers
            var Location = inst.Location;
            var Registerer = inst.AdminName;
            var fullname =  Teacher.FirstName+" "+ Teacher.OtherName+ " "+Teacher.LastName;
-
+           var position = inst.Position;
 
 string htmlelement = $@"<!DOCTYPE html>
 <html>
@@ -178,7 +178,7 @@ string htmlelement = $@"<!DOCTYPE html>
             Sincerely,<br/>
             .........................<br/>
             {Registerer}<br/>
-            HR Manager
+            {position}
         </div>
         <br/><br/>
         <div class='center'>

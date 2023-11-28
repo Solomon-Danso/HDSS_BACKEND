@@ -25,6 +25,70 @@ namespace HDSS_BACKEND.Controllers
             context = ctx;
         }
 
+    [HttpPost("ScheduleVideoCall")]
+    public async Task<IActionResult>StartVidCall([FromBody]VideoCall request, string StaffID){
+     var t = context.Teachers.FirstOrDefault(a=>a.StaffID==StaffID);
+     if(t==null){
+        return BadRequest("Teacher Not Found");
+     }
+
+    
+
+     var v = new VideoCall{
+        TeacherId = t.StaffID,
+        TeacherName = t.FirstName+" " + t.OtherName+" "+t.LastName,
+        Level = request.Level,
+        AcademicYear = request.AcademicYear,
+        AcademicTerm = request.AcademicTerm,
+        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+        VideoCallUrl = Guid.NewGuid().ToString(),
+        StartDate = request.StartDate,
+        Subject = request.Subject,
+
+     };
+
+     context.VideoCalls.Add(v);
+     await context.SaveChangesAsync();
+     return Ok("Video Scheduled Successfully");
+
+
+    }
+
+    [HttpGet("ViewAllVideoCalls")]
+    public async Task<IActionResult>VidCall(string level){
+        var v = context.VideoCalls.Where(a=>DateTime.Now>=a.StartDate&&a.Level==level).OrderByDescending(r=>r.Id).ToList();
+        return Ok(v); 
+    }
+
+
+    [HttpGet("CheckWhetherVideoCallIsCorrect")]
+    public async Task<IActionResult>GetVideoCall(string url){
+        var v = context.VideoCalls.FirstOrDefault(a=>a.VideoCallUrl==url);
+        if(v==null){
+            return BadRequest();
+        }
+        return Ok(v);
+    }
+
+     [HttpDelete("DeleteVideoCall")]
+    public async Task<IActionResult>DeleteVideoCall(string VideoCallUrl){
+        var v = context.VideoCalls.FirstOrDefault(a=>DateTime.Now>=a.StartDate&&a.VideoCallUrl==VideoCallUrl);
+        if(v==null){
+            return BadRequest("Video Not Found");
+        }
+        context.VideoCalls.Remove(v);
+        await context.SaveChangesAsync();
+        return Ok(v);
+    }
+
+
+
+
+
+
+
+
+
         [HttpPost("AddSubject")]
         public async Task<IActionResult> AddSubject([FromBody]Subject request, string ID){
            
@@ -743,7 +807,7 @@ namespace HDSS_BACKEND.Controllers
        ClassName = request.ClassName,
        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
        SlidePath = Path.Combine("LMS/Assignments", slideName),
-      
+      QuestionId = AssignmentIdGenerator(),
        AcademicYear = request.AcademicYear,
        AcademicTerm = request.AcademicTerm,
       
@@ -760,6 +824,28 @@ namespace HDSS_BACKEND.Controllers
     if(s.Deadline<DateTime.Now){
         return BadRequest("The Deadline should be greater than or equal to Today's Date and Time");
     }
+    var studentList = context.Students.Where(a=>a.Level==s.ClassName).ToList();
+    foreach(var student in studentList){
+        var assgn = new AssignmentForStudent{
+            SubjectName = s.SubjectName,
+            Title = s.Title,
+            ClassName = s.ClassName,
+            DateAdded = s.DateAdded,
+            SlidePath = s.SlidePath,
+            AcademicYear = s.AcademicYear,
+            AcademicTerm = s.AcademicTerm,
+            Deadline = s.Deadline,
+            IsAnswered = false,
+            StudentId = student.StudentId,
+            StudentName = student.FirstName+" " + student.OtherName+" " + student.LastName,
+            ProfilePic = student.ProfilePic,
+            QuestionId = s.QuestionId,
+            StaffID = s.StaffID,
+            TeacherName = s.TeacherName
+        };
+        context.AssignmentForStudents.Add(assgn);
+        await context.SaveChangesAsync();
+    }
 
 
 
@@ -772,7 +858,7 @@ namespace HDSS_BACKEND.Controllers
     }
 
 [HttpPost("AssignmentSolution")]
-public async Task<IActionResult> AssignmentSolution([FromForm]LMSDto request, string SID, int AssignmentID){
+public async Task<IActionResult> AssignmentSolution([FromForm]LMSDto request, string SID, string QuestionId){
        
          
          if (request.Slide == null || request.Slide.Length == 0)
@@ -799,14 +885,11 @@ public async Task<IActionResult> AssignmentSolution([FromForm]LMSDto request, st
     {
         await request.Slide.CopyToAsync(stream);
     }
-   var a = context.Assignments.FirstOrDefault(a=>a.Id==AssignmentID);
+   var a = context.AssignmentForStudents.FirstOrDefault(a=>a.QuestionId==QuestionId&&a.StudentId==SID);
    if(a==null){
     return BadRequest("Assignment Not Found");
    }
-   var student = context.Students.FirstOrDefault(a=>a.StudentId==SID);
-    if(student==null){
-        return BadRequest("Student Not Found");
-    }
+   
 
 
 
@@ -821,26 +904,23 @@ public async Task<IActionResult> AssignmentSolution([FromForm]LMSDto request, st
        AcademicTerm = a.AcademicTerm,
       StaffID = a.StaffID,
       TeacherName = a.TeacherName,
-      ProfilePic = student.ProfilePic,
-      StudentId = student.StudentId,
-      StudentName = student.FirstName+" "+student.OtherName+" "+student.LastName,
+      ProfilePic = a.ProfilePic,
+      StudentId = a.StudentId,
+      StudentName = a.StudentName,
       SolutionDate= DateTime.Today.Date,
       SolutionType = "Document",
-      AssignmentID = a.Id,
+      QuestionId = a.QuestionId,
+      IsGraded = false,
 
     };
 
-    bool checker = await context.AssignmentSolutions.AnyAsync(a=>a.AssignmentID==s.AssignmentID&&a.StudentId==s.StudentId&&a.AcademicTerm==s.AcademicTerm&&a.AcademicYear==s.AcademicYear&&a.SubjectName==s.StudentName&&a.ClassName==s.ClassName);
+    bool checker = await context.AssignmentSolutions.AnyAsync(a=>a.QuestionId==s.QuestionId&&a.StudentId==s.StudentId&&a.AcademicTerm==s.AcademicTerm&&a.AcademicYear==s.AcademicYear&&a.SubjectName==s.StudentName&&a.ClassName==s.ClassName);
     if (checker){
         return BadRequest("You have already submitted a solution for this assignment");
     }
 
-
-
-   
-
-
     context.AssignmentSolutions.Add(s);
+    context.AssignmentForStudents.Remove(a);
     await context.SaveChangesAsync();
     await StudentAuditor(SID, constant.UploadSolution);
 
@@ -861,13 +941,13 @@ public async Task<IActionResult> AssignmentSolution([FromForm]LMSDto request, st
 }
 
 [HttpPost("GradeAssignmentSolution")]
-public async Task<IActionResult>GradeAssignment(int AId, string SId, string SJt, string L, string Y, string T, float marks, float total){
-var assgn = context.AssignmentSolutions.FirstOrDefault(a=>a.AssignmentID==AId&&a.StudentId==SId&&a.SubjectName==SJt&&a.ClassName==L&&a.AcademicYear==Y&&a.AcademicTerm==T);
+public async Task<IActionResult>GradeAssignment(string AId, string SId, string SJt, string L, string Y, string T, float marks, float total){
+var assgn = context.AssignmentSolutions.FirstOrDefault(a=>a.QuestionId==AId&&a.StudentId==SId&&a.SubjectName==SJt&&a.ClassName==L&&a.AcademicYear==Y&&a.AcademicTerm==T);
 if (assgn==null){
     return BadRequest("Assignment not found");
 }
 var grade = new GradeBook{
-QuizId = assgn.AssignmentID.ToString(),
+QuizId = assgn.QuestionId,
 StudentId = assgn.StudentId,
 StudentName = assgn.StudentName,
 Level = assgn.ClassName,
@@ -879,33 +959,6 @@ DateUploaded = DateTime.Today.Date.ToString("dd MMMM, yyyy")
 
 
 };
-
-
-
-var termResults = context.GradeBooks
-    .Where(a=>a.QuizId==assgn.AssignmentID.ToString())
-    .ToList();
-
-// Group TermResults by Average and order the groups by Average in descending order
-var groupedGrades = termResults
-    .GroupBy(a => a.MarksObtained)
-    .OrderByDescending(g => g.Key);
-
-int position = 1;
-
-foreach (var group in groupedGrades)
-{
-    var sortedGroup = group.OrderBy(a => Guid.NewGuid()).ToList(); // Shuffle the group to randomize order
-    int samePosition = position;
-
-    foreach (var result in sortedGroup)
-    {
-        result.Position = GetOrdinal(samePosition);
-          await context.SaveChangesAsync();
-    }
-
-    position += sortedGroup.Count;
-}
 
 bool checks = await context.GradeBooks.AnyAsync(a=>a.StudentId==grade.StudentId&&a.QuizId==grade.QuizId&&a.SubjectName==grade.StudentName);
 if (checks){
@@ -923,6 +976,36 @@ else{
 context.GradeBooks.Add(grade);
  await context.SaveChangesAsync();
 }
+
+
+var termResults = context.GradeBooks
+    .Where(a=>a.QuizId==grade.QuizId)
+    .ToList();
+
+// Group TermResults by Average and order the groups by Average in descending order
+var groupedGrades = termResults
+    .GroupBy(a => a.MarksObtained)
+    .OrderByDescending(g => g.Key);
+
+int position = 1;
+
+foreach (var group in groupedGrades)
+{
+    var sortedGroup = group.OrderBy(a => Guid.NewGuid()).ToList(); // Shuffle the group to randomize order
+    int samePosition = position;
+
+    foreach (var result in sortedGroup)
+    {
+        result.Position = GetOrdinal(samePosition);
+       
+    }
+
+    position += sortedGroup.Count;
+}
+await context.SaveChangesAsync();
+
+
+
 
 return Ok("Grade Uploaded Successfully");
 
@@ -985,8 +1068,14 @@ private string GetOrdinal(int number)
         if(slide == null){
             return BadRequest("Slides not found");
         }
+        var assignmentList = context.AssignmentForStudents.Where(a=>a.QuestionId==slide.QuestionId).ToList();
+        foreach(var deleter in assignmentList){
+            context.AssignmentForStudents.Remove(deleter);
+             await context.SaveChangesAsync();
+        }
         context.Assignments.Remove(slide);
-        await context.SaveChangesAsync();
+             await context.SaveChangesAsync();
+
         try{
         await TeacherAuditor(SID, constant.DeletUploadedAssignment);
         }

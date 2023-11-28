@@ -608,6 +608,9 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<DateTime?>("Deadline")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("QuestionId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SlidePath")
                         .HasColumnType("nvarchar(max)");
 
@@ -628,6 +631,64 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("Assignments");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.AssignmentForStudent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicTerm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcademicYear")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Deadline")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAnswered")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProfilePic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SlidePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StaffID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AssignmentForStudents");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.AssignmentSolution", b =>
                 {
                     b.Property<int>("Id")
@@ -642,16 +703,19 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("AcademicYear")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AssignmentID")
-                        .HasColumnType("int");
-
                     b.Property<string>("ClassName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsGraded")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ProfilePic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SlidePath")
@@ -2379,6 +2443,46 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Videos");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.VideoCall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicTerm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcademicYear")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Level")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VideoCallUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VideoCalls");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,9 +13,9 @@ namespace HDSS_BACKEND.Models
        public string? Location { get; set;}  
        public string? AdminName { get; set; }   
        public string? Position {get;set;} 
+      
     }
-
-    public class InstituitionDto
+public class InstituitionDto
     {
        public int Id { get; set; }
        public string? Position {get;set;} 

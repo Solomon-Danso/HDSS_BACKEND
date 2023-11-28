@@ -5,6 +5,23 @@ using System.Threading.Tasks;
 
 namespace HDSS_BACKEND.Models
 {
+
+
+public class VideoCall{
+    public int Id{get; set;}
+    public string? TeacherId {get; set;}
+    public string? TeacherName {get; set;}
+    public string? Level {get;set;}
+    public string? Subject {get;set;}
+    public string? AcademicYear {get; set;}
+    public string? AcademicTerm {get; set;}
+    public string? DateAdded {get; set;}
+    public string? VideoCallUrl {get; set;}
+    public DateTime? StartDate {get; set;}
+    
+}
+
+
     public class Subject
     {
         public int Id { get; set; }
@@ -86,10 +103,33 @@ namespace HDSS_BACKEND.Models
         public string? AcademicTerm{ get; set; }
         public string? StaffID {get;set;}
         public string? TeacherName { get; set; }
-        
+        public string? QuestionId {get; set;}
         public DateTime? Deadline { get; set; }
 
     }
+
+    public class AssignmentForStudent{
+        public int Id { get; set; }
+         public string? QuestionId {get; set;}
+        public string? SubjectName { get; set; }
+        public string? Title { get; set; }
+        public string? ClassName { get; set; }
+        public string? SlidePath { get; set; }
+        public string? DateAdded{ get; set; }
+        public string? AcademicYear{ get; set; }
+        public string? AcademicTerm{ get; set; }
+        public string? StaffID {get;set;}
+        public string? TeacherName { get; set; }
+        public DateTime? Deadline { get; set; }
+        public string? StudentId {get; set;}
+        public string? StudentName {get; set;}
+        public string? ProfilePic {get; set;}
+        public bool IsAnswered{get; set; }
+
+
+
+    }
+
 
     public class AssignmentSolution{
         public int Id { get; set; }
@@ -107,7 +147,8 @@ namespace HDSS_BACKEND.Models
        public string? StudentName {get; set;}
        public DateTime? SolutionDate {get; set;}
        public string? SolutionType {get; set;}
-       public int AssignmentID {get; set;}
+       public string? QuestionId {get; set;}
+       public bool IsGraded {get;set;}
        
 
     }
