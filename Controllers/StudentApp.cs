@@ -105,6 +105,81 @@ public async Task<IActionResult>GetTeacherClass(string ID){
     return Ok(c);
 }
 
+    [HttpPost("AddStudentNotes")]
+    public async Task<IActionResult> AddStudentNotes([FromBody] StudentNote request, string SID){
+        var stud = context.Students.FirstOrDefault(a=>a.StudentId==SID);
+        if(stud==null){
+            return BadRequest("Student not found");
+        }
+
+        var note = new StudentNote{
+            StudentId = stud.StudentId,
+            FullName = stud.FirstName+" "+stud.OtherName+" "+stud.LastName,
+            Level = stud.Level,
+            ResourceType = "Typed Notes",
+            Subject = request.Subject,
+            Notes = request.Notes,
+            AcademicTerm = request.AcademicTerm,
+            AcademicYear = request.AcademicYear,
+            DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy")
+        };
+        context.StudentNotes.Add(note);
+        await context.SaveChangesAsync();
+        await StudentAuditor(SID, constant.AstudNote);
+        return Ok("Notes Added successfully");
+
+
+    }
+
+
+
+    [HttpGet("ViewAllNotesForAStudent")]
+    public async Task<IActionResult>GetStudentNotes(string StudentID){
+        var c = context.StudentNotes.Where(a=>a.StudentId==StudentID).OrderByDescending(r=>r.Id).ToList();
+        await StudentAuditor(StudentID, constant.VstudNotes);
+        return Ok(c);
+    }
+
+    [HttpGet("ViewAllNotesForAStudentByTeacher")]
+    public async Task<IActionResult>GetStudentNotesByTeacher(string StudentID, string SID){
+        var c = context.StudentNotes.Where(a=>a.StudentId==StudentID).OrderByDescending(r=>r.Id).ToList();
+        await TeacherAuditor(SID, constant.TVstudNotes);
+        return Ok(c);
+    }
+
+    [HttpGet("ViewOneNotesForAStudent")]
+    public async Task<IActionResult>GetOneStudentNotes(int ID, string StudentId){
+        var c = context.StudentNotes.FirstOrDefault(a=>a.Id==ID&&a.StudentId==StudentId);
+        if(c==null){
+            return BadRequest("Notes not found");
+        }
+        await StudentAuditor(StudentId, constant.VstudNotesD);
+        return Ok(c);
+    }
+
+    [HttpGet("ViewOneNotesForAStudentByTeacher")]
+    public async Task<IActionResult>GetOneStudentNotesByTeacher(int ID, string StudentId, string SID){
+        var c = context.StudentNotes.FirstOrDefault(a=>a.Id==ID&&a.StudentId==StudentId);
+        if(c==null){
+            return BadRequest("Notes not found");
+        }
+           await TeacherAuditor(SID, constant.TVstudNotesD);
+        return Ok(c);
+    }
+
+    [HttpDelete("DeleteOneNotesForAStudent")]
+    public async Task<IActionResult>DeleteOneStudentNotes(int ID, string StudentId){
+        var c = context.StudentNotes.FirstOrDefault(a=>a.Id==ID&&a.StudentId==StudentId);
+        if(c==null){
+            return BadRequest("Notes not found");
+        }
+        context.StudentNotes.Remove(c);
+        await context.SaveChangesAsync();
+        await StudentAuditor(StudentId, constant.DstudNote);
+        return Ok("Notes Deleted Successfully");
+    }
+
+
 
     [HttpGet("ViewAllTimeTableTeachers")]
     public async Task<IActionResult>ViewAllBookTeachers(string ID){

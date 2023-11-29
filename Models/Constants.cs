@@ -118,12 +118,13 @@ public string StudViewAssignment = "Student Viewed The Assignment Given";
 
 public string? StudentQuiz = "Viewed Uploaded Quiz";
 public string? TeacherQuiz = "Uploaded A Quiz";
+public string? AstudNote = "Student Added A Note";
+public string? VstudNotes = "Student Viewed Notes";
+public string? TVstudNotes = "Viewed Students Notes";
 
-
-
-
-
-
+public string? VstudNotesD = "Student Viewed Note's Details";
+public string? TVstudNotesD = "Viewed Students Notes Details";
+public string? DstudNote = "Student Deleted A Note";
 
 
 

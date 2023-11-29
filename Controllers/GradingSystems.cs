@@ -47,8 +47,15 @@ namespace HDSS_BACKEND.Controllers
 
             };
             var a = r.ClassScore+r.ExamScore;
+            if(r.ClassScore>50){
+                return BadRequest("Input The Correct 50% Class Score for "+r.StudentName);
+            }
+
+            if( r.ExamScore>50){
+                return BadRequest("Input The Correct 50% Exams Score for "+r.StudentName);
+            }
             
-            var b = a/200;
+            var b = a/100;
              
             var d = b*100;
             r.Average = d;
@@ -84,7 +91,7 @@ namespace HDSS_BACKEND.Controllers
            
         bool checker =await context.TermResults.AnyAsync(a=>a.StudentId==r.StudentId&&a.Subject==r.Subject&&a.Level==r.Level&&a.AcademicYear==r.AcademicYear&&a.AcademicTerm==r.AcademicTerm);
         if(checker){
-            context.TermResults.Add(r);
+           return BadRequest("You have already uploaded the result for "+r.StudentName);
         }
         else{
              context.TermResults.Add(r);
