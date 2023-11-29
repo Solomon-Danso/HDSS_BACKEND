@@ -11,6 +11,7 @@ public string? StudentId {get;set;}
 public string? StudentName {get; set;}
 public float ClassScore {get; set;}
 public float ExamScore {get; set;}
+public float TotalScore {get; set;}
 public string? Position {get; set;}
 public string? Grade {get; set;}
 public string? Comment {get; set;}
@@ -26,6 +27,21 @@ public string? DateUploaded {get; set;}
 public DateTime? SpecificDateAndTime {get;set;}
 
 }
+
+
+public class GeneralTReportInfo{
+    public int Id{get; set;}
+    public string? AcademicTerm {get; set;}
+     public string? AcademicYear {get; set;}
+    public string? VacationDate {get; set;}
+    public string? ReOpeningDate {get; set;}
+
+
+
+}
+
+
+
 
 
 }

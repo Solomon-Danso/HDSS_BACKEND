@@ -47,6 +47,7 @@ namespace HDSS_BACKEND.Controllers
 
             };
             var a = r.ClassScore+r.ExamScore;
+            r.TotalScore = a;
             if(r.ClassScore>50){
                 return BadRequest("Input The Correct 50% Class Score for "+r.StudentName);
             }
@@ -63,31 +64,27 @@ namespace HDSS_BACKEND.Controllers
 
 
             if(d>79.4){
-                r.Grade="A";
-                r.Comment = "Excellent";
+                r.Grade="Level 1 - A";
+                r.Comment = "Advance";
             }
-            else if(d>69.4 && d<=79.4){
-                r.Grade="B";
-                r.Comment="Very Good";
+            else if(d>74.4 && d<=79.4){
+                r.Grade="Level 2 - P";
+                r.Comment="Proficient";
             }
-             else if(d>59.4 && d<=69.4){
-                r.Grade="C";
-                r.Comment="Good";
-            }
-
-            else if(d>49.4 && d<=59.4){
-                r.Grade="D";
-                r.Comment="Pass";
-            }
-             else if(d>30.4 && d<=49.4){
-                r.Grade="E";
-                r.Comment="Weak";
-            }
-             else {
-                r.Grade="F";
-                r.Comment="Fail";
+             else if(d>69.4 && d<=74.4){
+                r.Grade="Level 3 - AP";
+                r.Comment="A. Proficiency";
             }
 
+            else if(d>64.4 && d<=69.4){
+                r.Grade="Level 4 - D";
+                r.Comment="Developing";
+            }
+             else if(d>0 && d<=64.4){
+                r.Grade="Level 5 - B";
+                r.Comment="Beginning";
+            }
+             
            
         bool checker =await context.TermResults.AnyAsync(a=>a.StudentId==r.StudentId&&a.Subject==r.Subject&&a.Level==r.Level&&a.AcademicYear==r.AcademicYear&&a.AcademicTerm==r.AcademicTerm);
         if(checker){
@@ -147,6 +144,7 @@ await context.SaveChangesAsync();
 
 
 
+
 [HttpGet("ViewGrades")]
 public async Task<IActionResult> ViewGrades(string l, string s, string y, string t)
 {
@@ -155,12 +153,71 @@ public async Task<IActionResult> ViewGrades(string l, string s, string y, string
         .OrderByDescending(a => a.Average) // Sort by average score in descending order
         .ToList();
 
-    
-
     return Ok(classGrade);
 }
 
+
+[HttpGet("ViewTermGrades")]
+public async Task<IActionResult> ViewTermGrades(string StudentId, string Year, string Term, string Level)
+{
+    var Grade = context.TermResults
+        .Where(a => a.Level == Level && a.StudentId == StudentId && a.AcademicYear == Year && a.AcademicTerm == Term)
+        .OrderBy(a => a.Subject) // Sort by average score in descending order
+        .ToList();
+
+    return Ok(Grade);
+}
+
 // Method to convert an integer to its ordinal representation
+
+[HttpPost("GeneralTReportInfo")]
+public async Task<IActionResult> GeneralTReportInfo([FromBody]GeneralTReportInfo request){
+
+var info = new GeneralTReportInfo{
+AcademicTerm = request.AcademicTerm,
+AcademicYear = request.AcademicYear,
+VacationDate = request.VacationDate,
+ReOpeningDate = request.ReOpeningDate,
+};
+
+var c = context.GeneralTReportInfos.Where(a=>a.Id>0).Count();
+if (c>0){
+    var tr = context.GeneralTReportInfos.FirstOrDefault(a=>a.Id>0);
+    if(tr==null){
+        return BadRequest("Academic Info Not Found");
+    }
+    tr.AcademicTerm = info.AcademicTerm;
+    tr.AcademicYear = info.AcademicYear;
+    tr.VacationDate = info.VacationDate;
+    tr.ReOpeningDate = info.ReOpeningDate;
+
+   await context.SaveChangesAsync();
+
+}
+else{
+    context.GeneralTReportInfos.Add(info);
+      await context.SaveChangesAsync();
+}
+
+return Ok("Setup was successfull");
+
+}
+
+[HttpGet("StudentCounters")]
+public async Task<IActionResult>GetStudentCounter(string Level){
+    var c = context.Students.Where(a=>a.Level==Level).Count();
+    return Ok(c);
+}
+
+[HttpGet("GeneralInfo")]
+public async Task<IActionResult>GetGeneralInfo(){
+    var info = context.GeneralTReportInfos.FirstOrDefault(a=>a.Id>0);
+    return Ok(info);
+}
+
+
+
+
 private string GetOrdinal(int number)
 {
     if (number <= 0) return number.ToString();

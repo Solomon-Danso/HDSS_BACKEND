@@ -85,6 +85,22 @@ public DbSet<QuizTimer> QuizTimers {get; set;}
 public DbSet<GradeBook> GradeBooks {get; set;}
 public DbSet<VideoCall> VideoCalls {get; set;}
 public DbSet<AssignmentForStudent> AssignmentForStudents {get; set;}
+public DbSet<GeneralTReportInfo> GeneralTReportInfos {get; set;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1128,6 +1128,31 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("Fees");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.GeneralTReportInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicTerm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcademicYear")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReOpeningDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VacationDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GeneralTReportInfos");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.GradeBook", b =>
                 {
                     b.Property<int>("Id")
@@ -2132,6 +2157,9 @@ namespace HDSS_BACKEND.Migrations
 
                     b.Property<string>("TeacherName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("TotalScore")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
