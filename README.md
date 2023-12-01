@@ -19,20 +19,20 @@
 2. Mark Lesson Notes [Done]
 3. Website Admin section, Software Administration Section, System administration
 4. Annoucement, News and Reports[Next]
-5. Contact Information and Live Video Calls 
+5. Contact Information and Live Video Calls [90%Complete]
 6. CCTV Camera Section
 7. All Id's for student,Admin and Teachers can be accessed using a QR Code
 
 
 [.] Class Management
-1. Full Sakai system[Wip] 
-2. Live online teaching 
-3. Full YouTube system to browse and upload videos 
+1. Full Sakai system[done] 
+2. Live online teaching [90%Complete]
+3. Full YouTube system to browse and upload videos [Done]
 4. Full AI tools to enhance research and learniing 
-5. All teaching and learning materials 
-6. Class chatting platform [Fully Functional Telegram Chat System From Scratch]
-7. Quiz App
-8. Class Notes 
+5. All teaching and learning materials [Done]
+6. Class chatting platform [90%Complete]
+7. Quiz App[DONE]
+8. Class Notes [DONE]
 
 [.] Account 
 1. School fees collections [Done]
@@ -44,41 +44,41 @@
 7. Financial Statement 
 
 [.] Student 
-1. Access to recorded videos 
-2. Ability to join live class
-3. Access to Sakai system 
-4. Recieve annoucement and news 
-5. School timetable 
-6. Access results 
+1. Access to recorded videos [DONE]
+2. Ability to join live class[90%Complete]
+3. Access to Sakai system [DONE]
+4. Recieve annoucement and news [DONE]
+5. School timetable [DONE]
+6. Access results [DONE]
 7. Pay school fees online 
-8. Access to research materials 
-9. Create own notes system
+8. Access to research materials [DONE]
+9. Create own notes system [DONE]
 10. Read collegues public notes 
 
 [.] Teachers 
-1. Generate timetable 
-2. Record videos 
-3. Upload notes, slides,videos and books 
-4. Live chat with students
+1. Generate timetable [DONE]
+2. Record videos [DONE]
+3. Upload notes, slides,videos and books [DONE]
+4. Live chat with students [90%Complete]
 5. Access the students coursework 
 6. Write Lesson Notes 
-7. Access Staff platform and PTA platform 
+7. Access Staff platform and PTA platform [90%Complete]
 8. Access to AI research materials 
 9. Premium saturday and summer classes 
 
 [.] Academic Records 
-1. Class Score 
-2. MidTerm Score 
-3. Exams Score
-4. Quizes and Mocks 
-5. Terminally Reports 
+1. Class Score [DONE]
+2. MidTerm Score [DONE]
+3. Exams Score [DONE]
+4. Quizes and Mocks [DONE]
+5. Terminally Reports [[90%Complete]]
 
 [.] Parent
 1. Access to PTA PLAFORM 
-2. Public school information system 
+2. Public school information system [DONE]
 3. International Days (Egg Day, Mothers Day)
 4. Pay fees online
-5. Video call to 
+5. Video call to Admin [90%Complete]
 
 
 
@@ -99,7 +99,7 @@
 
 [.] Reports 
 1. Financial Reports 
-2. Academic Reports 
+2. Academic Reports [DONE]
 3. School growth reports 
 4. Transport Reports 
 5. Feeding Reports 
