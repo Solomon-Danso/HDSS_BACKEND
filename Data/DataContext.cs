@@ -87,9 +87,9 @@ public DbSet<VideoCall> VideoCalls {get; set;}
 public DbSet<AssignmentForStudent> AssignmentForStudents {get; set;}
 public DbSet<GeneralTReportInfo> GeneralTReportInfos {get; set;}
 
-
-
-
+public DbSet<Conduct> Conducts {get; set;}
+public DbSet<Attitude> Attitudes {get; set;}
+public DbSet<TerminalReportsInformation> TerminalReportsInformations {get; set;}
 
 
 

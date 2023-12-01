@@ -5,6 +5,17 @@ using System.Threading.Tasks;
 
 namespace HDSS_BACKEND.Models
 {
+
+public class Conduct{
+    public int Id {get; set;}
+    public string? AddConducts {get;set;}
+}
+
+public class Attitude{
+    public int Id {get; set;}
+    public string? AddAttitudes {get;set;}
+}
+
     public class Instituition
     {
        public int Id { get; set; }
@@ -15,6 +26,15 @@ namespace HDSS_BACKEND.Models
        public string? Position {get;set;} 
       
     }
+    public class GeneralTReportInfo{
+    public int Id{get; set;}
+    public string? AcademicTerm {get; set;}
+     public string? AcademicYear {get; set;}
+    public string? VacationDate {get; set;}
+    public string? ReOpeningDate {get; set;}
+
+
+}
 public class InstituitionDto
     {
        public int Id { get; set; }

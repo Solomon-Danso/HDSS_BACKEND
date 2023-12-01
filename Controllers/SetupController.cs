@@ -169,6 +169,106 @@ namespace HDSS_BACKEND.Controllers
     }
 
 
+[HttpPost("AddConducts")]
+public async Task<IActionResult>AddConducts([FromBody]Conduct request){
+    var conduct = new Conduct{
+        AddConducts = request.AddConducts,
+    };
+    context.Conducts.Add(conduct);
+    await context.SaveChangesAsync();
+    return Ok("Conduct added successfully");
+}
+
+[HttpPost("EditConducts")]
+public async Task<IActionResult> EditConducts([FromBody]Conduct request ,int Id){
+    var conduct = context.Conducts.FirstOrDefault(a=>a.Id == Id);
+    if (conduct == null){
+        return Ok("Conduct not found");
+    }
+    conduct.AddConducts = request.AddConducts;
+   await context.SaveChangesAsync();
+   return Ok("Conduct Edited Successfully");
+}
+
+[HttpPost("ViewOneConducts")]
+public async Task<IActionResult> ViewOneConducts(int Id){
+    var conduct = context.Conducts.FirstOrDefault(a=>a.Id == Id);
+    if (conduct == null){
+        return Ok("Conduct not found");
+    }
+   
+   return Ok(conduct);
+}
+
+
+
+
+[HttpGet("ViewConducts")]
+public async Task<IActionResult>ViewConducts(){
+    var conduct = context.Conducts.ToList();
+    return Ok(conduct);
+}
+[HttpDelete("DeleteConducts")]
+public async Task<IActionResult>DeleteConducts(int Id){
+    var conduct = context.Conducts.FirstOrDefault(a=>a.Id==Id);
+    if (conduct == null){
+        return BadRequest("Conduct not found");
+    };
+    context.Conducts.Remove(conduct);
+    return Ok("Conduct deleted successfully");
+}
+
+
+[HttpPost("AddAttitudes")]
+public async Task<IActionResult>AddAttitudes([FromBody]Attitude request){
+    var Attitude = new Attitude{
+        AddAttitudes = request.AddAttitudes,
+    };
+    context.Attitudes.Add(Attitude);
+    await context.SaveChangesAsync();
+    return Ok("Attitude added successfully");
+}
+
+[HttpPost("EditAttitudes")]
+public async Task<IActionResult> EditAttitudes([FromBody]Attitude request ,int Id){
+    var Attitude = context.Attitudes.FirstOrDefault(a=>a.Id == Id);
+    if (Attitude == null){
+        return Ok("Attitude not found");
+    }
+    Attitude.AddAttitudes = request.AddAttitudes;
+   await context.SaveChangesAsync();
+   return Ok("Attitude Edited Successfully");
+}
+
+[HttpPost("ViewOneAttitudes")]
+public async Task<IActionResult> ViewOneAttitudes(int Id){
+    var Attitude = context.Attitudes.FirstOrDefault(a=>a.Id == Id);
+    if (Attitude == null){
+        return Ok("Attitude not found");
+    }
+   
+   return Ok(Attitude);
+}
+
+
+
+
+[HttpGet("ViewAttitudes")]
+public async Task<IActionResult>ViewAttitudes(){
+    var Attitude = context.Attitudes.ToList();
+    return Ok(Attitude);
+}
+[HttpDelete("DeleteAttitudes")]
+public async Task<IActionResult>DeleteAttitudes(int Id){
+    var Attitude = context.Attitudes.FirstOrDefault(a=>a.Id==Id);
+    if (Attitude == null){
+        return BadRequest("Attitude not found");
+    };
+    context.Attitudes.Remove(Attitude);
+    return Ok("Attitude deleted successfully");
+}
+
+
 
 
 
@@ -244,6 +344,38 @@ public async Task<IActionResult>GetSchool(){
 
 }
 
+[HttpPost("GeneralTReportInfo")]
+public async Task<IActionResult> GeneralTReportInfo([FromBody]GeneralTReportInfo request){
+
+var info = new GeneralTReportInfo{
+AcademicTerm = request.AcademicTerm,
+AcademicYear = request.AcademicYear,
+VacationDate = request.VacationDate,
+ReOpeningDate = request.ReOpeningDate,
+};
+
+var c = context.GeneralTReportInfos.Where(a=>a.Id>0).Count();
+if (c>0){
+    var tr = context.GeneralTReportInfos.FirstOrDefault(a=>a.Id>0);
+    if(tr==null){
+        return BadRequest("Academic Info Not Found");
+    }
+    tr.AcademicTerm = info.AcademicTerm;
+    tr.AcademicYear = info.AcademicYear;
+    tr.VacationDate = info.VacationDate;
+    tr.ReOpeningDate = info.ReOpeningDate;
+
+   await context.SaveChangesAsync();
+
+}
+else{
+    context.GeneralTReportInfos.Add(info);
+      await context.SaveChangesAsync();
+}
+
+return Ok("Setup was successfull");
+
+}
 
 
 [HttpPost("AssignRoles")]

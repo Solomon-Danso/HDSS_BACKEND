@@ -6,6 +6,8 @@ using HDSS_BACKEND.Data;
 using HDSS_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Globalization;
 
 namespace HDSS_BACKEND.Controllers
 {
@@ -14,6 +16,11 @@ namespace HDSS_BACKEND.Controllers
     public class GradingSystems : ControllerBase
     {
         private readonly DataContext context;
+          string Country;
+        string City;
+        double latitude;
+        double logitude;
+        Constants constant = new Constants();
         public GradingSystems(DataContext ctx)
         {
             context=ctx;
@@ -170,38 +177,6 @@ public async Task<IActionResult> ViewTermGrades(string StudentId, string Year, s
 
 // Method to convert an integer to its ordinal representation
 
-[HttpPost("GeneralTReportInfo")]
-public async Task<IActionResult> GeneralTReportInfo([FromBody]GeneralTReportInfo request){
-
-var info = new GeneralTReportInfo{
-AcademicTerm = request.AcademicTerm,
-AcademicYear = request.AcademicYear,
-VacationDate = request.VacationDate,
-ReOpeningDate = request.ReOpeningDate,
-};
-
-var c = context.GeneralTReportInfos.Where(a=>a.Id>0).Count();
-if (c>0){
-    var tr = context.GeneralTReportInfos.FirstOrDefault(a=>a.Id>0);
-    if(tr==null){
-        return BadRequest("Academic Info Not Found");
-    }
-    tr.AcademicTerm = info.AcademicTerm;
-    tr.AcademicYear = info.AcademicYear;
-    tr.VacationDate = info.VacationDate;
-    tr.ReOpeningDate = info.ReOpeningDate;
-
-   await context.SaveChangesAsync();
-
-}
-else{
-    context.GeneralTReportInfos.Add(info);
-      await context.SaveChangesAsync();
-}
-
-return Ok("Setup was successfull");
-
-}
 
 [HttpGet("StudentCounters")]
 public async Task<IActionResult>GetStudentCounter(string Level){
@@ -214,6 +189,104 @@ public async Task<IActionResult>GetGeneralInfo(){
     var info = context.GeneralTReportInfos.FirstOrDefault(a=>a.Id>0);
     return Ok(info);
 }
+
+
+[HttpPost("TReportInfo")]
+public async Task<IActionResult>TReportInfo([FromBody] TerminalReportsInformation request, string TID, string SID){
+ var t = context.Classess.FirstOrDefault(a=>a.TeacherId==TID);
+    if (t==null){
+        return BadRequest("Teacher not found");
+    }
+var s = context.Students.FirstOrDefault(a=>a.StudentId==SID);
+if (s==null){
+    return BadRequest("Student not found");
+}
+var tr = context.GeneralTReportInfos.FirstOrDefault(a=>a.Id>0);
+    if(tr==null){
+        return BadRequest("Academic Info Not Found");
+    }
+
+var r  = new TerminalReportsInformation{
+Attendance = request.Attendance,
+OutOf = request.OutOf,
+PromotedTo = request.PromotedTo,
+Conduct = request.Conduct,
+Attitude = request.Attitude,
+Interest = request.Interest,
+ClassTeacherRemarks = request.ClassTeacherRemarks,
+TeacherId = t.TeacherId,
+TeacherName = t.ClassTeacher,
+StudentId = s.StudentId,
+StudentName = s.FirstName+" "+s.OtherName+" "+s.LastName,
+AcademicTerm = tr.AcademicTerm,
+AcademicYear = tr.AcademicYear,
+DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy"),
+Level = s.Level
+
+};
+
+bool checker = await context.TerminalReportsInformations.AnyAsync(a=>a.StudentId==r.StudentId&&a.AcademicTerm==r.AcademicTerm&&a.AcademicYear==r.AcademicYear);
+if(checker){
+var a = context.TerminalReportsInformations.FirstOrDefault(a=>a.StudentId==r.StudentId&&a.AcademicTerm==r.AcademicTerm&&a.AcademicYear==r.AcademicYear);
+if(a==null){
+return BadRequest("Term Report does not exist");
+};
+a.Level = r.Level;
+a.Attendance = r.Attendance;
+a.OutOf = r.OutOf;
+a.PromotedTo = r.PromotedTo;
+a.Conduct = r.Conduct;
+a.Attitude = r.Attitude;
+a.Interest = r.Interest;
+a.ClassTeacherRemarks = r.ClassTeacherRemarks;
+a.TeacherId = r.TeacherId;
+a.TeacherName = r.TeacherName;
+a.StudentId = r.StudentId;
+a.StudentName = r.StudentName;
+a.AcademicTerm = r.AcademicTerm;
+a.AcademicYear = r.AcademicYear;
+a.DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy");
+
+await context.SaveChangesAsync();
+
+}else{
+    context.TerminalReportsInformations.Add(r);
+    await context.SaveChangesAsync();
+}
+
+await TeacherAuditor(TID, constant.TSubReport);
+
+return Ok("Term Report Sent Successfully");
+
+
+}
+
+[HttpGet("GetTermReport")]
+public async Task<IActionResult> GetTermReport(string Year, string Term, string Level){
+    var term = context.TerminalReportsInformations.Where(a=>a.AcademicYear==Year && a.AcademicTerm==Term&&a.Level==Level);
+    return Ok(term);
+}
+
+
+[HttpGet("GetTermReportOnReload")]
+public async Task<IActionResult> GetTermReportOnReload( string Level, string SID){
+    
+    var tr = context.GeneralTReportInfos.FirstOrDefault(a=>a.Id>0);
+    if(tr==null){
+        return BadRequest("Academic Info Not Found");
+    }
+
+
+    var term = context.TerminalReportsInformations.FirstOrDefault(a=>a.AcademicYear==tr.AcademicYear && a.AcademicTerm==tr.AcademicTerm&&a.Level==Level&&a.StudentId==SID);
+    if (term == null) {
+    // Return an empty array as response
+    return Ok(new object[] { });
+}
+    
+    return Ok(term);
+}
+
+
 
 
 
@@ -251,6 +324,337 @@ private string GetOrdinal(int number)
 
 
 
+
+
+
+
+
+[ApiExplorerSettings(IgnoreApi = true)] 
+public async Task StudentAuditor(string StudentId,string Action)
+{
+
+
+    var user = context.Students.FirstOrDefault(a => a.StudentId==StudentId);
+    if (user ==null){
+         BadRequest("Student not found");
+    }
+
+    var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+    var deviceCategory = GetDeviceCategory(userAgent);
+     //var ipAddress = "41.155.45.174";
+    if (string.IsNullOrEmpty(ipAddress))
+    {
+        ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+    }
+
+        try
+    {
+        using (var client = new HttpClient())
+        {
+            var response = await client.GetFromJsonAsync<IpApiLocationResponse>($"http://ip-api.com/json/{ipAddress}");
+
+            Country = response.country;
+            City = response.city;
+            latitude = response.lat;
+            logitude = response.lon;
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        // Handle the exception or log it as needed
+        // You can set default values for Country, City, latitude, and longitude here
+        // For example:
+        Country = "Unknown";
+        City = "Unknown";
+        latitude = 0.0;
+        logitude = 0.0;
+    }
+
+//fast
+ string formattedTime = DateTime.Now.ToString(@"hh:mm:ss tt", CultureInfo.InvariantCulture);
+
+
+    var audit = new AuditTrial
+    {
+        IpAddress = ipAddress,
+        BrowserType = userAgent,
+        DeviceType = deviceCategory,
+        UserLocation = $"https://www.google.com/maps?q={latitude},{logitude}",
+        Country = Country,
+        City = City,
+        Maker = user.FirstName+" "+user.OtherName+" "+user.LastName,
+        TheDateStamp = DateTime.Today.Date.ToString("MMMM dd, yyyy"),
+       TheTimeStamp = formattedTime,
+        Email= user.Email,
+        ActionDescription = Action,
+        Role = user.Role,
+        Level = user.Level,
+        ProfilePic = user.ProfilePic
+
+    };
+
+    context.AuditTrials.Add(audit);
+    await context.SaveChangesAsync();
+
+   
+}
+
+[ApiExplorerSettings(IgnoreApi = true)] 
+public async Task AdminAuditor(string StaffId, string Action)
+{
+    var user = context.Admins.FirstOrDefault(a => a.AdminID == StaffId);
+    if (user == null)
+    {
+          BadRequest("User not found");
+    }
+
+    var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+    var deviceCategory = GetDeviceCategory(userAgent);
+
+    // Ensure ipAddress is not null or empty
+    if (string.IsNullOrEmpty(ipAddress))
+    {
+        ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+    }
+
+    try
+    {
+        using (var client = new HttpClient())
+        {
+            var response = await client.GetFromJsonAsync<IpApiLocationResponse>($"http://ip-api.com/json/{ipAddress}");
+
+            if (response != null)
+            {
+                Country = response.country;
+                City = response.city;
+                latitude = response.lat;
+                logitude = response.lon;
+            }
+            else
+            {
+                // Log a message when the response is null
+                // You can replace this with your preferred logging mechanism
+                Console.WriteLine("IP API response is null");
+                Country = "Unknown";
+                City = "Unknown";
+                latitude = 0.0;
+                logitude = 0.0;
+            }
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        // Log the exception
+        // You can replace this with your preferred logging mechanism
+        Console.WriteLine($"HttpRequestException: {ex.Message}");
+
+        // Set default values for Country, City, latitude, and longitude
+        Country = "Unknown";
+        City = "Unknown";
+        latitude = 0.0;
+        logitude = 0.0;
+    }
+
+    // Fast
+    string formattedTime = DateTime.Now.ToString(@"hh:mm:ss tt", CultureInfo.InvariantCulture);
+
+    var audit = new AuditTrial
+    {
+        IpAddress = ipAddress,
+        BrowserType = userAgent,
+        DeviceType = deviceCategory,
+        UserLocation = $"https://www.google.com/maps?q={latitude},{logitude}",
+        Country = Country,
+        City = City,
+        Maker = user.Name,
+        TheDateStamp = DateTime.Today.Date.ToString("MMMM dd, yyyy"),
+        TheTimeStamp = formattedTime,
+        Email = user.Email,
+        ActionDescription = Action,
+        Role = user.Role,
+        ProfilePic = user.ProfilePic
+    };
+
+    context.AuditTrials.Add(audit);
+    await context.SaveChangesAsync();
+
+      Ok();
+}
+
+[ApiExplorerSettings(IgnoreApi = true)] 
+public async Task TeacherAuditor(string StudentId,string Action)
+{
+
+
+    var user = context.Teachers.FirstOrDefault(a => a.StaffID==StudentId);
+    if (user ==null){
+         BadRequest("Teacher not found");
+    }
+
+    var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+    var deviceCategory = GetDeviceCategory(userAgent);
+     //var ipAddress = "41.155.45.174";
+    if (string.IsNullOrEmpty(ipAddress))
+    {
+        ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+    }
+
+        try
+    {
+        using (var client = new HttpClient())
+        {
+            var response = await client.GetFromJsonAsync<IpApiLocationResponse>($"http://ip-api.com/json/{ipAddress}");
+
+            Country = response.country;
+            City = response.city;
+            latitude = response.lat;
+            logitude = response.lon;
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        // Handle the exception or log it as needed
+        // You can set default values for Country, City, latitude, and longitude here
+        // For example:
+        Country = "Unknown";
+        City = "Unknown";
+        latitude = 0.0;
+        logitude = 0.0;
+    }
+
+//fast
+ string formattedTime = DateTime.Now.ToString(@"hh:mm:ss tt", CultureInfo.InvariantCulture);
+
+
+    var audit = new AuditTrial
+    {
+        IpAddress = ipAddress,
+        BrowserType = userAgent,
+        DeviceType = deviceCategory,
+        UserLocation = $"https://www.google.com/maps?q={latitude},{logitude}",
+        Country = Country,
+        City = City,
+        Maker = user.FirstName+" "+user.OtherName+" "+user.LastName,
+        TheDateStamp = DateTime.Today.Date.ToString("MMMM dd, yyyy"),
+       TheTimeStamp = formattedTime,
+        Email= user.Email,
+        ActionDescription = Action,
+        Role = user.Role,
+       
+        ProfilePic= user.FilePath
+
+    };
+
+    context.AuditTrials.Add(audit);
+    await context.SaveChangesAsync();
+
+   
+}
+
+[ApiExplorerSettings(IgnoreApi = true)] 
+public async Task AuthAuditor(string StaffId,string Action)
+{
+
+
+    var user = context.AuthenticationModels.FirstOrDefault(a => a.UserId==StaffId);
+    if (user ==null){
+         BadRequest("Student not found");
+    }
+
+    var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+    var deviceCategory = GetDeviceCategory(userAgent);
+     //var ipAddress = "41.155.45.174";
+    if (string.IsNullOrEmpty(ipAddress))
+    {
+        ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+    }
+
+        try
+    {
+        using (var client = new HttpClient())
+        {
+            var response = await client.GetFromJsonAsync<IpApiLocationResponse>($"http://ip-api.com/json/{ipAddress}");
+
+            Country = response.country;
+            City = response.city;
+            latitude = response.lat;
+            logitude = response.lon;
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        // Handle the exception or log it as needed
+        // You can set default values for Country, City, latitude, and longitude here
+        // For example:
+        Country = "Unknown";
+        City = "Unknown";
+        latitude = 0.0;
+        logitude = 0.0;
+    }
+
+//fast
+ string formattedTime = DateTime.Now.ToString(@"hh:mm:ss tt", CultureInfo.InvariantCulture);
+
+
+    var audit = new AuditTrial
+    {
+        IpAddress = ipAddress,
+        BrowserType = userAgent,
+        DeviceType = deviceCategory,
+        UserLocation = $"https://www.google.com/maps?q={latitude},{logitude}",
+        Country = Country,
+        City = City,
+        Maker = user.Name,
+        TheDateStamp = DateTime.Today.Date.ToString("MMMM dd, yyyy"),
+       TheTimeStamp = formattedTime,
+        ActionDescription = Action,
+        Role = user.SpecificUserRole,
+        
+
+    };
+
+    context.AuditTrials.Add(audit);
+     try
+    {
+        // Existing code for AuthAuditor
+        // ...
+        await context.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+        // Log any exceptions here
+        Console.WriteLine(ex.Message);
+    }
+
+   
+}
+
+
+
+private string GetDeviceCategory(string userAgent)
+{
+    userAgent = userAgent.ToLower();
+
+    if (userAgent.Contains("mobile") || userAgent.Contains("android") || userAgent.Contains("iphone") || userAgent.Contains("ipad") || userAgent.Contains("ipod"))
+    {
+        return "Mobile";
+    }
+    else if (userAgent.Contains("tablet"))
+    {
+        return "Tablet";
+    }
+    else
+    {
+        return "Desktop";
+    }
+}
 
 
 

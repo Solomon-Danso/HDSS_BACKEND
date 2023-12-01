@@ -126,7 +126,7 @@ public string? VstudNotesD = "Student Viewed Note's Details";
 public string? TVstudNotesD = "Viewed Students Notes Details";
 public string? DstudNote = "Student Deleted A Note";
 
-
+public string? TSubReport = "Teacher submitted an Academic Report ";
 
 
 

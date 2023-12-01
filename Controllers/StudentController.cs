@@ -307,7 +307,13 @@ public async Task<IActionResult> GetStudents(string stage, string ID)
     await  AdminAuditor(ID, constant.GetStudent);
     return Ok(studentList);
 }
-
+[HttpGet("getStudentsTeacher")]
+public async Task<IActionResult> GetStudentsTeacher(string stage, string ID)
+{
+    var studentList = context.Students.Where(s=>s.Level==stage).OrderBy(student => student.LastName).ToList();
+    await  TeacherAuditor(ID, constant.GetStudent);
+    return Ok(studentList);
+}
 
 
 [HttpGet("getSpecificUser")]

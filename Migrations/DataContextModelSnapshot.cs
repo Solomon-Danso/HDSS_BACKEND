@@ -750,6 +750,22 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("AssignmentSolutions");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.Attitude", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AddAttitudes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Attitudes");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.Audio", b =>
                 {
                     b.Property<int>("Id")
@@ -1058,6 +1074,22 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Classess");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.Conduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AddConducts")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Conducts");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.Discussions", b =>
@@ -2164,6 +2196,64 @@ namespace HDSS_BACKEND.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TermResults");
+                });
+
+            modelBuilder.Entity("HDSS_BACKEND.Models.TerminalReportsInformation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicTerm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcademicYear")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Attendance")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Attitude")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassTeacherRemarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Conduct")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Interest")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Level")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OutOf")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PromotedTo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeacherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TerminalReportsInformations");
                 });
 
             modelBuilder.Entity("HDSS_BACKEND.Models.TestnQuizStudent", b =>
