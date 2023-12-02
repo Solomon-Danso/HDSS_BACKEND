@@ -37,6 +37,7 @@ namespace HDSS_BACKEND.Controllers
             if(teacher==null){
                 return BadRequest("Teacher Not Found");
             }
+
             var r = new TermResult{
                 StudentId = request.StudentId,
                 StudentName = request.StudentName,
@@ -95,7 +96,35 @@ namespace HDSS_BACKEND.Controllers
            
         bool checker =await context.TermResults.AnyAsync(a=>a.StudentId==r.StudentId&&a.Subject==r.Subject&&a.Level==r.Level&&a.AcademicYear==r.AcademicYear&&a.AcademicTerm==r.AcademicTerm);
         if(checker){
-           return BadRequest("You have already uploaded the result for "+r.StudentName);
+           var ch = context.TermResults.FirstOrDefault(a=>a.StudentId==r.StudentId&&a.Subject==r.Subject&&a.Level==r.Level&&a.AcademicYear==r.AcademicYear&&a.AcademicTerm==r.AcademicTerm);
+            if(ch==null){
+                return BadRequest("Student not found");
+            }
+
+
+                ch.StudentId = r.StudentId;
+                ch.StudentName = r.StudentName;
+                ch.ClassScore = r.ClassScore;
+                ch.ExamScore = r.ExamScore;
+                ch.Level = r.Level;
+                ch.Subject = r.Subject;
+                ch.AcademicYear = r.AcademicYear;
+                ch.AcademicTerm = r.AcademicTerm;
+                ch.TeacherId = teacher.StaffID;
+                ch.TeacherName = teacher.FirstName+" "+teacher.OtherName+" "+teacher.LastName;
+                ch.DateUploaded = DateTime.Today.Date.ToString("dd MMMM, yyyy");
+                ch.SpecificDateAndTime = DateTime.Now;
+                ch.Grade = r.Grade;
+                ch.Comment = r.Comment;
+                ch.Average = r.Average;
+
+                await context.SaveChangesAsync();
+                
+
+
+
+           
+           
         }
         else{
              context.TermResults.Add(r);
@@ -135,15 +164,9 @@ await context.SaveChangesAsync();
 
 
 
-
-
-
-
-
-  
            
 
-            return Ok("Result Uploaded");
+            return Ok("Result Uploaded Successfully");
 
 
         }
@@ -174,6 +197,17 @@ public async Task<IActionResult> ViewTermGrades(string StudentId, string Year, s
 
     return Ok(Grade);
 }
+
+[HttpGet("ViewSingleSubjectGradeStudent")]
+public async Task<IActionResult> ViewSingleSubjectGradeStudent(string StudentId, string Year, string Term, string Level, string Subject)
+{
+    var Grade = context.TermResults.FirstOrDefault(a => a.Level == Level && a.StudentId == StudentId && a.AcademicYear == Year && a.AcademicTerm == Term&&a.Subject==Subject);        
+    
+    return Ok(Grade);
+}
+
+
+
 
 // Method to convert an integer to its ordinal representation
 

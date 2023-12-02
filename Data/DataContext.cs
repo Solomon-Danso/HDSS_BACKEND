@@ -33,7 +33,7 @@ public DbSet<AmountPaid> AmountsPaid { get; set; }
 public DbSet<LessonNote> LessonNotes { get; set; }
 public DbSet<LessonNoteUpload> LessonNotesUpload { get; set; }
 public DbSet<Subject> Subjects { get; set; }
-
+public DbSet<ReportAnalysis> ReportAnalysis { get; set; }
 public DbSet<TeacherInSubject>TeacherInSubjects { get;set; }
 public DbSet<StudentForSubject>StudentForSubjects { get;set; }
 public DbSet<Classes> Classess { get; set; }

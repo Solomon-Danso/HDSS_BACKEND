@@ -48,7 +48,31 @@ public class TerminalReportsInformation{
     public string? DateAdded {get; set;}
 }
 
+public class ReportAnalysis{
+    public int Id{get;set;}
+    public string? ThisTermPosition {get;set;}
+    public float ThisTermTotalScoreObtained {get;set;}
+    public float ThisTermEntireTotalScore {get;set;}
+    public float ThisTermAverageScore{get;set;}
+    public int ThisTermTotalPass {get; set;}
+    public int ThisTermTotalFailed {get;set;}
+    public string? ThisTermAcademicTerm {get; set;}
+    public string? ThisTermAcademicYear {get; set;}
 
+
+    public string? PreviousTermPosition {get;set;}
+    public float PreviousTermTotalScoreObtained {get;set;}
+    public float PreviousTermEntireTotalScore {get;set;}
+    public float PreviousTermAverageScore{get;set;}
+    public int PreviousTermTotalPass {get; set;}
+    public int PreviousTermTotalFailed {get;set;}
+    public string? PreviousTermAcademicTerm {get; set;}
+    public string? PreviousTermAcademicYear {get; set;}
+
+    public string? StudentId {get;set;}
+    public string? StudentName {get;set;}
+
+}
 
 
 
