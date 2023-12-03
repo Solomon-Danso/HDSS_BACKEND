@@ -58,7 +58,8 @@ public class ReportAnalysis{
     public int ThisTermTotalFailed {get;set;}
     public string? ThisTermAcademicTerm {get; set;}
     public string? ThisTermAcademicYear {get; set;}
-
+    public string? ClassName{get; set;}
+     public string? DateAdded{get; set;}
 
     public string? PreviousTermPosition {get;set;}
     public float PreviousTermTotalScoreObtained {get;set;}

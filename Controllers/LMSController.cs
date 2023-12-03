@@ -117,6 +117,16 @@ namespace HDSS_BACKEND.Controllers
             return Ok(subject);
         }
 
+
+
+        [HttpGet("viewAllSubjectStudent")]
+        public async Task<IActionResult> ViewAllSubjectStudents(string ClassName, string ID){
+            var subject = context.StudentForSubjects.Where(a=>a.ClassName==ClassName&&a.StudentID==ID).OrderByDescending(R=>R.Id).ToList();
+             
+            return Ok(subject);
+        }
+
+
         [HttpDelete("DeleteSubject")]
          public async Task<IActionResult> DeleteSubject(int Id, string SID){
             var subject = context.Subjects.FirstOrDefault(r=>r.Id==Id);
@@ -203,6 +213,13 @@ namespace HDSS_BACKEND.Controllers
                 return BadRequest("Class does not exist");
             }
             context.Classess.Remove(cla);
+             var studentList = context.StudentForSubjects.Where(a=>a.ClassName==cla.ClassName).ToList();
+
+        foreach(var st in studentList ){
+            context.StudentForSubjects.Remove(st);
+            await context.SaveChangesAsync();
+        };
+
             await context.SaveChangesAsync();
             await AdminAuditor(SID,constant.DeletAClass);
             return Ok("Class Deleted Successfully");
@@ -249,6 +266,41 @@ namespace HDSS_BACKEND.Controllers
 
         teacherforsub.StaffName = q.FirstName+" " + q.OtherName+" " + q.LastName;
         teacherforsub.StaffID = q.StaffID;
+
+        var studentList = context.Students.Where(a=>a.Level==teacherforsub.ClassName).ToList();
+        foreach(var s in studentList){
+            var stusub = new StudentForSubject{
+                StudentID = s.StudentId,
+                StudentName = s.FirstName+" "+s.OtherName+" "+s.LastName,
+                SubjectName = teacherforsub.SubjectName,
+                ClassName = teacherforsub.ClassName,
+
+            };
+            bool check = await context.StudentForSubjects.AnyAsync(a=>a.StudentID==stusub.StudentID&&a.SubjectName==stusub.SubjectName&&a.ClassName==stusub.ClassName);
+            if(check){
+                var subj = context.StudentForSubjects.FirstOrDefault(a=>a.StudentID==stusub.StudentID&&a.SubjectName==stusub.SubjectName&&a.ClassName==stusub.ClassName);
+                if(subj==null){
+                    return BadRequest("Subject not found");
+                }
+                subj.StudentID = stusub.StudentID;
+                subj.SubjectName = stusub.SubjectName;
+                subj.StudentName = stusub.StudentName;
+                subj.ClassName = stusub.ClassName;
+
+                await context.SaveChangesAsync();
+            }
+            else{
+                context.StudentForSubjects.Add(stusub);
+                 await context.SaveChangesAsync();
+            }
+
+
+           
+
+        }
+
+
+
         bool checker = await context.TeacherInSubjects.AnyAsync(a=>a.ClassName==teacherforsub.ClassName&&a.StaffID==teacherforsub.StaffID&&a.SubjectName==teacherforsub.SubjectName);
         if (checker){
             return BadRequest("Teacher Already Assigned");
@@ -276,6 +328,15 @@ namespace HDSS_BACKEND.Controllers
                 return BadRequest("Teacher does not exist");
             }
             context.TeacherInSubjects.Remove(cla);
+    var studentList = context.StudentForSubjects.Where(a=>a.ClassName==cla.ClassName&&a.SubjectName==cla.SubjectName).ToList();
+
+        foreach(var st in studentList ){
+            context.StudentForSubjects.Remove(st);
+            await context.SaveChangesAsync();
+        };
+
+
+
             await context.SaveChangesAsync();
             await AdminAuditor(SID,constant.DeletASubT);
             return Ok("Teacher Deleted Successfully");

@@ -1613,6 +1613,79 @@ namespace HDSS_BACKEND.Migrations
                     b.ToTable("QuizTimers");
                 });
 
+            modelBuilder.Entity("HDSS_BACKEND.Models.ReportAnalysis", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClassName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateAdded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreviousTermAcademicTerm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreviousTermAcademicYear")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("PreviousTermAverageScore")
+                        .HasColumnType("real");
+
+                    b.Property<float>("PreviousTermEntireTotalScore")
+                        .HasColumnType("real");
+
+                    b.Property<string>("PreviousTermPosition")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PreviousTermTotalFailed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PreviousTermTotalPass")
+                        .HasColumnType("int");
+
+                    b.Property<float>("PreviousTermTotalScoreObtained")
+                        .HasColumnType("real");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ThisTermAcademicTerm")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ThisTermAcademicYear")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("ThisTermAverageScore")
+                        .HasColumnType("real");
+
+                    b.Property<float>("ThisTermEntireTotalScore")
+                        .HasColumnType("real");
+
+                    b.Property<string>("ThisTermPosition")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ThisTermTotalFailed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ThisTermTotalPass")
+                        .HasColumnType("int");
+
+                    b.Property<float>("ThisTermTotalScoreObtained")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReportAnalysis");
+                });
+
             modelBuilder.Entity("HDSS_BACKEND.Models.Role", b =>
                 {
                     b.Property<int>("Id")
