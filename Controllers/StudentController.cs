@@ -33,7 +33,7 @@ namespace HDSS_BACKEND.Controllers
 
 
  [HttpPost("registerStudent")]
-        public async Task<IActionResult> CreateStudent([FromForm]StudentDto studentDto,string ID){
+public async Task<IActionResult> CreateStudent([FromForm]StudentDto studentDto,string ID){
     
 
 

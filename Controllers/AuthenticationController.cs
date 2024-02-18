@@ -40,7 +40,7 @@ namespace HDSS_BACKEND.Controllers
         return BadRequest("Incorrect password");
     } 
 
-await AuthAuditor(UserId.UserId, constant.UserLogin);
+    await AuthAuditor(UserId.UserId, constant.UserLogin);
     
     if(UserId.Role == constant.Teacher){
         var Teacher = context.Teachers.FirstOrDefault(a=>a.StaffID == UserId.UserId);

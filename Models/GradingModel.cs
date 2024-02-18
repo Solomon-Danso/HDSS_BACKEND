@@ -61,15 +61,6 @@ public class ReportAnalysis{
     public string? ClassName{get; set;}
      public string? DateAdded{get; set;}
 
-    public string? PreviousTermPosition {get;set;}
-    public float PreviousTermTotalScoreObtained {get;set;}
-    public float PreviousTermEntireTotalScore {get;set;}
-    public float PreviousTermAverageScore{get;set;}
-    public int PreviousTermTotalPass {get; set;}
-    public int PreviousTermTotalFailed {get;set;}
-    public string? PreviousTermAcademicTerm {get; set;}
-    public string? PreviousTermAcademicYear {get; set;}
-
     public string? StudentId {get;set;}
     public string? StudentName {get;set;}
 

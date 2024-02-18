@@ -199,7 +199,7 @@ public class Video{
 
     }
 
-    public class Audio{
+public class Audio{
         public int Id { get; set; }
         public string? SubjectName { get; set; }
         public string? Title { get; set; }
@@ -215,7 +215,7 @@ public class Video{
 
     }
 
-    public class Picture{
+public class Picture{
         public int Id { get; set; }
         public string? SubjectName { get; set; }
         public string? Title { get; set; }
@@ -231,7 +231,7 @@ public class Video{
 
     }
 
-     public class Book{
+public class Book{
         public int Id { get; set; }
         public string? SubjectName { get; set; }
         public string? Title { get; set; }
@@ -264,7 +264,7 @@ public class Video{
 
 
 
-      public class Calendar{
+public class Calendar{
         public int Id { get; set; }
         public string? Title { get; set; }
         public string? ClassName { get; set; }

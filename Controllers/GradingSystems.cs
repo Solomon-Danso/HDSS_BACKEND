@@ -179,7 +179,7 @@ public async Task<IActionResult>GetReportAnalysis(string StudentId){
 
 
 [ApiExplorerSettings(IgnoreApi = true)] 
-public async Task ReportAnalysis(string level, string SID, string year, string term){
+public async Task<IActionResult> ReportAnalysis(string level, string SID, string year, string term){
 
     var TotalScoreOb = context.TermResults.Where(a=>a.Level==level&&a.StudentId==SID&&a.AcademicYear==year&&a.AcademicTerm==term).Sum(r=>r.Average);
     var subjList = context.StudentForSubjects.Where(a=>a.StudentID==SID&&a.ClassName==level).Count();
@@ -205,127 +205,34 @@ public async Task ReportAnalysis(string level, string SID, string year, string t
 
     };
     
-
-var counter = context.ReportAnalysis.Where(a => a.ClassName == analysis.ClassName && a.ThisTermAcademicYear == analysis.ThisTermAcademicYear && a.ThisTermAcademicTerm == analysis.ThisTermAcademicTerm&&a.StudentId==analysis.StudentId).Count();
-
+var counter = context.ReportAnalysis.Where(a=>a.StudentId==analysis.StudentId).Count();
 if(counter>0){
-
-bool checker = await context.ReportAnalysis.AnyAsync(a => a.ClassName == analysis.ClassName && a.ThisTermAcademicYear == analysis.ThisTermAcademicYear && a.ThisTermAcademicTerm == analysis.ThisTermAcademicTerm&&a.StudentId==analysis.StudentId);
-if(checker){
-  var ch = context.ReportAnalysis.FirstOrDefault(a => a.ClassName == analysis.ClassName && a.ThisTermAcademicYear == analysis.ThisTermAcademicYear && a.ThisTermAcademicTerm == analysis.ThisTermAcademicTerm&&a.StudentId==analysis.StudentId);
-
-  ch.ThisTermTotalScoreObtained = analysis.ThisTermTotalScoreObtained;
-  ch.ThisTermEntireTotalScore = analysis.ThisTermEntireTotalScore;
-  ch.ThisTermAverageScore = analysis.ThisTermAverageScore;
-  ch.ThisTermTotalPass = analysis.ThisTermTotalPass;
-  ch.ThisTermTotalFailed = analysis.ThisTermTotalFailed;
-  ch.StudentId = analysis.StudentId;
-  ch.ClassName = analysis.ClassName;
-  ch.StudentName = analysis.StudentName;
-  ch.ThisTermAcademicTerm = analysis.ThisTermAcademicTerm;
-  ch.ThisTermAcademicYear = analysis.ThisTermAcademicYear;
-
-await context.SaveChangesAsync();
-
-}
-else{
-var cl = context.ReportAnalysis.OrderBy(a=>a.Id).LastOrDefault(a => a.ClassName == analysis.ClassName && a.ThisTermAcademicYear == analysis.ThisTermAcademicYear && a.ThisTermAcademicTerm == analysis.ThisTermAcademicTerm&&a.StudentId==analysis.StudentId);
+var c = context.ReportAnalysis.FirstOrDefault(a=>a.StudentId==analysis.StudentId);
+if(c!=null){
 
 
-var ch = context.ReportAnalysis.FirstOrDefault(a => a.ClassName == analysis.ClassName && a.ThisTermAcademicYear == analysis.ThisTermAcademicYear && a.ThisTermAcademicTerm == analysis.ThisTermAcademicTerm&&a.StudentId==analysis.StudentId);
-
-
-ch.PreviousTermTotalScoreObtained = cl.ThisTermTotalScoreObtained;
-  ch.PreviousTermEntireTotalScore = cl.ThisTermEntireTotalScore;
-  ch.PreviousTermAverageScore = cl.ThisTermAverageScore;
-  ch.PreviousTermTotalPass = cl.ThisTermTotalPass;
-  ch.PreviousTermTotalFailed = cl.ThisTermTotalFailed;
-  ch.StudentId = cl.StudentId;
-  ch.ClassName = cl.ClassName;
-  ch.StudentName = cl.StudentName;
-  ch.PreviousTermAcademicTerm = cl.ThisTermAcademicTerm;
-  ch.PreviousTermAcademicYear = cl.ThisTermAcademicYear;
-  ch.PreviousTermPosition = cl.ThisTermPosition;
-
-
-
-
-ch.ThisTermTotalScoreObtained = analysis.ThisTermTotalScoreObtained;
-  ch.ThisTermEntireTotalScore = analysis.ThisTermEntireTotalScore;
-  ch.ThisTermAverageScore = analysis.ThisTermAverageScore;
-  ch.ThisTermTotalPass = analysis.ThisTermTotalPass;
-  ch.ThisTermTotalFailed = analysis.ThisTermTotalFailed;
-  ch.StudentId = analysis.StudentId;
-  ch.ClassName = analysis.ClassName;
-  ch.StudentName = analysis.StudentName;
-  ch.ThisTermAcademicTerm = analysis.ThisTermAcademicTerm;
-  ch.ThisTermAcademicYear = analysis.ThisTermAcademicYear;
-
+c.ThisTermTotalScoreObtained = analysis.ThisTermTotalScoreObtained;
+c.ThisTermEntireTotalScore = analysis.ThisTermEntireTotalScore;
+c. ThisTermAverageScore = analysis. ThisTermAverageScore;
+c.ThisTermTotalPass = analysis.ThisTermTotalPass;
+c.ThisTermTotalFailed = analysis.ThisTermTotalFailed;
+c.StudentId = analysis.StudentId;
+c.ClassName = analysis.ClassName;
+c.StudentName = analysis.StudentName;
+c.ThisTermAcademicTerm = analysis.ThisTermAcademicTerm;
+c.ThisTermAcademicYear = analysis.ThisTermAcademicYear;
+c.DateAdded =  DateTime.Today.Date.ToString("dd MMMM, yyyy");
 
 await context.SaveChangesAsync();
-
-
 
 }
 
 
 }
 else{
-
-context.ReportAnalysis.Add(analysis);
+    context.ReportAnalysis.Add(analysis);
     await context.SaveChangesAsync();
-
-
 }
-
-
-
-
-
-
-var existingAnalysis = context.ReportAnalysis.FirstOrDefault(a =>
-        a.ClassName == level && 
-        a.ThisTermAcademicYear == year && 
-        a.ThisTermAcademicTerm == term && 
-        a.StudentId == SID);
-
-    if (existingAnalysis != null) {
-        // Update the existing record with the new term data and shift the existing "This" to "Previous"
-        existingAnalysis.PreviousTermTotalScoreObtained = existingAnalysis.ThisTermTotalScoreObtained;
-        existingAnalysis.PreviousTermEntireTotalScore = existingAnalysis.ThisTermEntireTotalScore;
-        existingAnalysis.PreviousTermAverageScore = existingAnalysis.ThisTermAverageScore;
-        existingAnalysis.PreviousTermTotalPass = existingAnalysis.ThisTermTotalPass;
-        existingAnalysis.PreviousTermTotalFailed = existingAnalysis.ThisTermTotalFailed;
-
-        // Update the "This" with the new term data
-        existingAnalysis.ThisTermTotalScoreObtained = TotalScoreOb;
-        existingAnalysis.ThisTermEntireTotalScore = EntireScore;
-        existingAnalysis.ThisTermAverageScore = TermAverage;
-        existingAnalysis.ThisTermTotalPass = TotalPass;
-        existingAnalysis.ThisTermTotalFailed = TotalFailed;
-
-        await context.SaveChangesAsync();
-    } else {
-        // If no existing record, create a new one
-        var analy = new ReportAnalysis{
-        ThisTermTotalScoreObtained = TotalScoreOb,
-        ThisTermEntireTotalScore = EntireScore,
-        ThisTermAverageScore = TermAverage,
-        ThisTermTotalPass = TotalPass,
-        ThisTermTotalFailed = TotalFailed,
-        StudentId = s?.StudentId,
-        ClassName = level,
-        StudentName = s?.FirstName+" " + s?.OtherName+" " + s?.LastName,
-        ThisTermAcademicTerm = term,
-        ThisTermAcademicYear = year,
-        DateAdded = DateTime.Today.Date.ToString("dd MMMM, yyyy")
-
-    };
-
-        context.ReportAnalysis.Add(analy);
-        await context.SaveChangesAsync();
-    }
-
 
 
 
@@ -341,7 +248,7 @@ var existingAnalysis = context.ReportAnalysis.FirstOrDefault(a =>
 
 
 var termResults = context.ReportAnalysis
-    .Where(a => a.ClassName == existingAnalysis.ClassName && a.ThisTermAcademicYear == existingAnalysis.ThisTermAcademicYear && a.ThisTermAcademicTerm == existingAnalysis.ThisTermAcademicTerm)
+    .Where(a => a.ClassName == analysis.ClassName && a.ThisTermAcademicYear == analysis.ThisTermAcademicYear && a.ThisTermAcademicTerm == analysis.ThisTermAcademicTerm)
     .ToList();
 
 // Group TermResults by Average and order the groups by Average in descending order
@@ -372,6 +279,7 @@ await context.SaveChangesAsync();
 
 
 
+return Ok("Analysis completed");
 
 
 }

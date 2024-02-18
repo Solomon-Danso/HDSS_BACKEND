@@ -1627,30 +1627,6 @@ namespace HDSS_BACKEND.Migrations
                     b.Property<string>("DateAdded")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PreviousTermAcademicTerm")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PreviousTermAcademicYear")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("PreviousTermAverageScore")
-                        .HasColumnType("real");
-
-                    b.Property<float>("PreviousTermEntireTotalScore")
-                        .HasColumnType("real");
-
-                    b.Property<string>("PreviousTermPosition")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PreviousTermTotalFailed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PreviousTermTotalPass")
-                        .HasColumnType("int");
-
-                    b.Property<float>("PreviousTermTotalScoreObtained")
-                        .HasColumnType("real");
-
                     b.Property<string>("StudentId")
                         .HasColumnType("nvarchar(max)");
 
